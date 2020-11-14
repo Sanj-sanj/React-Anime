@@ -11,21 +11,11 @@ export default function header() {
   const [title, setTitles] = useState("english");
   const [cards, setCards] = useState([]);
 
-  let tmp = [];
-  function handleAnimeResponse(json) {
-    if (json.data.Page.pageInfo.hasNextPage) {
-      tmp = json.data.Page.media;
-      return requestAnimes(null, json.data.Page.pageInfo.currentPage + 1);
-    }
-    console.log(cards.concat(json.data.Page.media)); //taran elite code
-    return setCards(tmp.concat(json.data.Page.media));
-  }
-
-  function requestAnimes(e, nextPage) {
+  function requestAnimes(nextPage = 1, acc = []) {
     const variables = {
       // id: 112124,
       isAdult: false,
-      page: nextPage || 1,
+      page: nextPage,
       perPage: 50,
       format_in: format == "TV" ? ["TV", "TV_SHORT"] : format, //defaults to TV series
       season: season[0].toUpperCase(),
@@ -44,28 +34,19 @@ export default function header() {
           variables: variables,
         }),
       };
-    fetch(url, options)
-      .then(handleResponse)
-      .then(handleData)
-      .catch(handleError);
 
-    function handleResponse(response) {
-      console.log("called API");
-      return response.json().then(function (json) {
-        return response.ok ? handleAnimeResponse(json) : Promise.reject(json);
+    return fetch(url, options).then((response) => {
+      return response.json().then((json) => {
+        if (!response.ok) return Promise.reject(json);
+        if (!json.data.Page.pageInfo.hasNextPage)
+          return acc.concat(json.data.Page.media);
+
+        return requestAnimes(
+          json.data.Page.pageInfo.currentPage + 1,
+          acc.concat(json.data.Page.media)
+        );
       });
-    }
-
-    function handleData(data) {
-      //eslint-disable-next-line
-      console.log(data);
-    }
-
-    function handleError(error) {
-      alert("Error, check console");
-      //eslint-disable-next-line
-      console.error(error);
-    }
+    });
   }
 
   function changeSeason(change) {
@@ -84,8 +65,9 @@ export default function header() {
   }
 
   useEffect(() => {
-    console.log({ season, format });
-    requestAnimes();
+    requestAnimes().then((vals) => {
+      setCards(vals);
+    });
   }, [season, format]);
 
   return (
