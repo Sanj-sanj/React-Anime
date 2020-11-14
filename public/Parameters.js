@@ -11,7 +11,7 @@ export default function header() {
   const [title, setTitles] = useState("english");
   const [cards, setCards] = useState([]);
 
-  function requestAnimes(nextPage = 1, acc = []) {
+  async function requestAnimes(nextPage = 1, acc = []) {
     const variables = {
       // id: 112124,
       isAdult: false,
@@ -35,18 +35,16 @@ export default function header() {
         }),
       };
 
-    return fetch(url, options).then((response) => {
-      return response.json().then((json) => {
-        if (!response.ok) return Promise.reject(json);
-        if (!json.data.Page.pageInfo.hasNextPage)
-          return acc.concat(json.data.Page.media);
-
-        return requestAnimes(
-          json.data.Page.pageInfo.currentPage + 1,
-          acc.concat(json.data.Page.media)
-        );
-      });
-    });
+    const response = await fetch(url, options);
+    const json = await response.json();
+    if (!response.ok) return Promise.reject(json);
+    if (!json.data.Page.pageInfo.hasNextPage) {
+      return acc.concat(json.data.Page.media);
+    }
+    return requestAnimes(
+      json.data.Page.pageInfo.currentPage + 1,
+      acc.concat(json.data.Page.media)
+    );
   }
 
   function changeSeason(change) {
