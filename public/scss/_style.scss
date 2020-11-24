@@ -146,6 +146,7 @@ li.f-choice button:hover {
   text-overflow: ellipsis;
   overflow: hidden;
   -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   z-index: 1;
 }
 .anime-genre {
@@ -278,7 +279,7 @@ ol.anime-genre li:not(:last-child)::after {
 .spinner {
   width: fit-content;
   animation: spinner 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
-  display: none;
+  // display: none;
   position: absolute;
   z-index: 100;
 }

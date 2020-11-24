@@ -16,13 +16,6 @@ const App = () => {
     <div>
       <Nav />
       <Parameters />
-      <div className="loading-area">
-        <img
-          className="spinner"
-          src={require("./imgs/1F63B.svg")}
-          alt="Loading spinner"
-        />
-      </div>
     </div>
   );
 };

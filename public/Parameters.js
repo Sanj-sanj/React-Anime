@@ -1,15 +1,33 @@
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import $ from "jquery";
 import React, { useState, useEffect } from "react";
 import querys from "./querys";
-import Dropdown from "./ToggleDropdown";
+import Toggle from "./ToggleDropdown";
+import Season from "./Season";
+import Format from "./Format";
+import SortDropdown from "./SortDropdown";
 import checkSeason from "./checkSeason";
 import Card from "./Card";
+import Modal from "./Modal";
+import Spinner from "./Spinner";
 
-export default function header() {
+export default function body() {
   const [season, setSeason] = useState(checkSeason().split(" "));
   const [format, setFormat] = useState(["TV", "TV_SHORT"]);
-  const [sort, setSort] = useState("popularity");
-  const [title, setTitles] = useState("english");
+  const [sort, setSort] = useState(
+    JSON.parse(localStorage.getItem("sort")) || "popularity"
+  );
+  const [title, setTitles] = useState(
+    JSON.parse(localStorage.getItem("title")) || "english"
+  );
   const [cards, setCards] = useState([]);
+  const [newEpisodes, setNewEpisodes] = useState([]);
+  const [watchStates, setWatchStates] = useState(
+    JSON.parse(localStorage.getItem("watching")) || []
+  );
+  const [considerStates, setConsiderStates] = useState(
+    JSON.parse(localStorage.getItem("considering")) || []
+  );
 
   async function requestAnimes(nextPage = 1, acc = []) {
     const variables = {
@@ -47,164 +65,215 @@ export default function header() {
     );
   }
 
-  function changeSeason(change) {
-    const currSeason = season;
-    return setSeason(checkSeason(...currSeason, change).split(" "));
-    // timer.resetTimer()
+  function sortCards(allCards) {
+    //map the state of cards to work with state then set it. otherwise state stays one step behind
+    let cloneCards = allCards.map((show) => show);
+    console.log("Sort Cards Called");
+    const options = [
+      "popularity",
+      "countdown",
+      "rating",
+      "air date",
+      "my shows",
+    ];
+    if (sort == options[0]) {
+      return cloneCards.sort((a, b) => {
+        return b.popularity - a.popularity;
+      });
+    }
+    if (sort == options[1]) {
+      return cloneCards
+        .filter((item) => (item.nextAiringEpisode ? item : false))
+        .sort((a, b) => {
+          if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
+          return (
+            a.nextAiringEpisode.timeUntilAiring -
+            b.nextAiringEpisode.timeUntilAiring
+          );
+        })
+        .concat(cloneCards.filter((show) => !show.nextAiringEpisode));
+    }
+    if (sort == options[2]) {
+      return cloneCards.sort((a, b) => {
+        return b.meanScore - a.meanScore;
+      });
+    }
+    if (sort == options[3]) {
+      return cloneCards
+        .filter((show) => show.startDate.day)
+        .sort((a, b) => {
+          const altDayA = a.startDate.day ? `${a.startDate.day}` : "00";
+          const altMonthA = a.startDate.month ? `${a.startDate.month}` : "00";
+          const altYearA = a.startDate.year ? `${a.startDate.year}` : "2021";
+          const altDayB = b.startDate.day ? `${b.startDate.day}` : "00";
+          const altMonthB = b.startDate.month ? `${b.startDate.month}` : "00";
+          const altYearB = b.startDate.year ? `${b.startDate.year}` : "2021";
+          return (
+            `${altYearA}${altDayA.length < 2 ? "0" + altDayA : altDayA}${
+              altMonthA.length < 2 ? "0" + altMonthA : altMonthA
+            }` -
+            `${altYearB}${altDayB.length < 2 ? "0" + altDayB : altDayB}${
+              altMonthB.length < 2 ? "0" + altMonthB : altMonthB
+            }`
+          );
+        })
+        .concat(cloneCards.filter((show) => !show.startDate.day));
+    }
+    if (sort == options[4]) {
+      return cloneCards
+        .filter((show) => watchStates.find((item) => item.id == show.id))
+        .sort((a, b) => {
+          if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
+          return (
+            a.nextAiringEpisode.timeUntilAiring -
+            b.nextAiringEpisode.timeUntilAiring
+          );
+        })
+        .concat(
+          cloneCards.filter(
+            (show) => !watchStates.some((item) => item.id == show.id)
+          )
+        );
+    }
   }
-  function changeActiveFormat(e) {
-    const choices = [];
-    choices["TV"] = ["TV", "TV_SHORT"];
-    choices["MOVIE"] = ["MOVIE"];
-    choices["OVA"] = ["OVA", "ONA"];
-    document.querySelector(".f-choice.active").classList.remove("active");
-    e.target.parentElement.classList.add("active");
-    setFormat(choices[e.target.value]);
+
+  function checkForNewReleases() {
+    //this useses the state pulled from Card.js to sift through data to find a match in data to update episode numbers
+    //this gets called once on initial render, then again as watchStates changes at the end so it works properply.
+    const titles = ["english", "romaji"];
+    const hasNewEpisodes = watchStates.filter((item) => {
+      const [found] = cards.filter((show) => show.id == item.id);
+      if (found && !found.nextAiringEpisode) return null;
+      if (found && found.nextAiringEpisode.episode > item.episodeNumber) {
+        return found;
+      }
+    });
+    if (hasNewEpisodes.length) {
+      console.log({ hasNewEpisodes });
+      setNewEpisodes(hasNewEpisodes);
+      const updatedEpisodes = cards
+        .map((card) => {
+          if (hasNewEpisodes.find((item) => card.id == item.id)) {
+            const episodeNumber = card.nextAiringEpisode.episode;
+            const id = card.id;
+            const title = card.title[titles[0]] || card.title[titles[1]];
+            return { title, id, episodeNumber };
+          }
+          return null;
+        })
+        .filter((item) => item)
+        .concat(
+          watchStates.filter((item) => {
+            const [found] = cards.filter((show) => show.id == item.id);
+            if (found && found.nextAiringEpisode) {
+              if (found.nextAiringEpisode.episode == item.episodeNumber) {
+                return found;
+              }
+              if (!found.nextAiringEpisode) {
+                return found;
+              }
+            }
+          })
+        );
+      console.log({ updatedEpisodes });
+      setWatchStates(updatedEpisodes);
+    }
   }
 
   useEffect(() => {
+    $("#myModal").modal("show");
+  }, [newEpisodes]);
+
+  useEffect(() => {
+    console.log("hitting api");
+    setCards([]);
     requestAnimes().then((vals) => {
-      setCards(vals);
+      setCards(sortCards(vals));
     });
   }, [season, format]);
+
+  useEffect(() => {
+    setCards(sortCards(cards));
+    localStorage.setItem("sort", JSON.stringify(sort));
+    localStorage.setItem("title", JSON.stringify(title));
+  }, [sort, title]);
+
+  useEffect(() => {
+    checkForNewReleases();
+    localStorage.setItem("watching", JSON.stringify(watchStates));
+    localStorage.setItem("considering", JSON.stringify(considerStates));
+  }, [watchStates, considerStates]);
 
   return (
     <div>
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
-          <form className="season-selection">
-            <button
-              className="btn change-season"
-              type="button"
-              onClick={() => changeSeason("down")}
-            >
-              <svg
-                width="2em"
-                height="2em"
-                viewBox="0 0 16 16"
-                className="bi bi-caret-left-fill"
-                fill="#4d94e2"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z" />
-              </svg>
-            </button>
-            <h2 className="anime-season-header">{season.join(" ")}</h2>
-            <button
-              className="btn change-season"
-              type="button"
-              onClick={() => changeSeason("up")}
-            >
-              <svg
-                width="2em"
-                height="2em"
-                viewBox="0 0 16 16"
-                className="bi bi-caret-right-fill"
-                fill="#4d94e2"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
-              </svg>
-            </button>
-          </form>
-          <div className="nav format-options">
-            <ul className="format-choices">
-              <li className="f-choice active">
-                <button
-                  className="btn"
-                  value={"TV"}
-                  onClick={(e) => changeActiveFormat(e)}
-                >
-                  Television
-                </button>
-              </li>
-              <li className="f-choice">
-                <button
-                  className="btn"
-                  value="MOVIE"
-                  onClick={(e) => changeActiveFormat(e)}
-                >
-                  Movies
-                </button>
-              </li>
-              <li className="f-choice">
-                <button
-                  className="btn"
-                  value="OVA"
-                  onClick={(e) => changeActiveFormat(e)}
-                >
-                  OVA
-                </button>
-              </li>
-            </ul>
-          </div>
+          <Season season={season} onChange={setSeason} />
+          <Format changeFormat={setFormat} />
         </div>
       </div>
       <div className="container-fluid anime-container">
         <div className="options-area">
-          <div className="input-group mb-3">
-            <div className="input-group-prepend">
-              <label className="input-group-text" htmlFor="sort-prefs">
-                Sort by:
-              </label>
-            </div>
-            <select
-              className="custom-select"
-              name="sort-by"
-              id="sort-prefs"
-              onChange={(e) => setSort(e.target.value)}
-              onBlur={(e) => setSort(e.target.value)}
-            >
-              <option value="popularity" key="popularity">
-                Popularity
-              </option>
-              <option value="countdown" key="countdown">
-                Countdown
-              </option>
-              <option value="rating" key="rating">
-                Rating
-              </option>
-              <option value="air-date" key="air-date">
-                Air date
-              </option>
-              <option value="user-shows" key="user-shows">
-                My Shows
-              </option>
-            </select>
-          </div>
-          <div className="input-group mb-3">
-            <div className="input-group-prepend">
-              <label className="input-group-text" htmlFor="sort-names">
-                Titles:
-              </label>
-            </div>
-            <select
-              className="custom-select"
-              name="sort-by"
-              id="sort-names"
-              onChange={(e) => setTitles(e.target.value)}
-              onBlur={(e) => setTitles(e.target.value)}
-            >
-              <option value="english" key="english">
-                English
-              </option>
-              <option value="romaji" key="romaji">
-                Romaji
-              </option>
-            </select>
-          </div>
-          <Dropdown />
+          <SortDropdown
+            tag={"prefs"}
+            label={"Sort by"}
+            valuesArr={[
+              "Popularity",
+              "Countdown",
+              "Rating",
+              "Air date",
+              "My shows",
+            ]}
+            set={setSort}
+            defaultState={sort}
+          />
+          <SortDropdown
+            tag={"names"}
+            label={"Titles"}
+            valuesArr={["English", "Romaji"]}
+            set={setTitles}
+            defaultState={title}
+          />
+          <Toggle />
         </div>
         <div className="row row-card-area">
-          {cards.length == 0 ? (
-            <h1>Nothing found</h1>
+          {!cards || !cards.length ? (
+            <Spinner display={cards} />
           ) : (
-            cards.map((data) => <Card key={data.id} data={data} />)
+            cards.map((data) => (
+              <Card
+                key={data.id}
+                data={data}
+                language={title}
+                watchSet={setWatchStates}
+                considerSet={setConsiderStates}
+                watching={watchStates}
+                considering={considerStates}
+              />
+            ))
           )}
         </div>
       </div>
-      <button onClick={requestAnimes}>click</button>
+      <Modal shows={newEpisodes} />
       <button onClick={() => console.log(cards)}>click</button>
+      <button
+        onClick={() =>
+          cards.forEach((a) => {
+            const altDay = a.startDate.day ? `${a.startDate.day}` : "00";
+            const altMonth = a.startDate.month ? `${a.startDate.month}` : "00";
+            const altYear = a.startDate.year ? `${a.startDate.year}` : "2021";
+            // a.startDate.day ? console.log(a.startDate.day.length) : false;
+
+            console.log(
+              `${altYear}${altDay.length < 2 ? "0" + altDay : altDay}${
+                altMonth.length < 2 ? "0" + altMonth : altMonth
+              }`
+            );
+          })
+        }
+      >
+        click
+      </button>
     </div>
   );
 }

@@ -1,17 +1,57 @@
-import React from "react";
-import Timer from "./counter";
+import React, { useState, useEffect } from "react";
 import Countdown from "./Countdown";
-// const t = Timer();
+import Button from "./Button";
+import Ribbon from "./Ribbon";
 
-export default function Results({ data }) {
+export default function Card({
+  data,
+  language,
+  watchSet,
+  considerSet,
+  watching,
+  considering,
+}) {
+  const [watchState, setWatchState] = useState(false);
+  const [considerState, setConsiderState] = useState(false);
+
+  const nextEpCD = new Date();
+  const airing = data.nextAiringEpisode
+    ? nextEpCD.setSeconds(data.nextAiringEpisode.timeUntilAiring)
+    : null;
   const studio = data.studios
     ? data.studios.nodes.find((studio) => studio.isAnimationStudio)
     : "N/A";
   const description = data.description
     ? data.description
     : "No synopsis has been added yet.";
+  const altLang = language == "english" ? "romaji" : "english";
+  const title = data.title[language] || data.title[altLang];
 
-  function formatNextEpisodeDate(nextEp, status) {
+  function formatEpisodeAirDate({ day, month, year }) {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    let date;
+    day ? (date = new Date(`${day}, ${months[month - 1]}, ${year}`)) : false;
+    if (day) {
+      return `${days[date.getDay()]} ${months[month - 1]} ${day} ${year}`;
+    }
+    return formatNextAiringEpisodeDate(data.nextAiringEpisode, data.status);
+  }
+
+  function formatNextAiringEpisodeDate(nextEp, status) {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = [
       "Jan",
@@ -40,20 +80,69 @@ export default function Results({ data }) {
         nextEpDate.getMinutes()
     ).toFixed(1);
     nextEpMinsRounded.replace(".", "");
-    return `${days[nextEpDate.getDay()]} ${
-      months[nextEpDate.getMonth()]
-    } ${nextEpDate.getDate()} ${nextEpDate.getFullYear()} ${nextEpDate.getHours()}:${
+    return `${days[nextEpDate.getDay()]} 
+    ${months[nextEpDate.getMonth()]} 
+    ${nextEpDate.getDate()} ${nextEpDate.getFullYear()} ${nextEpDate.getHours()}:${
       nextEpDate.getMinutes() < 10
         ? "0" + nextEpDate.getMinutes()
         : nextEpDate.getMinutes()
     } `;
   }
 
+  useEffect(() => {
+    const id = data.id;
+    const episodeNumber = data.nextAiringEpisode
+      ? data.nextAiringEpisode.episode
+      : null;
+    if (watchState) {
+      //if watching, add to watching state remove from considering state if exists
+      const currentlyWatching = watching.filter((show) => show.id !== id);
+      const newWatching = [...currentlyWatching, { title, id, episodeNumber }];
+      const currentConsider = considering.filter((show) => show.id !== id);
+      considerSet(currentConsider);
+      watchSet(newWatching);
+    }
+    if (considerState) {
+      const current = considering.filter((show) => show.id !== id);
+      const newConsider = [...current, { title, id, episodeNumber }];
+      const currentWatch = watching.filter((show) => show.id !== id);
+      watchSet(currentWatch);
+      return considerSet(newConsider);
+    }
+    if (!watchState && !considerState) {
+      const stillWatching = watching.filter((show) => {
+        return show.id !== id;
+      });
+      const stillConsidering = considering.filter((show) => {
+        return show.id !== id;
+      });
+      watchSet(stillWatching);
+      considerSet(stillConsidering);
+    }
+  }, [watchState, considerState]);
+
+  useEffect(() => {
+    watching.forEach((show) => {
+      if (show.id != data.id) return;
+      show.id == data.id ? setWatchState(true) : false;
+    });
+    considering.forEach((show) => {
+      if (show.id != data.id) return;
+      show.id == data.id ? setConsiderState(true) : false;
+    });
+  }, []);
+
   return (
     <div className="card anime-card mb-3 col-md-4 col-xl-3" data-id={data.id}>
       <h5 className="anime-title">
-        <a className="main-title" href={data.siteUrl}>
-          {data.title.english ? data.title.english : data.title.romaji}{" "}
+        <Ribbon watch={watchState} consider={considerState} />
+        <a
+          className="main-title"
+          href={data.siteUrl}
+          style={{ WebkitBoxOrient: "vertical" }}
+          title={title}
+        >
+          {title}{" "}
         </a>
       </h5>
       <ol className="anime-genre">
@@ -70,17 +159,11 @@ export default function Results({ data }) {
 
       <div className="contents">
         <div className="col img-spot">
-          <Countdown data={[data.status, data.nextAiringEpisode]} />
-          {/* <time className="countdown">
-            {data.status == "FINISHED"
-              ? "Finished!"
-              : data.nextAiringEpisode
-              ? `Ep ${data.nextAiringEpisode.episode} ${Timer(
-                  data.nextAiringEpisode.timeUntilAiring
-                )} `
-              : "No information"}{" "}
-            <span></span>
-          </time> */}
+          <Countdown
+            status={data.status}
+            airingInfo={data.nextAiringEpisode}
+            cd={airing}
+          />
           <img
             className="card-img-top anime-cover-image"
             src={data.coverImage.large}
@@ -106,15 +189,7 @@ export default function Results({ data }) {
         </div>
         <div className="row no-gutters row-anime-info">
           <div className="anime-info col border-top border-left">
-            <div
-              className="meta-container"
-              data-popularity={data.popularity}
-              data-score={data.meanScore}
-              //   data-cd={data.nextAiringEpisode.timeUntilAiring || data.status}
-              data-start={`${data.startDate.year} ${data.startDate.month - 1} ${
-                data.startDate.day
-              }`}
-            >
+            <div className="meta-container">
               <ul className="list-group list-group-flush">
                 <li className="list-group-item company">
                   {studio ? studio.name : "No information"}
@@ -122,7 +197,9 @@ export default function Results({ data }) {
                 <li className="list-group-item date">
                   {data.status == "FINISHED"
                     ? "Finished"
-                    : formatNextEpisodeDate(
+                    : data.status == "NOT_YET_RELEASED"
+                    ? formatEpisodeAirDate(data.startDate)
+                    : formatNextAiringEpisodeDate(
                         data.nextAiringEpisode,
                         data.status
                       )}
@@ -146,16 +223,23 @@ export default function Results({ data }) {
         </div>
       </div>
       <ul className="links icons">
-        <li className="icon">
-          <button className="btn btn-sm btn-outline-success btn-watching">
-            Watching
-          </button>
-        </li>
-        <li className="icon">
-          <button className="btn btn-sm btn-outline-warning btn-consider">
-            Considering
-          </button>
-        </li>
+        <Button
+          style={"success"}
+          action={"watching"}
+          status={watchState}
+          set={setWatchState}
+          altSet={setConsiderState}
+          id={data.id}
+        />
+        <Button
+          style={"warning"}
+          action={"consider"}
+          status={considerState}
+          set={setConsiderState}
+          altSet={setWatchState}
+          id={data.id}
+        />
+
         <li className="icon">
           <button className="btn btn-sm btn-outline-info btn-id">
             More info
