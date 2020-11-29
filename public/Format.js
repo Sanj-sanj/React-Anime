@@ -1,11 +1,21 @@
 import React from "react";
+import FormatButton from "./FormatBtns";
 
-export default function format({ changeFormat }) {
+export default function format({ changeFormat, activeFormat }) {
+  const formats = ["TV", "MOVIE", "OVA"];
+  const names = ["Television", "Movie", "OVA"];
+  const choices = [];
+  choices["TV"] = ["TV", "TV_SHORT"];
+  choices["MOVIE"] = ["MOVIE"];
+  choices["OVA"] = ["OVA", "ONA"];
+  //this if causes two calls to the API, its probably better to set active format to be set properly than set it in this component
+  // if (!Array.isArray(activeFormat)) {
+  //   activeFormat = choices[activeFormat.toUpperCase()];
+  //   // changeFormat(activeFormat);
+  //   // return null;
+  // }
+
   function changeActiveFormat(e) {
-    const choices = [];
-    choices["TV"] = ["TV", "TV_SHORT"];
-    choices["MOVIE"] = ["MOVIE"];
-    choices["OVA"] = ["OVA", "ONA"];
     document.querySelector(".f-choice.active").classList.remove("active");
     e.target.parentElement.classList.add("active");
     changeFormat(choices[e.target.value]);
@@ -13,33 +23,15 @@ export default function format({ changeFormat }) {
   return (
     <div className="nav format-options">
       <ul className="format-choices">
-        <li className="f-choice active">
-          <button
-            className="btn"
-            value={"TV"}
-            onClick={(e) => changeActiveFormat(e)}
-          >
-            Television
-          </button>
-        </li>
-        <li className="f-choice">
-          <button
-            className="btn"
-            value="MOVIE"
-            onClick={(e) => changeActiveFormat(e)}
-          >
-            Movies
-          </button>
-        </li>
-        <li className="f-choice">
-          <button
-            className="btn"
-            value="OVA"
-            onClick={(e) => changeActiveFormat(e)}
-          >
-            OVA
-          </button>
-        </li>
+        {formats.map((format, i) => (
+          <FormatButton
+            key={format}
+            value={choices[format]}
+            active={activeFormat}
+            name={names[i]}
+            change={changeActiveFormat}
+          />
+        ))}
       </ul>
     </div>
   );

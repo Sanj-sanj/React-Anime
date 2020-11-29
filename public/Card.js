@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "@reach/router";
 import Countdown from "./Countdown";
 import Button from "./Button";
 import Ribbon from "./Ribbon";
@@ -239,11 +240,13 @@ export default function Card({
           altSet={setWatchState}
           id={data.id}
         />
-
         <li className="icon">
-          <button className="btn btn-sm btn-outline-info btn-id">
+          <Link
+            className="btn btn-sm btn-outline-info btn-id"
+            to={`/details/${data.id}`}
+          >
             More info
-          </button>
+          </Link>
         </li>
       </ul>
     </div>

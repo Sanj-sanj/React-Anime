@@ -2,8 +2,9 @@ import "regenerator-runtime/runtime";
 
 import React from "react";
 import { render } from "react-dom";
-import Nav from "./Nav";
+import { Router } from "@reach/router";
 import Parameters from "./Parameters";
+import Details from "./Details";
 // import Options from "./useOptions";
 // import { Link } from "@reach/router";
 
@@ -13,10 +14,11 @@ import Parameters from "./Parameters";
  */
 const App = () => {
   return (
-    <div>
-      <Nav />
-      <Parameters />
-    </div>
+    <Router>
+      <Parameters path="/:prevSeasonDashPrevYear/:prevFormat" />
+      <Parameters path="/" />
+      <Details path="/details/:id" />
+    </Router>
   );
 };
 render(<App />, document.getElementById("root"));

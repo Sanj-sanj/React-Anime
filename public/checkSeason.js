@@ -1,6 +1,5 @@
 export default function checkSeason(seasonString, year, change) {
   const seasons = ["WINTER", "SPRING", "SUMMER", "FALL"];
-  // console.log({ seasonString, year, change });
   if (seasonString && year) {
     let ind = seasons.indexOf(seasonString.toUpperCase());
     year = Number(year);

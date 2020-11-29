@@ -1,7 +1,6 @@
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import $ from "jquery";
 import React, { useState, useEffect } from "react";
-import querys from "./querys";
 import Toggle from "./ToggleDropdown";
 import Season from "./Season";
 import Format from "./Format";
@@ -10,60 +9,35 @@ import checkSeason from "./checkSeason";
 import Card from "./Card";
 import Modal from "./Modal";
 import Spinner from "./Spinner";
+import requestAnimes from "./requestAnimes";
+import Nav from "./Nav";
 
-export default function body() {
-  const [season, setSeason] = useState(checkSeason().split(" "));
-  const [format, setFormat] = useState(["TV", "TV_SHORT"]);
+export default function body({ prevSeasonDashPrevYear, prevFormat }) {
+  if (prevSeasonDashPrevYear && prevFormat) {
+    prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
+    const choices = [["TV", "TV_SHORT"], ["MOVIE"], ["OVA", "ONA"]];
+
+    prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
+  }
+
+  const [cards, setCards] = useState([]);
+  const [newEpisodes, setNewEpisodes] = useState([]);
+  const [season, setSeason] = useState(
+    prevSeasonDashPrevYear || checkSeason().split(" ")
+  );
+  const [format, setFormat] = useState(prevFormat || ["TV", "TV_SHORT"]);
   const [sort, setSort] = useState(
     JSON.parse(localStorage.getItem("sort")) || "popularity"
   );
-  const [title, setTitles] = useState(
-    JSON.parse(localStorage.getItem("title")) || "english"
+  const [language, setLanguage] = useState(
+    JSON.parse(localStorage.getItem("language")) || "english"
   );
-  const [cards, setCards] = useState([]);
-  const [newEpisodes, setNewEpisodes] = useState([]);
   const [watchStates, setWatchStates] = useState(
     JSON.parse(localStorage.getItem("watching")) || []
   );
   const [considerStates, setConsiderStates] = useState(
     JSON.parse(localStorage.getItem("considering")) || []
   );
-
-  async function requestAnimes(nextPage = 1, acc = []) {
-    const variables = {
-      // id: 112124,
-      isAdult: false,
-      page: nextPage,
-      perPage: 50,
-      format_in: format == "TV" ? ["TV", "TV_SHORT"] : format, //defaults to TV series
-      season: season[0].toUpperCase(),
-      seasonYear: season[1],
-    };
-
-    const url = "https://graphql.anilist.co",
-      options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          query: querys.queryMain,
-          variables: variables,
-        }),
-      };
-
-    const response = await fetch(url, options);
-    const json = await response.json();
-    if (!response.ok) return Promise.reject(json);
-    if (!json.data.Page.pageInfo.hasNextPage) {
-      return acc.concat(json.data.Page.media);
-    }
-    return requestAnimes(
-      json.data.Page.pageInfo.currentPage + 1,
-      acc.concat(json.data.Page.media)
-    );
-  }
 
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
@@ -187,7 +161,7 @@ export default function body() {
   useEffect(() => {
     console.log("hitting api");
     setCards([]);
-    requestAnimes().then((vals) => {
+    requestAnimes(null, 1, [], format, season).then((vals) => {
       setCards(sortCards(vals));
     });
   }, [season, format]);
@@ -195,8 +169,8 @@ export default function body() {
   useEffect(() => {
     setCards(sortCards(cards));
     localStorage.setItem("sort", JSON.stringify(sort));
-    localStorage.setItem("title", JSON.stringify(title));
-  }, [sort, title]);
+    localStorage.setItem("language", JSON.stringify(language));
+  }, [sort, language]);
 
   useEffect(() => {
     checkForNewReleases();
@@ -206,10 +180,11 @@ export default function body() {
 
   return (
     <div>
+      <Nav />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
           <Season season={season} onChange={setSeason} />
-          <Format changeFormat={setFormat} />
+          <Format changeFormat={setFormat} activeFormat={format} />
         </div>
       </div>
       <div className="container-fluid anime-container">
@@ -231,20 +206,20 @@ export default function body() {
             tag={"names"}
             label={"Titles"}
             valuesArr={["English", "Romaji"]}
-            set={setTitles}
-            defaultState={title}
+            set={setLanguage}
+            defaultState={language}
           />
           <Toggle />
         </div>
         <div className="row row-card-area">
           {!cards || !cards.length ? (
-            <Spinner display={cards} />
+            <Spinner watch={cards} />
           ) : (
             cards.map((data) => (
               <Card
                 key={data.id}
                 data={data}
-                language={title}
+                language={language}
                 watchSet={setWatchStates}
                 considerSet={setConsiderStates}
                 watching={watchStates}
@@ -255,25 +230,6 @@ export default function body() {
         </div>
       </div>
       <Modal shows={newEpisodes} />
-      <button onClick={() => console.log(cards)}>click</button>
-      <button
-        onClick={() =>
-          cards.forEach((a) => {
-            const altDay = a.startDate.day ? `${a.startDate.day}` : "00";
-            const altMonth = a.startDate.month ? `${a.startDate.month}` : "00";
-            const altYear = a.startDate.year ? `${a.startDate.year}` : "2021";
-            // a.startDate.day ? console.log(a.startDate.day.length) : false;
-
-            console.log(
-              `${altYear}${altDay.length < 2 ? "0" + altDay : altDay}${
-                altMonth.length < 2 ? "0" + altMonth : altMonth
-              }`
-            );
-          })
-        }
-      >
-        click
-      </button>
     </div>
   );
 }

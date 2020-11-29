@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function makeCountdown({ status, airingInfo, cd }) {
+export default function makeCountdown({ status, airingInfo, cd, css }) {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -38,8 +38,8 @@ export default function makeCountdown({ status, airingInfo, cd }) {
       : "No information";
 
   return (
-    <time className="countdown">
-      {episode} <span>{time}</span>
+    <time className={`countdown ${css}`}>
+      {episode} {!time ? null : <span>{time}</span>}
     </time>
   );
 }
