@@ -3,7 +3,6 @@ import Countdown from "./Countdown";
 import Nav from "./Nav";
 
 export default function InfoCard({ props }) {
-  console.log(props);
   const [showText, setShowText] = useState(false);
 
   function formatDate(year, month, day) {
@@ -26,7 +25,6 @@ export default function InfoCard({ props }) {
   }
   const timeouts = [];
   function describeTags(e, tag) {
-    console.log(e);
     const prev = document.querySelector(".alert.alert-info");
     if (prev) {
       deleteBox();
@@ -56,13 +54,10 @@ export default function InfoCard({ props }) {
   useEffect(() => {
     const desc = document.querySelector(".anime-description");
     const buttons = document.querySelector(".toggle-text");
-    console.log("working");
     if (desc.clientHeight > 200) {
       buttons.classList.remove("hidden");
       desc.classList.add("collapsed");
     } else {
-      console.log(">200");
-
       desc.classList.remove("collapsed");
     }
   }, [showText]);
@@ -103,7 +98,6 @@ export default function InfoCard({ props }) {
     title,
     trailer,
   } = props;
-  console.log(format, startDate);
   const cd = new Date();
   nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
   return (
