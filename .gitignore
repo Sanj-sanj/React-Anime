@@ -1,8 +1,7 @@
 node_modules/
 .cache/
-dist/
 coverage/
 .vscode/
 public/testDropdown.js
 public/graphql.js
-public/useOptions.js
+public/useOpions.js
