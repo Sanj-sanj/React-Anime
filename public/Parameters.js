@@ -42,7 +42,6 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
     let cloneCards = allCards.map((show) => show);
-    console.log("Sort Cards Called");
     const options = [
       "popularity",
       "countdown",
@@ -123,7 +122,6 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
       }
     });
     if (hasNewEpisodes.length) {
-      console.log({ hasNewEpisodes });
       setNewEpisodes(hasNewEpisodes);
       const updatedEpisodes = cards
         .map((card) => {
@@ -149,7 +147,6 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
             }
           })
         );
-      console.log({ updatedEpisodes });
       setWatchStates(updatedEpisodes);
     }
   }
