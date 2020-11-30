@@ -6,4 +6,3 @@ coverage/
 public/testDropdown.js
 public/graphql.js
 public/useOptions.js
-public/server.js
