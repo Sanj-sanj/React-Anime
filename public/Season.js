@@ -1,10 +1,12 @@
 import React from "react";
-import checkSeason from "./checkSeason";
+import seasonFunc from "./checkSeason";
 
 export default function seasonHeader({ season, onChange }) {
   // console.log(season);
   function changeSeason(change) {
-    return onChange(checkSeason(...season.split(" "), change).split(" "));
+    return onChange(
+      seasonFunc.checkSeason(...season.split(" "), change).split(" ")
+    );
   }
   season = season.join(" ");
   season = season.charAt(0).toUpperCase() + season.slice(1).toLowerCase();

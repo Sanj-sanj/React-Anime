@@ -198,7 +198,8 @@ export default function Card({
                 <li className="list-group-item date">
                   {data.status == "FINISHED"
                     ? "Finished"
-                    : data.status == "NOT_YET_RELEASED"
+                    : data.status == "NOT_YET_RELEASED" ||
+                      !data.nextAiringEpisode
                     ? formatEpisodeAirDate(data.startDate)
                     : formatNextAiringEpisodeDate(
                         data.nextAiringEpisode,

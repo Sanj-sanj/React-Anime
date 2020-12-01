@@ -5,13 +5,12 @@ import Toggle from "./ToggleDropdown";
 import Season from "./Season";
 import Format from "./Format";
 import SortDropdown from "./SortDropdown";
-import checkSeason from "./checkSeason";
+import seasonFunc from "./checkSeason";
 import Card from "./Card";
 import Modal from "./Modal";
 import Spinner from "./Spinner";
 import requestAnimes from "./requestAnimes";
 import Nav from "./Nav";
-
 export default function body({ prevSeasonDashPrevYear, prevFormat }) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -19,11 +18,13 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
 
     prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
   }
-
+  const [onGoing, setOnGoing] = useState(
+    JSON.parse(localStorage.getItem("ongoing")) || "Hide ongoing"
+  );
   const [cards, setCards] = useState([]);
   const [newEpisodes, setNewEpisodes] = useState([]);
   const [season, setSeason] = useState(
-    prevSeasonDashPrevYear || checkSeason().split(" ")
+    prevSeasonDashPrevYear || seasonFunc.checkSeason().split(" ")
   );
   const [format, setFormat] = useState(prevFormat || ["TV", "TV_SHORT"]);
   const [sort, setSort] = useState(
@@ -155,19 +156,35 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
     $("#myModal").modal("show");
   }, [newEpisodes]);
 
-  useEffect(() => {
+  useEffect(async () => {
     console.log("hitting api");
     setCards([]);
-    requestAnimes(null, 1, [], format, season).then((vals) => {
-      setCards(sortCards(vals));
-    });
-  }, [season, format]);
+    let ongoingShows = [];
+
+    if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
+      ongoingShows = await requestAnimes(onGoing, 1, [], format).then(
+        (vals) => vals
+      );
+    }
+    const thisSeasons = await requestAnimes(null, 1, [], format, season).then(
+      (vals) => vals
+    );
+    ongoingShows = ongoingShows
+      .filter(
+        (show) => !thisSeasons.find((seasonShow) => show.id == seasonShow.id)
+      )
+      .filter((show) => show.popularity >= 100)
+      .concat(thisSeasons);
+
+    setCards(sortCards(ongoingShows));
+  }, [season, format, onGoing]);
 
   useEffect(() => {
     setCards(sortCards(cards));
     localStorage.setItem("sort", JSON.stringify(sort));
     localStorage.setItem("language", JSON.stringify(language));
-  }, [sort, language]);
+    localStorage.setItem("ongoing", JSON.stringify(onGoing));
+  }, [sort, language, onGoing]);
 
   useEffect(() => {
     checkForNewReleases();
@@ -206,6 +223,15 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
             set={setLanguage}
             defaultState={language}
           />
+          <SortDropdown
+            tag={"ongoing"}
+            label={"Ongoing"}
+            valuesArr={["Hide Ongoing", "Show Ongoing"]}
+            set={setOnGoing}
+            defaultState={onGoing}
+          />
+          {/* <input type="checkbox" defaultChecked={true}></input> */}
+
           <Toggle />
         </div>
         <div className="row row-card-area">
@@ -227,6 +253,18 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
         </div>
       </div>
       <Modal shows={newEpisodes} />
+      <button
+        onClick={() =>
+          requestAnimes({
+            status: "RELEASING",
+            page: 1,
+            isAdult: false,
+            format_in: format,
+          }).then((vals) => setCards(sortCards(vals)))
+        }
+      >
+        dsda
+      </button>
     </div>
   );
 }

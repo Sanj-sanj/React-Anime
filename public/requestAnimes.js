@@ -6,7 +6,16 @@ export default async function requestAnimes(
   format,
   season
 ) {
-  console.log({ variables, nextPage, acc, format, season });
+  // console.log({ variables, nextPage, acc, format, season });
+  if (variables == "show ongoing") {
+    variables = {
+      status_in: ["RELEASING"],
+      page: 1,
+      isAdult: false,
+      format_in: format,
+      popularity_greater: 100,
+    };
+  }
   if (!variables) {
     variables = {
       // id: 112124,
@@ -18,6 +27,7 @@ export default async function requestAnimes(
       seasonYear: season[1] || null,
     };
   }
+  // console.log(variables);
 
   const url = "https://graphql.anilist.co",
     options = {
@@ -36,13 +46,14 @@ export default async function requestAnimes(
   const json = await response.json();
   if (!response.ok) return Promise.reject(json);
   if (!json.data.Page.pageInfo.hasNextPage) {
-    console.log("doesnt have a next page");
+    // console.log("doesnt have a next page");
     return acc.concat(json.data.Page.media);
   }
   console.log("has next page");
 
-  if (variables.id || variables.status) {
+  if (variables.id || variables.status_in) {
     variables.page = json.data.Page.pageInfo.currentPage + 1;
+    // console.log(json.data.Page);
     return requestAnimes(
       variables,
       null,
