@@ -6,6 +6,7 @@ export default async function requestAnimes(
   format,
   season
 ) {
+  console.log({ variables, nextPage, acc, format, season });
   if (!variables) {
     variables = {
       // id: 112124,
@@ -13,10 +14,11 @@ export default async function requestAnimes(
       page: nextPage,
       perPage: 50,
       format_in: format == "TV" ? ["TV", "TV_SHORT"] : format, //defaults to TV series
-      season: season[0].toUpperCase(),
-      seasonYear: season[1],
+      season: season[0].toUpperCase() || null,
+      seasonYear: season[1] || null,
     };
   }
+
   const url = "https://graphql.anilist.co",
     options = {
       method: "POST",
@@ -34,8 +36,22 @@ export default async function requestAnimes(
   const json = await response.json();
   if (!response.ok) return Promise.reject(json);
   if (!json.data.Page.pageInfo.hasNextPage) {
+    console.log("doesnt have a next page");
     return acc.concat(json.data.Page.media);
   }
+  console.log("has next page");
+
+  if (variables.id || variables.status) {
+    variables.page = json.data.Page.pageInfo.currentPage + 1;
+    return requestAnimes(
+      variables,
+      null,
+      acc.concat(json.data.Page.media),
+      null,
+      null
+    );
+  }
+
   return requestAnimes(
     null,
     json.data.Page.pageInfo.currentPage + 1,
