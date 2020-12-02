@@ -11,10 +11,12 @@ import Modal from "./Modal";
 import Spinner from "./Spinner";
 import requestAnimes from "./requestAnimes";
 import Nav from "./Nav";
+
 export default function body({
   prevSeasonDashPrevYear,
   prevFormat,
   setCurrLocation,
+  currLocation,
 }) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -23,7 +25,7 @@ export default function body({
     prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
   }
   const [onGoing, setOnGoing] = useState(
-    JSON.parse(localStorage.getItem("ongoing")) || "Show ongoing"
+    JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"
   );
   const [cards, setCards] = useState([]);
   const [newEpisodes, setNewEpisodes] = useState([]);
@@ -43,6 +45,9 @@ export default function body({
   const [considerStates, setConsiderStates] = useState(
     JSON.parse(localStorage.getItem("considering")) || []
   );
+  const currentSeasonDateAndFormat = `/${seasonFunc
+    .checkSeason()
+    .replace(" ", "-")}/${format[0]}`.toLowerCase();
 
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
@@ -161,10 +166,12 @@ export default function body({
   }, [newEpisodes]);
 
   useEffect(async () => {
-    console.log("hitting api");
-    setCards([]);
-    localStorage.setItem("sort", JSON.stringify(sort));
     let ongoingShows = [];
+    localStorage.setItem("ongoing", JSON.stringify(onGoing));
+    setCards([]);
+    setCurrLocation(`/${season.join("-")}/${format[0]}`.toLowerCase());
+
+    console.log("hitting api");
 
     if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
       ongoingShows = await requestAnimes(onGoing, 1, [], format).then(
@@ -180,14 +187,13 @@ export default function body({
       )
       .filter((show) => show.popularity >= 100)
       .concat(thisSeasons);
-    setCurrLocation(`${season.join("-")}/${format[0]}`);
     setCards(sortCards(ongoingShows));
   }, [season, format, onGoing]);
 
   useEffect(() => {
     setCards(sortCards(cards));
     localStorage.setItem("language", JSON.stringify(language));
-    localStorage.setItem("ongoing", JSON.stringify(onGoing));
+    localStorage.setItem("sort", JSON.stringify(sort));
   }, [sort, language]);
 
   useEffect(() => {
@@ -196,9 +202,17 @@ export default function body({
     localStorage.setItem("considering", JSON.stringify(considerStates));
   }, [watchStates, considerStates]);
 
+  console.log(currLocation);
+  console.log(currentSeasonDateAndFormat);
+  console.log(currentSeasonDateAndFormat == currLocation);
+  console.log(`${season.join(" ")}`);
   return (
     <div>
-      <Nav />
+      <Nav
+        lastLocation={
+          !currentSeasonDateAndFormat == currLocation ? currLocation : "/"
+        }
+      />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
           <Season season={season} onChange={setSeason} />

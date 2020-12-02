@@ -4,7 +4,6 @@ import MoreInfo from "./MoreInfo";
 import Spinner from "./Spinner";
 
 export default function requestAnimeById(props) {
-  // console.log(props);
   const [data, setData] = useState({});
   useEffect(() => {
     requestAnimes({ id: props.id }).then((vals) => {

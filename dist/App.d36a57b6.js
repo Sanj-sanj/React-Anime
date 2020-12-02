@@ -45381,7 +45381,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function navbar(_ref) {
   var lastLocation = _ref.lastLocation;
-  lastLocation ? lastLocation = "/".concat(lastLocation) : lastLocation = "/";
+  lastLocation ? lastLocation = "".concat(lastLocation) : lastLocation = "/";
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "navbar navbar-dark bg-dark"
   }, /*#__PURE__*/_react.default.createElement("h2", {
@@ -45449,7 +45449,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function body(_ref) {
   var prevSeasonDashPrevYear = _ref.prevSeasonDashPrevYear,
       prevFormat = _ref.prevFormat,
-      setCurrLocation = _ref.setCurrLocation;
+      setCurrLocation = _ref.setCurrLocation,
+      currLocation = _ref.currLocation;
 
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -45459,7 +45460,7 @@ function body(_ref) {
     });
   }
 
-  var _useState = (0, _react.useState)(JSON.parse(localStorage.getItem("ongoing")) || "Show ongoing"),
+  var _useState = (0, _react.useState)(JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"),
       _useState2 = _slicedToArray(_useState, 2),
       onGoing = _useState2[0],
       setOnGoing = _useState2[1];
@@ -45503,6 +45504,8 @@ function body(_ref) {
       _useState18 = _slicedToArray(_useState17, 2),
       considerStates = _useState18[0],
       setConsiderStates = _useState18[1];
+
+  var currentSeasonDateAndFormat = "/".concat(_checkSeason.default.checkSeason().replace(" ", "-"), "/").concat(format[0]).toLowerCase();
 
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
@@ -45633,31 +45636,32 @@ function body(_ref) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            console.log("hitting api");
-            setCards([]);
-            localStorage.setItem("sort", JSON.stringify(sort));
             ongoingShows = [];
+            localStorage.setItem("ongoing", JSON.stringify(onGoing));
+            setCards([]);
+            setCurrLocation("/".concat(season.join("-"), "/").concat(format[0]).toLowerCase());
+            console.log("hitting api");
 
             if (!(onGoing == "show ongoing" && _checkSeason.default.compareSeasons(season))) {
-              _context.next = 8;
+              _context.next = 9;
               break;
             }
 
-            _context.next = 7;
+            _context.next = 8;
             return (0, _requestAnimes.default)(onGoing, 1, [], format).then(function (vals) {
               return vals;
             });
 
-          case 7:
+          case 8:
             ongoingShows = _context.sent;
 
-          case 8:
-            _context.next = 10;
+          case 9:
+            _context.next = 11;
             return (0, _requestAnimes.default)(null, 1, [], format, season).then(function (vals) {
               return vals;
             });
 
-          case 10:
+          case 11:
             thisSeasons = _context.sent;
             ongoingShows = ongoingShows.filter(function (show) {
               return !thisSeasons.find(function (seasonShow) {
@@ -45666,7 +45670,6 @@ function body(_ref) {
             }).filter(function (show) {
               return show.popularity >= 100;
             }).concat(thisSeasons);
-            setCurrLocation("".concat(season.join("-"), "/").concat(format[0]));
             setCards(sortCards(ongoingShows));
 
           case 14:
@@ -45679,14 +45682,20 @@ function body(_ref) {
   (0, _react.useEffect)(function () {
     setCards(sortCards(cards));
     localStorage.setItem("language", JSON.stringify(language));
-    localStorage.setItem("ongoing", JSON.stringify(onGoing));
+    localStorage.setItem("sort", JSON.stringify(sort));
   }, [sort, language]);
   (0, _react.useEffect)(function () {
     checkForNewReleases();
     localStorage.setItem("watching", JSON.stringify(watchStates));
     localStorage.setItem("considering", JSON.stringify(considerStates));
   }, [watchStates, considerStates]);
-  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Nav.default, null), /*#__PURE__*/_react.default.createElement("div", {
+  console.log(currLocation);
+  console.log(currentSeasonDateAndFormat);
+  console.log(currentSeasonDateAndFormat == currLocation);
+  console.log("".concat(season.join(" ")));
+  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Nav.default, {
+    lastLocation: !currentSeasonDateAndFormat == currLocation ? currLocation : "/"
+  }), /*#__PURE__*/_react.default.createElement("div", {
     className: "alert alert-dark"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "anime-season-area border-dark border-bottom row"
@@ -45734,20 +45743,241 @@ function body(_ref) {
     });
   }))), /*#__PURE__*/_react.default.createElement(_Modal.default, {
     shows: newEpisodes
-  }), /*#__PURE__*/_react.default.createElement("button", {
-    onClick: function onClick() {
-      return (0, _requestAnimes.default)({
-        status: "RELEASING",
-        page: 1,
-        isAdult: false,
-        format_in: format
-      }).then(function (vals) {
-        return setCards(sortCards(vals));
-      });
-    }
-  }, "dsda"));
+  }));
 }
-},{"bootstrap/dist/js/bootstrap.bundle.min":"../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js","jquery":"../node_modules/jquery/dist/jquery.js","react":"../node_modules/react/index.js","./ToggleDropdown":"ToggleDropdown.js","./Season":"Season.js","./Format":"Format.js","./SortDropdown":"SortDropdown.js","./checkSeason":"checkSeason.js","./Card":"Card.js","./Modal":"Modal.js","./Spinner":"Spinner.js","./requestAnimes":"requestAnimes.js","./Nav":"Nav.js"}],"imgs/d_banner.png":[function(require,module,exports) {
+},{"bootstrap/dist/js/bootstrap.bundle.min":"../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js","jquery":"../node_modules/jquery/dist/jquery.js","react":"../node_modules/react/index.js","./ToggleDropdown":"ToggleDropdown.js","./Season":"Season.js","./Format":"Format.js","./SortDropdown":"SortDropdown.js","./checkSeason":"checkSeason.js","./Card":"Card.js","./Modal":"Modal.js","./Spinner":"Spinner.js","./requestAnimes":"requestAnimes.js","./Nav":"Nav.js"}],"PosterColumn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = posterColumn;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function posterColumn(_ref) {
+  var coverImage = _ref.coverImage;
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "col poster"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "anime-poster-area"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "anime-poster border border-dark",
+    src: coverImage.large,
+    alt: "${title.romaji}"
+  })), /*#__PURE__*/_react.default.createElement("span", {
+    className: "library-position border border-top-0 border-primary"
+  }, "Watch"));
+}
+},{"react":"../node_modules/react/index.js"}],"RatingColumn.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = RatingColumn;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function RatingColumn(_ref) {
+  var meanScore = _ref.meanScore,
+      synonyms = _ref.synonyms,
+      studios = _ref.studios,
+      genres = _ref.genres,
+      formattedDate = _ref.formattedDate;
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "meta-tags-box col"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "rating-box "
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "rating-title"
+  }, "Rating"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "show-rating border border-top-0 border-dark"
+  }, meanScore), /*#__PURE__*/_react.default.createElement("div", {
+    className: "premiered small"
+  }, "Premiere : ", formattedDate), /*#__PURE__*/_react.default.createElement("div", {
+    className: "synonym"
+  }, /*#__PURE__*/_react.default.createElement("i", null, synonyms.find(function (el) {
+    return el.length < 30;
+  }) || "")), /*#__PURE__*/_react.default.createElement("div", {
+    className: "studio"
+  }, !studios.nodes ? "No studio" : studios.nodes.find(function (studio) {
+    return studio.isAnimationStudio;
+  }) ? studios.nodes.find(function (studio) {
+    return studio.isAnimationStudio;
+  }).name : "No information"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "tags"
+  }, /*#__PURE__*/_react.default.createElement("ul", {
+    className: "genres"
+  }, genres.map(function (genre) {
+    return /*#__PURE__*/_react.default.createElement("li", {
+      key: genre
+    }, genre);
+  })))));
+}
+},{"react":"../node_modules/react/index.js"}],"MetaInfo.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = MetaInfo;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function MetaInfo(_ref) {
+  var format = _ref.format,
+      source = _ref.source,
+      episodes = _ref.episodes,
+      duration = _ref.duration;
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "row meta-info mb-2 border-top border-bottom"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-box"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-label"
+  }, "Format"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-value"
+  }, format ? format.split("_").map(function (v) {
+    return v.charAt(0) + v.slice(1).toLowerCase();
+  }).join(" ") : "No information")), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-box"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-label"
+  }, "Source"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-value"
+  }, source ? source.split("_").map(function (v) {
+    return v.charAt(0) + v.slice(1).toLowerCase();
+  }).join(" ") : "No Information")), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-box"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-label"
+  }, "Episodes"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-value"
+  }, episodes || "?")), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-box"
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-label"
+  }, "Run time"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "info-value"
+  }, duration || "?", " min")));
+}
+},{"react":"../node_modules/react/index.js"}],"Themes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Themes;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Themes(_ref) {
+  var tags = _ref.tags,
+      describeTags = _ref.describeTags;
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "border-top theme-container"
+  }, /*#__PURE__*/_react.default.createElement("h4", {
+    className: "card-title"
+  }, "Themes:"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "related-tags"
+  }, /*#__PURE__*/_react.default.createElement("ul", {
+    className: "tags-section"
+  }, tags ? tags.map(function (tag) {
+    if (tag.isGeneralSpoiler || tag.isMediaSpoiler || tag.isAdult) {
+      return "";
+    }
+
+    return /*#__PURE__*/_react.default.createElement("li", {
+      key: tag.id,
+      className: "",
+      title: tag.description
+    }, /*#__PURE__*/_react.default.createElement("button", {
+      className: "btn tag",
+      onClick: function onClick(e) {
+        return describeTags(e, tag);
+      }
+    }, " ", tag.name));
+  }) : "There seems to be nothing here.")));
+}
+},{"react":"../node_modules/react/index.js"}],"Trailer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Trailer;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Trailer(_ref) {
+  var trailer = _ref.trailer,
+      title = _ref.title;
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "trailer-box border-top border-bottom mb-3"
+  }, /*#__PURE__*/_react.default.createElement("h4", {
+    className: "card-title trailer-header"
+  }, "Trailer"), /*#__PURE__*/_react.default.createElement("div", {
+    className: "yt-prev"
+  }, trailer ? /*#__PURE__*/_react.default.createElement("a", {
+    href: trailer.site == "youtube" ? "https://www.youtube.com/watch?v=".concat(trailer.id) : "/"
+  }, /*#__PURE__*/_react.default.createElement("img", {
+    className: "yt-thumb",
+    src: trailer.thumbnail ? trailer.thumbnail : "",
+    alt: "Trailer for ".concat(title.english ? title.english : title.romaji)
+  })) : "No trailer found."));
+}
+},{"react":"../node_modules/react/index.js"}],"ExternalLinks.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = ExternalLinks;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function ExternalLinks(_ref) {
+  var externalLinks = _ref.externalLinks;
+  var externals = [_defineProperty({}, "Official Site", "site_ico"), _defineProperty({}, "Twitter", "twt_ico"), _defineProperty({}, "Crunchyroll", "crn_ico"), _defineProperty({}, "VRV", "vrv_ico"), _defineProperty({}, "Funimation", "funi_ico"), _defineProperty({}, "Hulu", "hulu_ico"), _defineProperty({}, "Youtube", "ytb_ico"), _defineProperty({}, "AnimeLab", "alab_ico"), _defineProperty({}, "Hidive", "hidive_ico")];
+  return /*#__PURE__*/_react.default.createElement("div", {
+    className: "external-links"
+  }, /*#__PURE__*/_react.default.createElement("h5", {
+    className: "card-title external-links-title"
+  }, "External links"), /*#__PURE__*/_react.default.createElement("ul", {
+    className: "links-section"
+  }, externalLinks ? externalLinks.map(function (link) {
+    var found;
+    externals.forEach(function (entry) {
+      return Object.prototype.hasOwnProperty.call(entry, link.site) == true ? found = entry : false;
+    });
+
+    if (found) {
+      return /*#__PURE__*/_react.default.createElement("li", {
+        key: link.id
+      }, /*#__PURE__*/_react.default.createElement("a", {
+        className: found[link.site],
+        title: link.site,
+        href: link.url
+      }, "#"));
+    }
+  }) : "No links found."));
+}
+},{"react":"../node_modules/react/index.js"}],"imgs/d_banner.png":[function(require,module,exports) {
 module.exports = "/d_banner.d1f06f91.png";
 },{}],"MoreInfo.js":[function(require,module,exports) {
 "use strict";
@@ -45763,13 +45993,23 @@ var _Countdown = _interopRequireDefault(require("./Countdown"));
 
 var _Nav = _interopRequireDefault(require("./Nav"));
 
+var _PosterColumn = _interopRequireDefault(require("./PosterColumn"));
+
+var _RatingColumn = _interopRequireDefault(require("./RatingColumn"));
+
+var _MetaInfo = _interopRequireDefault(require("./MetaInfo"));
+
+var _Themes = _interopRequireDefault(require("./Themes"));
+
+var _Trailer = _interopRequireDefault(require("./Trailer"));
+
+var _ExternalLinks = _interopRequireDefault(require("./ExternalLinks"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
@@ -45786,20 +46026,39 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function InfoCard(_ref) {
   var data = _ref.data,
       lastPage = _ref.lastPage;
-  console.log(data, lastPage);
 
   var _useState = (0, _react.useState)(false),
       _useState2 = _slicedToArray(_useState, 2),
       showText = _useState2[0],
       setShowText = _useState2[1];
 
+  var bannerImage = data.bannerImage,
+      coverImage = data.coverImage,
+      description = data.description,
+      duration = data.duration,
+      episodes = data.episodes,
+      externalLinks = data.externalLinks,
+      format = data.format,
+      genres = data.genres,
+      meanScore = data.meanScore,
+      nextAiringEpisode = data.nextAiringEpisode,
+      source = data.source,
+      startDate = data.startDate,
+      status = data.status,
+      studios = data.studios,
+      synonyms = data.synonyms,
+      tags = data.tags,
+      title = data.title,
+      trailer = data.trailer;
+  var timeouts = [];
+  var cd = new Date();
+  nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
+
   function formatDate(year, month, day) {
-    var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    // const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     return "".concat(months[month - 1] || "?", " ").concat(day || "?", " ").concat(year || "?");
   }
-
-  var timeouts = [];
 
   function describeTags(e, tag) {
     var prev = document.querySelector(".alert.alert-info");
@@ -45843,34 +46102,8 @@ function InfoCard(_ref) {
       desc.classList.remove("collapsed");
     }
   }, [showText]);
-  var externals = [_defineProperty({}, "Official Site", "site_ico"), _defineProperty({}, "Twitter", "twt_ico"), _defineProperty({}, "Crunchyroll", "crn_ico"), _defineProperty({}, "VRV", "vrv_ico"), _defineProperty({}, "Funimation", "funi_ico"), _defineProperty({}, "Hulu", "hulu_ico"), _defineProperty({}, "Youtube", "ytb_ico"), _defineProperty({}, "AnimeLab", "alab_ico"), _defineProperty({}, "Hidive", "hidive_ico")];
-  var bannerImage = data.bannerImage,
-      coverImage = data.coverImage,
-      description = data.description,
-      duration = data.duration,
-      episodes = data.episodes,
-      externalLinks = data.externalLinks,
-      format = data.format,
-      genres = data.genres,
-      id = data.id,
-      meanScore = data.meanScore,
-      nextAiringEpisode = data.nextAiringEpisode,
-      popularity = data.popularity,
-      season = data.season,
-      siteUrl = data.siteUrl,
-      source = data.source,
-      startDate = data.startDate,
-      status = data.status,
-      studios = data.studios,
-      synonyms = data.synonyms,
-      tags = data.tags,
-      title = data.title,
-      trailer = data.trailer;
-  console.log(data);
-  var cd = new Date();
-  nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Nav.default, {
-    lastLocation: lastPage
+    lastLocation: "".concat(lastPage)
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "container main-container"
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -45896,75 +46129,20 @@ function InfoCard(_ref) {
     css: "countdown-show mb-2"
   })), /*#__PURE__*/_react.default.createElement("div", {
     className: "row row-poster-meta-info mb-3"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "col poster"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "anime-poster-area"
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    className: "anime-poster border border-dark",
-    src: coverImage.large,
-    alt: "${title.romaji}"
-  })), /*#__PURE__*/_react.default.createElement("span", {
-    className: "library-position border border-top-0 border-primary"
-  }, "Watch")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "meta-tags-box col"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "rating-box "
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "rating-title"
-  }, "Rating"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "show-rating border border-top-0 border-dark"
-  }, meanScore), /*#__PURE__*/_react.default.createElement("div", {
-    className: "premiered small"
-  }, "Premiere :", " ", formatDate(startDate.year, startDate.month, startDate.day)), /*#__PURE__*/_react.default.createElement("div", {
-    className: "synonym"
-  }, /*#__PURE__*/_react.default.createElement("i", null, synonyms.find(function (el) {
-    return el.length < 30;
-  }) || "")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "studio"
-  }, !studios.nodes ? "No studio" : studios.nodes.find(function (studio) {
-    return studio.isAnimationStudio;
-  }) ? studios.nodes.find(function (studio) {
-    return studio.isAnimationStudio;
-  }).name : "No information"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "tags"
-  }, /*#__PURE__*/_react.default.createElement("ul", {
-    className: "genres"
-  }, genres.map(function (genre) {
-    return /*#__PURE__*/_react.default.createElement("li", {
-      key: genre
-    }, genre);
-  })))))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "row meta-info mb-2 border-top border-bottom"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-box"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-label"
-  }, "Format"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-value"
-  }, format ? format.split("_").map(function (v) {
-    return v.charAt(0) + v.slice(1).toLowerCase();
-  }).join(" ") : "No information")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-box"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-label"
-  }, "Source"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-value"
-  }, source ? source.split("_").map(function (v) {
-    return v.charAt(0) + v.slice(1).toLowerCase();
-  }).join(" ") : "No Information")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-box"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-label"
-  }, "Episodes"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-value"
-  }, episodes)), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-box"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-label"
-  }, "Run time"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "info-value"
-  }, duration, " min"))), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement(_PosterColumn.default, {
+    coverImage: coverImage
+  }), /*#__PURE__*/_react.default.createElement(_RatingColumn.default, {
+    meanScore: meanScore,
+    synonyms: synonyms,
+    studios: studios,
+    genres: genres,
+    formattedDate: formatDate(startDate.year, startDate.month, startDate.day)
+  })), /*#__PURE__*/_react.default.createElement(_MetaInfo.default, {
+    format: format,
+    source: source,
+    episodes: episodes,
+    duration: duration
+  }), /*#__PURE__*/_react.default.createElement("div", {
     className: "row show-info-bottom"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "col anime-description-box"
@@ -45985,65 +46163,17 @@ function InfoCard(_ref) {
     onClick: function onClick() {
       return setShowText(!showText);
     }
-  }, "SHOW LESS")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "border-top theme-container"
-  }, /*#__PURE__*/_react.default.createElement("h4", {
-    className: "card-title"
-  }, "Themes:"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "related-tags"
-  }, /*#__PURE__*/_react.default.createElement("ul", {
-    className: "tags-section"
-  }, tags ? tags.map(function (tag) {
-    if (tag.isGeneralSpoiler || tag.isMediaSpoiler || tag.isAdult) {
-      return "";
-    }
-
-    return /*#__PURE__*/_react.default.createElement("li", {
-      key: tag.id,
-      className: "",
-      title: tag.description
-    }, /*#__PURE__*/_react.default.createElement("button", {
-      className: "btn tag",
-      onClick: function onClick(e) {
-        return describeTags(e, tag);
-      }
-    }, " ", tag.name));
-  }) : "There seems to be nothing here."))), /*#__PURE__*/_react.default.createElement("div", {
-    className: "trailer-box border-top border-bottom mb-3"
-  }, /*#__PURE__*/_react.default.createElement("h4", {
-    className: "card-title trailer-header"
-  }, "Trailer"), /*#__PURE__*/_react.default.createElement("div", {
-    className: "yt-prev"
-  }, trailer ? /*#__PURE__*/_react.default.createElement("a", {
-    href: trailer.site == "youtube" ? "https://www.youtube.com/watch?v=".concat(trailer.id) : "/"
-  }, /*#__PURE__*/_react.default.createElement("img", {
-    className: "yt-thumb",
-    src: trailer.thumbnail ? trailer.thumbnail : "",
-    alt: "Trailer for ".concat(title.romaji)
-  })) : "No trailer found.")), /*#__PURE__*/_react.default.createElement("div", {
-    className: "external-links"
-  }, /*#__PURE__*/_react.default.createElement("h5", {
-    className: "card-title external-links-title"
-  }, "External links"), /*#__PURE__*/_react.default.createElement("ul", {
-    className: "links-section"
-  }, externalLinks ? externalLinks.map(function (link) {
-    var found;
-    externals.forEach(function (entry) {
-      return Object.prototype.hasOwnProperty.call(entry, link.site) == true ? found = entry : false;
-    });
-
-    if (found) {
-      return /*#__PURE__*/_react.default.createElement("li", {
-        key: link.id
-      }, /*#__PURE__*/_react.default.createElement("a", {
-        className: found[link.site],
-        title: link.site,
-        href: link.url
-      }, "#"));
-    }
-  }) : "No links found."))))))));
+  }, "SHOW LESS")), /*#__PURE__*/_react.default.createElement(_Themes.default, {
+    tags: tags,
+    describeTags: describeTags
+  }), /*#__PURE__*/_react.default.createElement(_Trailer.default, {
+    trailer: trailer,
+    title: title
+  }), /*#__PURE__*/_react.default.createElement(_ExternalLinks.default, {
+    externalLinks: externalLinks
+  })))))));
 }
-},{"react":"../node_modules/react/index.js","./Countdown":"Countdown.js","./Nav":"Nav.js","./imgs/d_banner.png":"imgs/d_banner.png"}],"Details.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./Countdown":"Countdown.js","./Nav":"Nav.js","./PosterColumn":"PosterColumn.js","./RatingColumn":"RatingColumn.js","./MetaInfo":"MetaInfo.js","./Themes":"Themes.js","./Trailer":"Trailer.js","./ExternalLinks":"ExternalLinks.js","./imgs/d_banner.png":"imgs/d_banner.png"}],"Details.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46086,8 +46216,6 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function requestAnimeById(props) {
-  console.log(props);
-
   var _useState = (0, _react.useState)({}),
       _useState2 = _slicedToArray(_useState, 2),
       data = _useState2[0],
@@ -46155,10 +46283,12 @@ var App = function App() {
 
   return /*#__PURE__*/_react.default.createElement(_router.Router, null, /*#__PURE__*/_react.default.createElement(_Parameters.default, {
     path: "/:prevSeasonDashPrevYear/:prevFormat",
-    setCurrLocation: setCurrLocation
+    setCurrLocation: setCurrLocation,
+    currLocation: currLocation
   }), /*#__PURE__*/_react.default.createElement(_Parameters.default, {
     path: "/",
-    setCurrLocation: setCurrLocation
+    setCurrLocation: setCurrLocation,
+    currLocation: currLocation
   }), /*#__PURE__*/_react.default.createElement(_Details.default, {
     path: "/details/:id",
     lastPage: currLocation
@@ -46194,7 +46324,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50310" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53426" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

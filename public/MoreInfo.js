@@ -1,13 +1,41 @@
 import React, { useEffect, useState } from "react";
 import Countdown from "./Countdown";
 import Nav from "./Nav";
+import PosterColumn from "./PosterColumn";
+import RatingColumn from "./RatingColumn";
+import MetaInfo from "./MetaInfo";
+import Themes from "./Themes";
+import Trailer from "./Trailer";
+import ExternalLinks from "./ExternalLinks";
 
 export default function InfoCard({ data, lastPage }) {
   const [showText, setShowText] = useState(false);
+  const {
+    bannerImage,
+    coverImage,
+    description,
+    duration,
+    episodes,
+    externalLinks,
+    format,
+    genres,
+    meanScore,
+    nextAiringEpisode,
+    source,
+    startDate,
+    status,
+    studios,
+    synonyms,
+    tags,
+    title,
+    trailer,
+  } = data;
   const timeouts = [];
+  const cd = new Date();
+  nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
 
   function formatDate(year, month, day) {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    // const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = [
       "Jan",
       "Feb",
@@ -62,48 +90,9 @@ export default function InfoCard({ data, lastPage }) {
     }
   }, [showText]);
 
-  const externals = [
-    { ["Official Site"]: "site_ico" },
-    { ["Twitter"]: "twt_ico" },
-    { ["Crunchyroll"]: "crn_ico" },
-    { ["VRV"]: "vrv_ico" },
-    { ["Funimation"]: "funi_ico" },
-    { ["Hulu"]: "hulu_ico" },
-    { ["Youtube"]: "ytb_ico" },
-    { ["AnimeLab"]: "alab_ico" },
-    { ["Hidive"]: "hidive_ico" },
-  ];
-
-  const {
-    bannerImage,
-    coverImage,
-    description,
-    duration,
-    episodes,
-    externalLinks,
-    format,
-    genres,
-    id,
-    meanScore,
-    nextAiringEpisode,
-    popularity,
-    season,
-    siteUrl,
-    source,
-    startDate,
-    status,
-    studios,
-    synonyms,
-    tags,
-    title,
-    trailer,
-  } = data;
-  // console.log(data);
-  const cd = new Date();
-  nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
   return (
     <div>
-      <Nav lastLocation={lastPage} />
+      <Nav lastLocation={`${lastPage}`} />
       <div className="container main-container">
         <div className="banner-area">
           <img
@@ -128,89 +117,32 @@ export default function InfoCard({ data, lastPage }) {
               />
             </div>
             <div className="row row-poster-meta-info mb-3">
-              <div className="col poster">
-                <div className="anime-poster-area">
-                  <img
-                    className="anime-poster border border-dark"
-                    src={coverImage.large}
-                    alt="${title.romaji}"
-                  />
-                </div>
-                <span className="library-position border border-top-0 border-primary">
-                  Watch
-                </span>
-              </div>
-              <div className="meta-tags-box col">
-                <div className="rating-box ">
-                  <div className="rating-title">Rating</div>
-                  <div className="show-rating border border-top-0 border-dark">
-                    {meanScore}
-                  </div>
-                  <div className="premiered small">
-                    Premiere :{" "}
-                    {formatDate(startDate.year, startDate.month, startDate.day)}
-                  </div>
-                  <div className="synonym">
-                    {<i>{synonyms.find((el) => el.length < 30) || ""}</i>}
-                  </div>
-                  <div className="studio">
-                    {!studios.nodes
-                      ? "No studio"
-                      : studios.nodes.find((studio) => studio.isAnimationStudio)
-                      ? studios.nodes.find((studio) => studio.isAnimationStudio)
-                          .name
-                      : "No information"}
-                  </div>
+              <PosterColumn coverImage={coverImage} />
+              <RatingColumn
+                meanScore={meanScore}
+                synonyms={synonyms}
+                studios={studios}
+                genres={genres}
+                formattedDate={formatDate(
+                  startDate.year,
+                  startDate.month,
+                  startDate.day
+                )}
+              />
+            </div>
+            <MetaInfo
+              format={format}
+              source={source}
+              episodes={episodes}
+              duration={duration}
+            />
 
-                  <div className="tags">
-                    <ul className="genres">
-                      {genres.map((genre) => (
-                        <li key={genre}>{genre}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="row meta-info mb-2 border-top border-bottom">
-              <div className="info-box">
-                <div className="info-label">Format</div>
-                <div className="info-value">
-                  {format
-                    ? format
-                        .split("_")
-                        .map((v) => v.charAt(0) + v.slice(1).toLowerCase())
-                        .join(" ")
-                    : "No information"}
-                </div>
-              </div>
-              <div className="info-box">
-                <div className="info-label">Source</div>
-                <div className="info-value">
-                  {source
-                    ? source
-                        .split("_")
-                        .map((v) => v.charAt(0) + v.slice(1).toLowerCase())
-                        .join(" ")
-                    : "No Information"}
-                </div>
-              </div>
-              <div className="info-box">
-                <div className="info-label">Episodes</div>
-                <div className="info-value">{episodes}</div>
-              </div>
-              <div className="info-box">
-                <div className="info-label">Run time</div>
-                <div className="info-value">{duration} min</div>
-              </div>
-            </div>
             <div className="row show-info-bottom">
               <div className="col anime-description-box">
                 <div
                   className=" anime-description mb-3"
                   dangerouslySetInnerHTML={{ __html: description }}
                 />
-
                 <div className="toggle-text mb-3 hidden">
                   <button
                     className="btn btn-sm btn-show-txt"
@@ -226,96 +158,9 @@ export default function InfoCard({ data, lastPage }) {
                   </button>
                 </div>
 
-                <div className="border-top theme-container">
-                  <h4 className="card-title">Themes:</h4>
-                  <div className="related-tags">
-                    <ul className="tags-section">
-                      {tags
-                        ? tags.map((tag) => {
-                            if (
-                              tag.isGeneralSpoiler ||
-                              tag.isMediaSpoiler ||
-                              tag.isAdult
-                            ) {
-                              return "";
-                            }
-                            return (
-                              <li
-                                key={tag.id}
-                                className=""
-                                title={tag.description}
-                              >
-                                <button
-                                  className={"btn tag"}
-                                  onClick={(e) => describeTags(e, tag)}
-                                >
-                                  {" "}
-                                  {tag.name}
-                                </button>
-                              </li>
-                            );
-                          })
-                        : "There seems to be nothing here."}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="trailer-box border-top border-bottom mb-3">
-                  <h4 className="card-title trailer-header">Trailer</h4>
-                  <div className="yt-prev">
-                    {trailer ? (
-                      <a
-                        href={
-                          trailer.site == "youtube"
-                            ? `https://www.youtube.com/watch?v=${trailer.id}`
-                            : "/"
-                        }
-                      >
-                        <img
-                          className="yt-thumb"
-                          src={trailer.thumbnail ? trailer.thumbnail : ""}
-                          alt={`Trailer for ${title.romaji}`}
-                        ></img>
-                      </a>
-                    ) : (
-                      "No trailer found."
-                    )}
-                  </div>
-                </div>
-
-                <div className="external-links">
-                  <h5 className="card-title external-links-title">
-                    External links
-                  </h5>
-                  <ul className="links-section">
-                    {externalLinks
-                      ? externalLinks.map((link) => {
-                          let found;
-                          externals.forEach((entry) =>
-                            Object.prototype.hasOwnProperty.call(
-                              entry,
-                              link.site
-                            ) == true
-                              ? (found = entry)
-                              : false
-                          );
-                          if (found) {
-                            return (
-                              <li key={link.id}>
-                                <a
-                                  className={found[link.site]}
-                                  title={link.site}
-                                  href={link.url}
-                                >
-                                  #
-                                </a>
-                              </li>
-                            );
-                          }
-                        })
-                      : "No links found."}
-                  </ul>
-                </div>
+                <Themes tags={tags} describeTags={describeTags} />
+                <Trailer trailer={trailer} title={title} />
+                <ExternalLinks externalLinks={externalLinks} />
               </div>
             </div>
           </div>
