@@ -16,7 +16,6 @@ export default function body({
   prevSeasonDashPrevYear,
   prevFormat,
   setCurrLocation,
-  currLocation,
 }) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -45,9 +44,6 @@ export default function body({
   const [considerStates, setConsiderStates] = useState(
     JSON.parse(localStorage.getItem("considering")) || []
   );
-  const currentSeasonDateAndFormat = `/${seasonFunc
-    .checkSeason()
-    .replace(" ", "-")}/${format[0]}`.toLowerCase();
 
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
@@ -202,17 +198,9 @@ export default function body({
     localStorage.setItem("considering", JSON.stringify(considerStates));
   }, [watchStates, considerStates]);
 
-  console.log(currLocation);
-  console.log(currentSeasonDateAndFormat);
-  console.log(currentSeasonDateAndFormat == currLocation);
-  console.log(`${season.join(" ")}`);
   return (
     <div>
-      <Nav
-        lastLocation={
-          !currentSeasonDateAndFormat == currLocation ? currLocation : "/"
-        }
-      />
+      <Nav lastLocation={"/"} />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
           <Season season={season} onChange={setSeason} />

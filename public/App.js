@@ -19,13 +19,8 @@ const App = () => {
       <Parameters
         path="/:prevSeasonDashPrevYear/:prevFormat"
         setCurrLocation={setCurrLocation}
-        currLocation={currLocation}
       />
-      <Parameters
-        path="/"
-        setCurrLocation={setCurrLocation}
-        currLocation={currLocation}
-      />
+      <Parameters path="/" setCurrLocation={setCurrLocation} />
       <Details path="/details/:id" lastPage={currLocation} />
     </Router>
   );

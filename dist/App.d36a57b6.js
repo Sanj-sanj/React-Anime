@@ -45387,7 +45387,17 @@ function navbar(_ref) {
   }, /*#__PURE__*/_react.default.createElement("h2", {
     className: "navbar-text"
   }, /*#__PURE__*/_react.default.createElement(_router.Link, {
-    to: lastLocation
+    to: lastLocation,
+    onClick: function onClick() {
+      if (window.location.pathname.includes("details")) {
+        return;
+      }
+
+      if (window.location.pathname == "/") {
+        window.location.href("/");
+        return;
+      }
+    }
   }, "Seasonal Anime")));
 }
 },{"react":"../node_modules/react/index.js","@reach/router":"../node_modules/@reach/router/es/index.js"}],"Parameters.js":[function(require,module,exports) {
@@ -45449,8 +45459,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function body(_ref) {
   var prevSeasonDashPrevYear = _ref.prevSeasonDashPrevYear,
       prevFormat = _ref.prevFormat,
-      setCurrLocation = _ref.setCurrLocation,
-      currLocation = _ref.currLocation;
+      setCurrLocation = _ref.setCurrLocation;
 
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -45504,8 +45513,6 @@ function body(_ref) {
       _useState18 = _slicedToArray(_useState17, 2),
       considerStates = _useState18[0],
       setConsiderStates = _useState18[1];
-
-  var currentSeasonDateAndFormat = "/".concat(_checkSeason.default.checkSeason().replace(" ", "-"), "/").concat(format[0]).toLowerCase();
 
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
@@ -45689,12 +45696,8 @@ function body(_ref) {
     localStorage.setItem("watching", JSON.stringify(watchStates));
     localStorage.setItem("considering", JSON.stringify(considerStates));
   }, [watchStates, considerStates]);
-  console.log(currLocation);
-  console.log(currentSeasonDateAndFormat);
-  console.log(currentSeasonDateAndFormat == currLocation);
-  console.log("".concat(season.join(" ")));
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Nav.default, {
-    lastLocation: !currentSeasonDateAndFormat == currLocation ? currLocation : "/"
+    lastLocation: "/"
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "alert alert-dark"
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -46283,12 +46286,10 @@ var App = function App() {
 
   return /*#__PURE__*/_react.default.createElement(_router.Router, null, /*#__PURE__*/_react.default.createElement(_Parameters.default, {
     path: "/:prevSeasonDashPrevYear/:prevFormat",
-    setCurrLocation: setCurrLocation,
-    currLocation: currLocation
+    setCurrLocation: setCurrLocation
   }), /*#__PURE__*/_react.default.createElement(_Parameters.default, {
     path: "/",
-    setCurrLocation: setCurrLocation,
-    currLocation: currLocation
+    setCurrLocation: setCurrLocation
   }), /*#__PURE__*/_react.default.createElement(_Details.default, {
     path: "/details/:id",
     lastPage: currLocation
@@ -46324,7 +46325,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53426" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58430" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
