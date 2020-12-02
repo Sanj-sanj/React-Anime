@@ -308,7 +308,7 @@ ol.anime-genre li:not(:last-child)::after {
 @media (max-width: 498px) {
   .row.row-card-area {
     position: relative;
-    bottom: 8em;
+    bottom: 11em;
     transition: bottom 1s ease;
   }
   .anime-container {
@@ -317,7 +317,7 @@ ol.anime-genre li:not(:last-child)::after {
   .options-area {
     display: block;
     position: relative;
-    bottom: 8em;
+    bottom: 11em;
     transition: bottom 1s ease;
   }
   .btn.pull-dropdown {

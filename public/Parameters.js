@@ -11,7 +11,11 @@ import Modal from "./Modal";
 import Spinner from "./Spinner";
 import requestAnimes from "./requestAnimes";
 import Nav from "./Nav";
-export default function body({ prevSeasonDashPrevYear, prevFormat }) {
+export default function body({
+  prevSeasonDashPrevYear,
+  prevFormat,
+  setCurrLocation,
+}) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
     const choices = [["TV", "TV_SHORT"], ["MOVIE"], ["OVA", "ONA"]];
@@ -19,7 +23,7 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
     prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
   }
   const [onGoing, setOnGoing] = useState(
-    JSON.parse(localStorage.getItem("ongoing")) || "Hide ongoing"
+    JSON.parse(localStorage.getItem("ongoing")) || "Show ongoing"
   );
   const [cards, setCards] = useState([]);
   const [newEpisodes, setNewEpisodes] = useState([]);
@@ -159,6 +163,7 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
   useEffect(async () => {
     console.log("hitting api");
     setCards([]);
+    localStorage.setItem("sort", JSON.stringify(sort));
     let ongoingShows = [];
 
     if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
@@ -175,16 +180,15 @@ export default function body({ prevSeasonDashPrevYear, prevFormat }) {
       )
       .filter((show) => show.popularity >= 100)
       .concat(thisSeasons);
-
+    setCurrLocation(`${season.join("-")}/${format[0]}`);
     setCards(sortCards(ongoingShows));
   }, [season, format, onGoing]);
 
   useEffect(() => {
     setCards(sortCards(cards));
-    localStorage.setItem("sort", JSON.stringify(sort));
     localStorage.setItem("language", JSON.stringify(language));
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
-  }, [sort, language, onGoing]);
+  }, [sort, language]);
 
   useEffect(() => {
     checkForNewReleases();

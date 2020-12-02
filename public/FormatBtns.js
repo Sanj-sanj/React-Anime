@@ -11,7 +11,7 @@ export default function btnFormat({ active, value, change, name }) {
         className="btn"
         value={value[0]}
         onClick={(e) => {
-          console.log(e), change(e);
+          change(e);
         }}
       >
         {name}

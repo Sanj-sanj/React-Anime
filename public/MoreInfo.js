@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import Countdown from "./Countdown";
 import Nav from "./Nav";
 
-export default function InfoCard({ props }) {
+export default function InfoCard({ data, lastPage }) {
   const [showText, setShowText] = useState(false);
+  const timeouts = [];
 
   function formatDate(year, month, day) {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -23,7 +24,6 @@ export default function InfoCard({ props }) {
     ];
     return `${months[month - 1] || "?"} ${day || "?"} ${year || "?"}`;
   }
-  const timeouts = [];
   function describeTags(e, tag) {
     const prev = document.querySelector(".alert.alert-info");
     if (prev) {
@@ -97,12 +97,13 @@ export default function InfoCard({ props }) {
     tags,
     title,
     trailer,
-  } = props;
+  } = data;
+  // console.log(data);
   const cd = new Date();
   nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
   return (
     <div>
-      <Nav season={season} year={startDate.year} format={format} />
+      <Nav lastLocation={lastPage} />
       <div className="container main-container">
         <div className="banner-area">
           <img
@@ -176,18 +177,22 @@ export default function InfoCard({ props }) {
                 <div className="info-label">Format</div>
                 <div className="info-value">
                   {format
-                    .split("_")
-                    .map((v) => v.charAt(0) + v.slice(1).toLowerCase())
-                    .join(" ")}
+                    ? format
+                        .split("_")
+                        .map((v) => v.charAt(0) + v.slice(1).toLowerCase())
+                        .join(" ")
+                    : "No information"}
                 </div>
               </div>
               <div className="info-box">
                 <div className="info-label">Source</div>
                 <div className="info-value">
                   {source
-                    .split("_")
-                    .map((v) => v.charAt(0) + v.slice(1).toLowerCase())
-                    .join(" ")}
+                    ? source
+                        .split("_")
+                        .map((v) => v.charAt(0) + v.slice(1).toLowerCase())
+                        .join(" ")
+                    : "No Information"}
                 </div>
               </div>
               <div className="info-box">

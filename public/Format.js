@@ -9,12 +9,6 @@ export default function format({ changeFormat, activeFormat }) {
   choices["MOVIE"] = ["MOVIE"];
   choices["OVA"] = ["OVA", "ONA"];
   //this if causes two calls to the API, its probably better to set active format to be set properly than set it in this component
-  // if (!Array.isArray(activeFormat)) {
-  //   activeFormat = choices[activeFormat.toUpperCase()];
-  //   // changeFormat(activeFormat);
-  //   // return null;
-  // }
-
   function changeActiveFormat(e) {
     document.querySelector(".f-choice.active").classList.remove("active");
     e.target.parentElement.classList.add("active");

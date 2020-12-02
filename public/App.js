@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 
-import React from "react";
+import React, { useState } from "react";
 import { render } from "react-dom";
 import { Router } from "@reach/router";
 import Parameters from "./Parameters";
@@ -13,11 +13,15 @@ import Details from "./Details";
  and another custom hook for sorting and title options. 
  */
 const App = () => {
+  const [currLocation, setCurrLocation] = useState("/");
   return (
     <Router>
-      <Parameters path="/:prevSeasonDashPrevYear/:prevFormat" />
-      <Parameters path="/" />
-      <Details path="/details/:id" />
+      <Parameters
+        path="/:prevSeasonDashPrevYear/:prevFormat"
+        setCurrLocation={setCurrLocation}
+      />
+      <Parameters path="/" setCurrLocation={setCurrLocation} />
+      <Details path="/details/:id" lastPage={currLocation} />
     </Router>
   );
 };

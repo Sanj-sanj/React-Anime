@@ -44646,7 +44646,7 @@ function btnFormat(_ref) {
     className: "btn",
     value: value[0],
     onClick: function onClick(e) {
-      console.log(e), change(e);
+      change(e);
     }
   }, name));
 }
@@ -44673,11 +44673,6 @@ function format(_ref) {
   choices["TV"] = ["TV", "TV_SHORT"];
   choices["MOVIE"] = ["MOVIE"];
   choices["OVA"] = ["OVA", "ONA"]; //this if causes two calls to the API, its probably better to set active format to be set properly than set it in this component
-  // if (!Array.isArray(activeFormat)) {
-  //   activeFormat = choices[activeFormat.toUpperCase()];
-  //   // changeFormat(activeFormat);
-  //   // return null;
-  // }
 
   function changeActiveFormat(e) {
     document.querySelector(".f-choice.active").classList.remove("active");
@@ -45384,14 +45379,15 @@ var _router = require("@reach/router");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function navbar(props) {
-  var pageLink = props.year ? "/".concat(props.season, "-").concat(props.year, "/").concat(props.format) : "/";
+function navbar(_ref) {
+  var lastLocation = _ref.lastLocation;
+  lastLocation ? lastLocation = "/".concat(lastLocation) : lastLocation = "/";
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "navbar navbar-dark bg-dark"
   }, /*#__PURE__*/_react.default.createElement("h2", {
     className: "navbar-text"
   }, /*#__PURE__*/_react.default.createElement(_router.Link, {
-    to: pageLink
+    to: lastLocation
   }, "Seasonal Anime")));
 }
 },{"react":"../node_modules/react/index.js","@reach/router":"../node_modules/@reach/router/es/index.js"}],"Parameters.js":[function(require,module,exports) {
@@ -45452,7 +45448,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function body(_ref) {
   var prevSeasonDashPrevYear = _ref.prevSeasonDashPrevYear,
-      prevFormat = _ref.prevFormat;
+      prevFormat = _ref.prevFormat,
+      setCurrLocation = _ref.setCurrLocation;
 
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -45462,7 +45459,7 @@ function body(_ref) {
     });
   }
 
-  var _useState = (0, _react.useState)(JSON.parse(localStorage.getItem("ongoing")) || "Hide ongoing"),
+  var _useState = (0, _react.useState)(JSON.parse(localStorage.getItem("ongoing")) || "Show ongoing"),
       _useState2 = _slicedToArray(_useState, 2),
       onGoing = _useState2[0],
       setOnGoing = _useState2[1];
@@ -45638,28 +45635,29 @@ function body(_ref) {
           case 0:
             console.log("hitting api");
             setCards([]);
+            localStorage.setItem("sort", JSON.stringify(sort));
             ongoingShows = [];
 
             if (!(onGoing == "show ongoing" && _checkSeason.default.compareSeasons(season))) {
-              _context.next = 7;
+              _context.next = 8;
               break;
             }
 
-            _context.next = 6;
+            _context.next = 7;
             return (0, _requestAnimes.default)(onGoing, 1, [], format).then(function (vals) {
               return vals;
             });
 
-          case 6:
+          case 7:
             ongoingShows = _context.sent;
 
-          case 7:
-            _context.next = 9;
+          case 8:
+            _context.next = 10;
             return (0, _requestAnimes.default)(null, 1, [], format, season).then(function (vals) {
               return vals;
             });
 
-          case 9:
+          case 10:
             thisSeasons = _context.sent;
             ongoingShows = ongoingShows.filter(function (show) {
               return !thisSeasons.find(function (seasonShow) {
@@ -45668,9 +45666,10 @@ function body(_ref) {
             }).filter(function (show) {
               return show.popularity >= 100;
             }).concat(thisSeasons);
+            setCurrLocation("".concat(season.join("-"), "/").concat(format[0]));
             setCards(sortCards(ongoingShows));
 
-          case 12:
+          case 14:
           case "end":
             return _context.stop();
         }
@@ -45679,10 +45678,9 @@ function body(_ref) {
   })), [season, format, onGoing]);
   (0, _react.useEffect)(function () {
     setCards(sortCards(cards));
-    localStorage.setItem("sort", JSON.stringify(sort));
     localStorage.setItem("language", JSON.stringify(language));
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
-  }, [sort, language, onGoing]);
+  }, [sort, language]);
   (0, _react.useEffect)(function () {
     checkForNewReleases();
     localStorage.setItem("watching", JSON.stringify(watchStates));
@@ -45786,7 +45784,9 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 function InfoCard(_ref) {
-  var props = _ref.props;
+  var data = _ref.data,
+      lastPage = _ref.lastPage;
+  console.log(data, lastPage);
 
   var _useState = (0, _react.useState)(false),
       _useState2 = _slicedToArray(_useState, 2),
@@ -45844,34 +45844,33 @@ function InfoCard(_ref) {
     }
   }, [showText]);
   var externals = [_defineProperty({}, "Official Site", "site_ico"), _defineProperty({}, "Twitter", "twt_ico"), _defineProperty({}, "Crunchyroll", "crn_ico"), _defineProperty({}, "VRV", "vrv_ico"), _defineProperty({}, "Funimation", "funi_ico"), _defineProperty({}, "Hulu", "hulu_ico"), _defineProperty({}, "Youtube", "ytb_ico"), _defineProperty({}, "AnimeLab", "alab_ico"), _defineProperty({}, "Hidive", "hidive_ico")];
-  var bannerImage = props.bannerImage,
-      coverImage = props.coverImage,
-      description = props.description,
-      duration = props.duration,
-      episodes = props.episodes,
-      externalLinks = props.externalLinks,
-      format = props.format,
-      genres = props.genres,
-      id = props.id,
-      meanScore = props.meanScore,
-      nextAiringEpisode = props.nextAiringEpisode,
-      popularity = props.popularity,
-      season = props.season,
-      siteUrl = props.siteUrl,
-      source = props.source,
-      startDate = props.startDate,
-      status = props.status,
-      studios = props.studios,
-      synonyms = props.synonyms,
-      tags = props.tags,
-      title = props.title,
-      trailer = props.trailer;
+  var bannerImage = data.bannerImage,
+      coverImage = data.coverImage,
+      description = data.description,
+      duration = data.duration,
+      episodes = data.episodes,
+      externalLinks = data.externalLinks,
+      format = data.format,
+      genres = data.genres,
+      id = data.id,
+      meanScore = data.meanScore,
+      nextAiringEpisode = data.nextAiringEpisode,
+      popularity = data.popularity,
+      season = data.season,
+      siteUrl = data.siteUrl,
+      source = data.source,
+      startDate = data.startDate,
+      status = data.status,
+      studios = data.studios,
+      synonyms = data.synonyms,
+      tags = data.tags,
+      title = data.title,
+      trailer = data.trailer;
+  console.log(data);
   var cd = new Date();
   nextAiringEpisode ? cd.setSeconds(nextAiringEpisode.timeUntilAiring) : null;
   return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Nav.default, {
-    season: season,
-    year: startDate.year,
-    format: format
+    lastLocation: lastPage
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "container main-container"
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -45943,17 +45942,17 @@ function InfoCard(_ref) {
     className: "info-label"
   }, "Format"), /*#__PURE__*/_react.default.createElement("div", {
     className: "info-value"
-  }, format.split("_").map(function (v) {
+  }, format ? format.split("_").map(function (v) {
     return v.charAt(0) + v.slice(1).toLowerCase();
-  }).join(" "))), /*#__PURE__*/_react.default.createElement("div", {
+  }).join(" ") : "No information")), /*#__PURE__*/_react.default.createElement("div", {
     className: "info-box"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info-label"
   }, "Source"), /*#__PURE__*/_react.default.createElement("div", {
     className: "info-value"
-  }, source.split("_").map(function (v) {
+  }, source ? source.split("_").map(function (v) {
     return v.charAt(0) + v.slice(1).toLowerCase();
-  }).join(" "))), /*#__PURE__*/_react.default.createElement("div", {
+  }).join(" ") : "No Information")), /*#__PURE__*/_react.default.createElement("div", {
     className: "info-box"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "info-label"
@@ -46086,8 +46085,9 @@ function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-// import { render } from "react-dom";
 function requestAnimeById(props) {
+  console.log(props);
+
   var _useState = (0, _react.useState)({}),
       _useState2 = _slicedToArray(_useState, 2),
       data = _useState2[0],
@@ -46101,7 +46101,8 @@ function requestAnimeById(props) {
     });
   }, []);
   return data.id ? /*#__PURE__*/_react.default.createElement(_MoreInfo.default, {
-    props: data
+    data: data,
+    lastPage: props.lastPage
   }) : /*#__PURE__*/_react.default.createElement(_Spinner.default, {
     watch: data
   });
@@ -46111,7 +46112,7 @@ function requestAnimeById(props) {
 
 require("regenerator-runtime/runtime");
 
-var _react = _interopRequireDefault(require("react"));
+var _react = _interopRequireWildcard(require("react"));
 
 var _reactDom = require("react-dom");
 
@@ -46123,6 +46124,22 @@ var _Details = _interopRequireDefault(require("./Details"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 // import Options from "./useOptions";
 // import { Link } from "@reach/router";
 
@@ -46131,12 +46148,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  and another custom hook for sorting and title options. 
  */
 var App = function App() {
+  var _useState = (0, _react.useState)("/"),
+      _useState2 = _slicedToArray(_useState, 2),
+      currLocation = _useState2[0],
+      setCurrLocation = _useState2[1];
+
   return /*#__PURE__*/_react.default.createElement(_router.Router, null, /*#__PURE__*/_react.default.createElement(_Parameters.default, {
-    path: "/:prevSeasonDashPrevYear/:prevFormat"
+    path: "/:prevSeasonDashPrevYear/:prevFormat",
+    setCurrLocation: setCurrLocation
   }), /*#__PURE__*/_react.default.createElement(_Parameters.default, {
-    path: "/"
+    path: "/",
+    setCurrLocation: setCurrLocation
   }), /*#__PURE__*/_react.default.createElement(_Details.default, {
-    path: "/details/:id"
+    path: "/details/:id",
+    lastPage: currLocation
   }));
 };
 
@@ -46169,7 +46194,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63724" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50310" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

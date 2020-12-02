@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import requestAnimes from "./requestAnimes";
 import MoreInfo from "./MoreInfo";
 import Spinner from "./Spinner";
-// import { render } from "react-dom";
 
 export default function requestAnimeById(props) {
+  // console.log(props);
   const [data, setData] = useState({});
   useEffect(() => {
     requestAnimes({ id: props.id }).then((vals) => {
@@ -12,5 +12,9 @@ export default function requestAnimeById(props) {
     });
   }, []);
 
-  return data.id ? <MoreInfo props={data} /> : <Spinner watch={data} />;
+  return data.id ? (
+    <MoreInfo data={data} lastPage={props.lastPage} />
+  ) : (
+    <Spinner watch={data} />
+  );
 }
