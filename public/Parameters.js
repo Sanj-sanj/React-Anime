@@ -257,18 +257,6 @@ export default function body({
         </div>
       </div>
       <Modal shows={newEpisodes} />
-      <button
-        onClick={() =>
-          requestAnimes({
-            status: "RELEASING",
-            page: 1,
-            isAdult: false,
-            format_in: format,
-          }).then((vals) => setCards(sortCards(vals)))
-        }
-      >
-        dsda
-      </button>
     </div>
   );
 }
