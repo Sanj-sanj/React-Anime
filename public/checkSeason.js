@@ -2,6 +2,11 @@ const season = seasonFunc();
 const seasons = ["WINTER", "SPRING", "SUMMER", "FALL"];
 
 function seasonFunc() {
+  function getSeasonIndex(season) {
+    console.log(season);
+    return seasons.findIndex((arrSeason) => arrSeason == season);
+  }
+
   function compareSeasons(userSeason) {
     const seasonAndYear = checkSeason().split(" ");
 
@@ -45,6 +50,6 @@ function seasonFunc() {
       .slice(1)
       .toLowerCase()} ${thisYear}`;
   }
-  return { checkSeason, compareSeasons };
+  return { checkSeason, compareSeasons, getSeasonIndex };
 }
 export default season;

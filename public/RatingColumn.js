@@ -12,7 +12,7 @@ export default function RatingColumn({
       <div className="rating-box ">
         <div className="rating-title">Rating</div>
         <div className="show-rating border border-top-0 border-dark">
-          {meanScore}
+          {meanScore || "?"}
         </div>
         <div className="premiered small">Premiere : {formattedDate}</div>
         <div className="synonym">

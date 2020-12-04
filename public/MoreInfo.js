@@ -7,6 +7,8 @@ import MetaInfo from "./MetaInfo";
 import Themes from "./Themes";
 import Trailer from "./Trailer";
 import ExternalLinks from "./ExternalLinks";
+import AnimeDescription from "./AnimeDescription";
+import Banner from "./Banner";
 
 export default function InfoCard({ data, lastPage }) {
   const [showText, setShowText] = useState(false);
@@ -94,14 +96,7 @@ export default function InfoCard({ data, lastPage }) {
     <div>
       <Nav lastLocation={`${lastPage}`} />
       <div className="container main-container">
-        <div className="banner-area">
-          <img
-            className="title-banner border "
-            src={bannerImage || require("./imgs/d_banner.png")}
-            alt="anime title"
-          />
-        </div>
-
+        <Banner bannerImage={bannerImage} />
         <div className="card">
           <div className="card-body">
             <h2 className="card-title">{title.romaji || title.english}</h2>
@@ -139,25 +134,11 @@ export default function InfoCard({ data, lastPage }) {
 
             <div className="row show-info-bottom">
               <div className="col anime-description-box">
-                <div
-                  className=" anime-description mb-3"
-                  dangerouslySetInnerHTML={{ __html: description }}
+                <AnimeDescription
+                  description={description}
+                  state={showText}
+                  setState={setShowText}
                 />
-                <div className="toggle-text mb-3 hidden">
-                  <button
-                    className="btn btn-sm btn-show-txt"
-                    onClick={() => setShowText(!showText)}
-                  >
-                    SHOW MORE
-                  </button>
-                  <button
-                    className="btn btn-sm btn-show-txt hidden"
-                    onClick={() => setShowText(!showText)}
-                  >
-                    SHOW LESS
-                  </button>
-                </div>
-
                 <Themes tags={tags} describeTags={describeTags} />
                 <Trailer trailer={trailer} title={title} />
                 <ExternalLinks externalLinks={externalLinks} />

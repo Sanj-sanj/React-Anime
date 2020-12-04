@@ -54,6 +54,7 @@ export default function body({
       "rating",
       "air date",
       "my shows",
+      "season",
     ];
     if (sort == options[0]) {
       return cloneCards.sort((a, b) => {
@@ -113,6 +114,40 @@ export default function body({
             (show) => !watchStates.some((item) => item.id == show.id)
           )
         );
+    }
+    if (sort == options[5]) {
+      console.log("hey");
+      let thisSeasonAndYear = cloneCards
+        .filter((show) => show.season || show.startDate.year)
+        .filter((show) => show.season == season[0].toUpperCase())
+        .filter((show) => show.startDate.year == season[1])
+        .filter((show) => show.nextAiringEpisode)
+        .sort((a, b) => {
+          return (
+            a.nextAiringEpisode.timeUntilAiring -
+            b.nextAiringEpisode.timeUntilAiring
+          );
+        })
+        .concat(
+          cloneCards.filter(
+            (show) =>
+              show.season == season[0].toUpperCase() &&
+              show.startDate.year == season[1] &&
+              !show.nextAiringEpisode
+          )
+        );
+      thisSeasonAndYear = thisSeasonAndYear.concat(
+        cloneCards.filter(
+          (show) =>
+            show.season == season[0].toUpperCase() &&
+            show.startDate.year != season[1]
+        )
+      );
+      return thisSeasonAndYear.concat(
+        cloneCards.filter(
+          (show) => !thisSeasonAndYear.find((item) => item.id == show.id)
+        )
+      );
     }
   }
 
@@ -218,6 +253,7 @@ export default function body({
               "Rating",
               "Air date",
               "My shows",
+              "Season",
             ]}
             set={setSort}
             defaultState={sort}

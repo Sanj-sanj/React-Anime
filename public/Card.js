@@ -27,6 +27,9 @@ export default function Card({
     : "No synopsis has been added yet.";
   const altLang = language == "english" ? "romaji" : "english";
   const title = data.title[language] || data.title[altLang];
+  const officialSite = data.externalLinks.find(
+    (obj) => obj.site == "Official Site"
+  );
 
   function formatEpisodeAirDate({ day, month, year }) {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -134,12 +137,12 @@ export default function Card({
   }, []);
 
   return (
-    <div className="card anime-card mb-3 col-md-4 col-xl-3" data-id={data.id}>
+    <div className="card anime-card mb-3 col-md-4 col-xl-3">
       <h5 className="anime-title">
         <Ribbon watch={watchState} consider={considerState} />
         <a
           className="main-title"
-          href={data.siteUrl}
+          href={officialSite ? officialSite.url : "#"}
           style={{ WebkitBoxOrient: "vertical" }}
           title={title}
         >
