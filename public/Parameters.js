@@ -89,11 +89,11 @@ export default function body({
           const altMonthB = b.startDate.month ? `${b.startDate.month}` : "00";
           const altYearB = b.startDate.year ? `${b.startDate.year}` : "2021";
           return (
-            `${altYearA}${altDayA.length < 2 ? "0" + altDayA : altDayA}${
-              altMonthA.length < 2 ? "0" + altMonthA : altMonthA
+            `${altYearA}${altMonthA.length < 2 ? "0" + altMonthA : altMonthA}${
+              altDayA.length < 2 ? "0" + altDayA : altDayA
             }` -
-            `${altYearB}${altDayB.length < 2 ? "0" + altDayB : altDayB}${
-              altMonthB.length < 2 ? "0" + altMonthB : altMonthB
+            `${altYearB}${altMonthB.length < 2 ? "0" + altMonthB : altMonthB}${
+              altDayB.length < 2 ? "0" + altDayB : altDayB
             }`
           );
         })
@@ -116,12 +116,22 @@ export default function body({
         );
     }
     if (sort == options[5]) {
-      console.log("hey");
-      let thisSeasonAndYear = cloneCards
-        .filter((show) => show.season || show.startDate.year)
-        .filter((show) => show.season == season[0].toUpperCase())
-        .filter((show) => show.startDate.year == season[1])
-        .filter((show) => show.nextAiringEpisode)
+      let thisSeasons = cloneCards
+        .filter((show) => show.season || show.startDate.year) //find anything that started last year but is supposed to be of the new years season
+        .filter(
+          (show) =>
+            show.startDate.month == 12 && show.startDate.year == season[1] - 1
+        )
+        .concat(
+          cloneCards
+            .filter((show) => show.season || show.startDate.year)
+            .filter(
+              (show) =>
+                show.season == season[0].toUpperCase() &&
+                show.startDate.year == season[1] &&
+                show.nextAiringEpisode
+            )
+        )
         .sort((a, b) => {
           return (
             a.nextAiringEpisode.timeUntilAiring -
@@ -131,23 +141,19 @@ export default function body({
         .concat(
           cloneCards.filter(
             (show) =>
-              show.season == season[0].toUpperCase() &&
               show.startDate.year == season[1] &&
+              show.season == season[0].toUpperCase() &&
               !show.nextAiringEpisode
           )
         );
-      thisSeasonAndYear = thisSeasonAndYear.concat(
+      return thisSeasons.concat(
         cloneCards.filter(
           (show) =>
-            show.season == season[0].toUpperCase() &&
-            show.startDate.year != season[1]
+            !thisSeasons.find((currSeasonShow) => currSeasonShow.id == show.id)
         )
       );
-      return thisSeasonAndYear.concat(
-        cloneCards.filter(
-          (show) => !thisSeasonAndYear.find((item) => item.id == show.id)
-        )
-      );
+
+      // return cloneCards;
     }
   }
 
@@ -212,13 +218,18 @@ export default function body({
     const thisSeasons = await requestAnimes(null, 1, [], format, season).then(
       (vals) => vals
     );
-    ongoingShows = ongoingShows
-      .filter(
-        (show) => !thisSeasons.find((seasonShow) => show.id == seasonShow.id)
+    setCards(
+      sortCards(
+        thisSeasons.concat(
+          ongoingShows
+            .filter(
+              (show) =>
+                !thisSeasons.find((seasonShow) => show.id == seasonShow.id)
+            )
+            .filter((show) => show.popularity >= 100)
+        )
       )
-      .filter((show) => show.popularity >= 100)
-      .concat(thisSeasons);
-    setCards(sortCards(ongoingShows));
+    );
   }, [season, format, onGoing]);
 
   useEffect(() => {

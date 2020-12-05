@@ -14,6 +14,7 @@ export default async function requestAnimes(
       isAdult: false,
       format_in: format,
       popularity_greater: 100,
+      sort: ["START_DATE_DESC"],
     };
   }
   if (!variables) {
@@ -25,9 +26,11 @@ export default async function requestAnimes(
       format_in: format == "TV" ? ["TV", "TV_SHORT"] : format, //defaults to TV series
       season: season[0].toUpperCase() || null,
       seasonYear: season[1] || null,
+      sort: ["START_DATE"],
     };
   }
-  // console.log(variables);
+
+  console.log(variables);
 
   const url = "https://graphql.anilist.co",
     options = {
@@ -50,7 +53,7 @@ export default async function requestAnimes(
     return acc.concat(json.data.Page.media);
   }
   console.log("has next page");
-
+  console.log(json);
   if (variables.id || variables.status_in) {
     variables.page = json.data.Page.pageInfo.currentPage + 1;
     // console.log(json.data.Page);
