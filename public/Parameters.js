@@ -1,5 +1,4 @@
-import "bootstrap/dist/js/bootstrap.bundle.min";
-import $ from "jquery";
+import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import React, { useState, useEffect } from "react";
 import Toggle from "./ToggleDropdown";
 import Season from "./Season";
@@ -7,7 +6,7 @@ import Format from "./Format";
 import SortDropdown from "./SortDropdown";
 import seasonFunc from "./checkSeason";
 import Card from "./Card";
-import Modal from "./Modal";
+import NewEpisodesModal from "./NewEpisodeModal";
 import Spinner from "./Spinner";
 import requestAnimes from "./requestAnimes";
 import Nav from "./Nav";
@@ -199,7 +198,9 @@ export default function body({
   }
 
   useEffect(() => {
-    $("#myModal").modal("show");
+    if (!newEpisodes.length) return;
+    let newEpisodesModal = document.querySelector("#myModal");
+    new Modal(newEpisodesModal).show();
   }, [newEpisodes]);
 
   useEffect(async () => {
@@ -287,6 +288,7 @@ export default function body({
 
           <Toggle />
         </div>
+
         <div className="row row-card-area">
           {!cards || !cards.length ? (
             <Spinner watch={cards} />
@@ -305,7 +307,7 @@ export default function body({
           )}
         </div>
       </div>
-      <Modal shows={newEpisodes} />
+      <NewEpisodesModal shows={newEpisodes} />
     </div>
   );
 }

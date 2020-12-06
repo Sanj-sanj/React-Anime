@@ -1,7 +1,7 @@
 import React from "react";
 
-export default function modal({ shows }) {
-  if (!shows.length) return null;
+export default function NewEpisodeModal({ shows }) {
+  // if (!shows.length) return null;
   return (
     <div
       className="modal fade"
@@ -29,9 +29,9 @@ export default function modal({ shows }) {
           <div className="modal-body">
             New episodes out for: {""}
             <ul>
-              {shows.map((show) => (
-                <li key={show.id}>{show.title}</li>
-              ))}
+              {shows.length
+                ? shows.map((show) => <li key={show.id}>{show.title}</li>)
+                : ""}
             </ul>
           </div>
           <div className="modal-footer">

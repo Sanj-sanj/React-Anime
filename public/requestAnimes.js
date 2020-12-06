@@ -30,8 +30,6 @@ export default async function requestAnimes(
     };
   }
 
-  console.log(variables);
-
   const url = "https://graphql.anilist.co",
     options = {
       method: "POST",
@@ -53,7 +51,6 @@ export default async function requestAnimes(
     return acc.concat(json.data.Page.media);
   }
   console.log("has next page");
-  console.log(json);
   if (variables.id || variables.status_in) {
     variables.page = json.data.Page.pageInfo.currentPage + 1;
     // console.log(json.data.Page);
