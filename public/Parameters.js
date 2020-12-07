@@ -1,6 +1,6 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import React, { useState, useEffect } from "react";
-import Toggle from "./ToggleDropdown";
+import ToggleSortDropdown from "./ToggleDropdown";
 import Season from "./Season";
 import Format from "./Format";
 import SortDropdown from "./SortDropdown";
@@ -101,6 +101,7 @@ export default function body({
     if (sort == options[4]) {
       return cloneCards
         .filter((show) => watchStates.find((item) => item.id == show.id))
+        .filter((show) => show.nextAiringEpisode)
         .sort((a, b) => {
           if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
           return (
@@ -109,8 +110,13 @@ export default function body({
           );
         })
         .concat(
+          cloneCards
+            .filter((show) => watchStates.find((item) => item.id == show.id))
+            .filter((show) => !show.nextAiringEpisode)
+        )
+        .concat(
           cloneCards.filter(
-            (show) => !watchStates.some((item) => item.id == show.id)
+            (show) => !watchStates.find((item) => item.id == show.id)
           )
         );
     }
@@ -151,8 +157,6 @@ export default function body({
             !thisSeasons.find((currSeasonShow) => currSeasonShow.id == show.id)
         )
       );
-
-      // return cloneCards;
     }
   }
 
@@ -208,9 +212,7 @@ export default function body({
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
     setCards([]);
     setCurrLocation(`/${season.join("-")}/${format[0]}`.toLowerCase());
-
     console.log("hitting api");
-
     if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
       ongoingShows = await requestAnimes(onGoing, 1, [], format).then(
         (vals) => vals
@@ -284,9 +286,7 @@ export default function body({
             set={setOnGoing}
             defaultState={onGoing}
           />
-          {/* <input type="checkbox" defaultChecked={true}></input> */}
-
-          <Toggle />
+          <ToggleSortDropdown />
         </div>
 
         <div className="row row-card-area">
