@@ -34,6 +34,10 @@ export default async function requestAnimes(
     options = {
       method: "POST",
       headers: {
+        // "Access-Control-Allow-Origin": "http://localhost:1234",
+        "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "Content-Type",
+        Origin: "https://react-anime.herokuapp.com",
         "Content-Type": "application/json",
         Accept: "application/json",
       },

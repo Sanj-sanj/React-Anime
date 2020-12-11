@@ -125,7 +125,9 @@ export default function body({
         .filter((show) => show.season || show.startDate.year) //find anything that started last year but is supposed to be of the new years season
         .filter(
           (show) =>
-            show.startDate.month == 12 && show.startDate.year == season[1] - 1
+            show.startDate.month == 12 &&
+            show.startDate.year == season[1] - 1 &&
+            show.season == season[0].toUpperCase()
         )
         .concat(
           cloneCards
@@ -288,7 +290,6 @@ export default function body({
           />
           <ToggleSortDropdown />
         </div>
-
         <div className="row row-card-area">
           {!cards || !cards.length ? (
             <Spinner watch={cards} />

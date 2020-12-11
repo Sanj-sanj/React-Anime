@@ -306,23 +306,18 @@ ol.anime-genre li:not(:last-child)::after {
 }
 
 @media (max-width: 498px) {
-  .row.row-card-area {
-    position: relative;
-    bottom: 11em;
-    transition: bottom 1s ease;
-  }
+  // .row.row-card-area {
+  //   position: relative;
+  //   bottom: 11em;
+  //   transition: bottom 1s ease;
+  // }
   .anime-container {
     padding: 0 1em !important;
   }
-  .options-area {
-    display: block;
-    position: relative;
-    bottom: 11em;
-    transition: bottom 1s ease;
-  }
-  .btn.pull-dropdown {
-    display: initial;
-  }
+
+  // .btn.pull-dropdown {
+  //   display: initial;
+  // }
 }
 @media (max-width: 644px) {
   .season-selection {
@@ -338,6 +333,21 @@ ol.anime-genre li:not(:last-child)::after {
   .input-group {
     width: 100% !important;
     margin-right: 1rem;
+  }
+  .options-area {
+    display: block;
+    position: relative;
+    bottom: 11em;
+    transition: bottom 1s ease;
+  }
+  .row.row-card-area {
+    position: relative;
+    bottom: 11em;
+    transition: bottom 1s ease;
+  }
+
+  .btn.pull-dropdown {
+    display: initial;
   }
   .contents {
     height: auto;

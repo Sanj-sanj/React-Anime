@@ -5,7 +5,9 @@ const server = express();
 const port = process.env.PORT || 3570;
 
 server.use(express.static(__dirname + "/dist"));
+// server.use(express.static(__dirname + "/public/index.html"));
 // server.use(bundler.middleware());
+
 server.listen(port, () => {
   console.log(`listening on http://localhost:${port}`);
 });
