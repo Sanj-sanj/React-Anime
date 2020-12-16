@@ -1,4 +1,5 @@
 import querys from "./querys";
+import Axios from "axios";
 export default async function requestAnimes(
   variables,
   nextPage = 1,
@@ -30,34 +31,28 @@ export default async function requestAnimes(
     };
   }
 
-  const url = "https://graphql.anilist.co",
-    options = {
-      method: "POST",
-      headers: {
-        // "Access-Control-Allow-Origin": "http://localhost:1234",
-        "Access-Control-Request-Method": "GET",
-        "Access-Control-Request-Headers": "Content-Type",
-        Origin: "https://react-anime.herokuapp.com",
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        query: querys.queryMain,
-        variables: variables,
-      }),
-    };
+  const response = await Axios({
+    method: "POST",
+    url: "https://graphql.anilist.co",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    data: JSON.stringify({
+      query: querys.queryMain,
+      variables: variables,
+    }),
+  });
 
-  const response = await fetch(url, options);
-  const json = await response.json();
-  if (!response.ok) return Promise.reject(json);
+  const json = response.data;
+  if (!response.status == 200) return Promise.reject(json);
   if (!json.data.Page.pageInfo.hasNextPage) {
-    // console.log("doesnt have a next page");
+    console.log("doesnt have a next page");
     return acc.concat(json.data.Page.media);
   }
   console.log("has next page");
   if (variables.id || variables.status_in) {
     variables.page = json.data.Page.pageInfo.currentPage + 1;
-    // console.log(json.data.Page);
     return requestAnimes(
       variables,
       null,
