@@ -14,6 +14,7 @@ import Details from "./Details";
  */
 const App = () => {
   const [currLocation, setCurrLocation] = useState("/");
+  console.log({ "something changed": currLocation });
   return (
     <Router>
       <Parameters

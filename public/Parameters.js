@@ -10,6 +10,7 @@ import NewEpisodesModal from "./NewEpisodeModal";
 import Spinner from "./Spinner";
 import requestAnimes from "./requestAnimes";
 import Nav from "./Nav";
+import checkNewEp from "./checkNewEpisodes";
 
 export default function body({
   prevSeasonDashPrevYear,
@@ -162,52 +163,59 @@ export default function body({
     }
   }
 
-  function checkForNewReleases() {
-    //this useses the state pulled from Card.js to sift through data to find a match in data to update episode numbers
-    //this gets called once on initial render, then again as watchStates changes at the end so it works properply.
-    const titles = ["english", "romaji"];
-    const hasNewEpisodes = watchStates.filter((item) => {
-      const [found] = cards.filter((show) => show.id == item.id);
-      if (found && !found.nextAiringEpisode) return null;
-      if (found && found.nextAiringEpisode.episode > item.episodeNumber) {
-        return found;
-      }
-    });
-    if (hasNewEpisodes.length) {
-      setNewEpisodes(hasNewEpisodes);
-      const updatedEpisodes = cards
-        .map((card) => {
-          if (hasNewEpisodes.find((item) => card.id == item.id)) {
-            const episodeNumber = card.nextAiringEpisode.episode;
-            const id = card.id;
-            const title = card.title[titles[0]] || card.title[titles[1]];
-            return { title, id, episodeNumber };
-          }
-          return null;
-        })
-        .filter((item) => item)
-        .concat(
-          watchStates.filter((item) => {
-            const [found] = cards.filter((show) => show.id == item.id);
-            if (found && found.nextAiringEpisode) {
-              if (found.nextAiringEpisode.episode == item.episodeNumber) {
-                return found;
-              }
-              if (!found.nextAiringEpisode) {
-                return found;
-              }
-            }
-          })
-        );
-      setWatchStates(updatedEpisodes);
-    }
+  function updateNewEpisodes(arrOfNewShows) {
+    const unaffectedShows = watchStates.filter(
+      (show) => !arrOfNewShows.find((newEp) => show.id == newEp.id)
+    );
+    let updated = unaffectedShows.concat(
+      arrOfNewShows.map((show) => {
+        const episodeNumber = show.nextAiringEpisode
+          ? show.nextAiringEpisode.episode
+          : null;
+        const id = show.id;
+        const title = show.title[language];
+        const status = show.status;
+        return { title, id, episodeNumber, status };
+      })
+    );
+    // console.log(updated);
+    return updated;
   }
 
-  useEffect(() => {
-    if (!newEpisodes.length) return;
-    let newEpisodesModal = document.querySelector("#myModal");
-    new Modal(newEpisodesModal).show();
-  }, [newEpisodes]);
+  async function checkForNewReleases() {
+    console.log("checking for new releases");
+    const episodesForQuery = watchStates
+      .filter((item) => item.status == "RELEASING")
+      .map((item) => item.id);
+
+    // console.log({ watchStates, episodesForQuery });
+    const response = await checkNewEp(episodesForQuery);
+
+    const hasNewEpisodes = response.filter((latestShowInfo) => {
+      const sameShow = watchStates.find((show) => latestShowInfo.id == show.id);
+      if (!sameShow) return;
+      if (
+        sameShow.status == "RELEASING" &&
+        latestShowInfo.status == "FINISHED"
+      ) {
+        //show finale aired
+        return sameShow;
+      }
+      if (
+        sameShow.status == "RELEASING" &&
+        sameShow.episodeNumber < latestShowInfo.nextAiringEpisode.episode
+      ) {
+        //new ep, show is still ongoing
+        return sameShow;
+      }
+    });
+    // console.log(hasNewEpisodes);
+
+    if (hasNewEpisodes.length) {
+      setNewEpisodes(hasNewEpisodes);
+      setWatchStates(updateNewEpisodes(hasNewEpisodes));
+    }
+  }
 
   useEffect(async () => {
     let ongoingShows = [];
@@ -235,6 +243,7 @@ export default function body({
         )
       )
     );
+    checkForNewReleases();
   }, [season, format, onGoing]);
 
   useEffect(() => {
@@ -244,10 +253,16 @@ export default function body({
   }, [sort, language]);
 
   useEffect(() => {
-    checkForNewReleases();
+    // console.log({ watchStates, considerStates });
     localStorage.setItem("watching", JSON.stringify(watchStates));
     localStorage.setItem("considering", JSON.stringify(considerStates));
   }, [watchStates, considerStates]);
+
+  useEffect(() => {
+    if (!newEpisodes.length) return;
+    let newEpisodesModal = document.querySelector("#myModal");
+    new Modal(newEpisodesModal).show();
+  }, [newEpisodes]);
 
   return (
     <div>

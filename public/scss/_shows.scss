@@ -1,7 +1,10 @@
 .banner-area {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 100;
+  max-height: 205px;
+  display: flex;
+  align-items: flex-end;
 }
 .title-banner {
   width: 100%;
@@ -33,6 +36,7 @@
 .anime-poster {
   max-width: 100%;
   height: auto;
+  width: fit-content;
 }
 .library-position {
   padding: 0 1em;
@@ -89,7 +93,7 @@
   color: #007cde !important;
   font-weight: 500 !important;
 }
-.theme-container {
+.more-info-container {
   padding-top: 1em;
 }
 .tags-section {
@@ -144,6 +148,15 @@
 .site_ico {
   content: url("../imgs/site_icon.jpg");
 }
+.swiper-wrapper {
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: 1em;
+}
+.character-portrait {
+  width: 5em;
+  height: 8em;
+}
 
 .hidden {
   display: none !important;
@@ -165,8 +178,9 @@
     height: auto;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
   .banner-area {
+    align-items: center;
     z-index: 0;
   }
 }

@@ -2,6 +2,7 @@ import React from "react";
 
 export default function NewEpisodeModal({ shows }) {
   // if (!shows.length) return null;
+  // console.log(shows);
   return (
     <div
       className="modal fade"
@@ -30,7 +31,9 @@ export default function NewEpisodeModal({ shows }) {
             New episodes out for: {""}
             <ul>
               {shows.length
-                ? shows.map((show) => <li key={show.id}>{show.title}</li>)
+                ? shows.map((show) => (
+                    <li key={show.id}>{show.title.romaji}</li>
+                  ))
                 : ""}
             </ul>
           </div>

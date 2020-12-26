@@ -9,9 +9,23 @@ import Trailer from "./Trailer";
 import ExternalLinks from "./ExternalLinks";
 import AnimeDescription from "./AnimeDescription";
 import Banner from "./Banner";
+import RelatedAnime from "./RelatedAnime";
+import Characters from "./Characters";
+//
+import SwiperCore, { Navigation, Scrollbar, A11y } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import "swiper/swiper.scss";
+import "swiper/components/navigation/navigation.scss";
+import "swiper/components/scrollbar/scrollbar.scss";
+
+SwiperCore.use([Navigation, Scrollbar, A11y]);
 
 export default function InfoCard({ data, lastPage }) {
-  const [showText, setShowText] = useState(false);
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+  // const [showText, setShowText] = useState(false);
   const {
     bannerImage,
     coverImage,
@@ -21,6 +35,7 @@ export default function InfoCard({ data, lastPage }) {
     externalLinks,
     format,
     genres,
+    id,
     meanScore,
     nextAiringEpisode,
     source,
@@ -81,23 +96,23 @@ export default function InfoCard({ data, lastPage }) {
     prev.remove();
   }
 
-  useEffect(() => {
-    const desc = document.querySelector(".anime-description");
-    const buttons = document.querySelector(".toggle-text");
-    if (desc.clientHeight > 200) {
-      buttons.classList.remove("hidden");
-      desc.classList.add("collapsed");
-    } else {
-      desc.classList.remove("collapsed");
-    }
-  }, [showText]);
+  // useEffect(() => {
+  //   const desc = document.querySelector(".anime-description");
+  //   const buttons = document.querySelector(".toggle-text");
+  //   if (desc.clientHeight > 200) {
+  //     buttons.classList.remove("hidden");
+  //     desc.classList.add("collapsed");
+  //   } else {
+  //     desc.classList.remove("collapsed");
+  //   }
+  // }, [showText]);
 
   return (
     <div>
       <Nav lastLocation={`${lastPage}`} />
       <div className="container main-container">
         <Banner bannerImage={bannerImage} />
-        <div className="card">
+        <div className="card text-dark bg-light ">
           <div className="card-body">
             <h2 className="card-title">{title.romaji || title.english}</h2>
             <h6 className="card-subtitle mb-2 text-muted mb-2">
@@ -112,7 +127,7 @@ export default function InfoCard({ data, lastPage }) {
               />
             </div>
             <div className="row row-poster-meta-info mb-3">
-              <PosterColumn coverImage={coverImage} />
+              <PosterColumn coverImage={coverImage} title={title} id={id} />
               <RatingColumn
                 meanScore={meanScore}
                 synonyms={synonyms}
@@ -131,18 +146,28 @@ export default function InfoCard({ data, lastPage }) {
               episodes={episodes}
               duration={duration}
             />
-
-            <div className="row show-info-bottom">
-              <div className="col anime-description-box">
-                <AnimeDescription
-                  description={description}
-                  state={showText}
-                  setState={setShowText}
-                />
-                <Themes tags={tags} describeTags={describeTags} />
-                <Trailer trailer={trailer} title={title} />
-                <ExternalLinks externalLinks={externalLinks} />
+            <div className="show-info-bottom">
+              <div className="anime-description-box">
+                <AnimeDescription description={description} />
               </div>
+              <Characters
+                characters={data.characters.edges}
+                Swiper={Swiper}
+                SwiperSlide={SwiperSlide}
+              />
+              <RelatedAnime
+                relations={data.relations}
+                Swiper={Swiper}
+                SwiperSlide={SwiperSlide}
+              />
+              <Themes
+                tags={tags}
+                describeTags={describeTags}
+                Swiper={Swiper}
+                SwiperSlide={SwiperSlide}
+              />
+              <Trailer trailer={trailer} title={title} />
+              <ExternalLinks externalLinks={externalLinks} />
             </div>
           </div>
         </div>

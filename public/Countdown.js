@@ -5,6 +5,7 @@ export default function makeCountdown({ status, airingInfo, cd, css }) {
 
   useEffect(() => {
     if (status == null || airingInfo == null) {
+      setTime("");
       return;
     }
     const timer = setInterval(() => {
@@ -28,7 +29,7 @@ export default function makeCountdown({ status, airingInfo, cd, css }) {
     return () => {
       clearInterval(timer);
     };
-  }, [time]);
+  }, [cd, status]);
 
   const episode =
     status == "FINISHED"
@@ -39,7 +40,7 @@ export default function makeCountdown({ status, airingInfo, cd, css }) {
 
   return (
     <time className={`countdown ${css}`}>
-      {episode} {!time ? null : <span>{time}</span>}
+      {episode} {!time ? null : time}
     </time>
   );
 }

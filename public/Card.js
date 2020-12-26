@@ -27,6 +27,8 @@ export default function Card({
     : "No synopsis has been added yet.";
   const altLang = language == "english" ? "romaji" : "english";
   const title = data.title[language] || data.title[altLang];
+  const endDate = data.endDate;
+  const status = data.status;
   const officialSite = data.externalLinks.find(
     (obj) => obj.site == "Official Site"
   );
@@ -101,14 +103,17 @@ export default function Card({
     if (watchState) {
       //if watching, add to watching state remove from considering state if exists
       const currentlyWatching = watching.filter((show) => show.id !== id);
-      const newWatching = [...currentlyWatching, { title, id, episodeNumber }];
+      const newWatching = [
+        ...currentlyWatching,
+        { title, id, episodeNumber, status },
+      ];
       const currentConsider = considering.filter((show) => show.id !== id);
       considerSet(currentConsider);
       watchSet(newWatching);
     }
     if (considerState) {
       const current = considering.filter((show) => show.id !== id);
-      const newConsider = [...current, { title, id, episodeNumber }];
+      const newConsider = [...current, { title, id, episodeNumber, status }];
       const currentWatch = watching.filter((show) => show.id !== id);
       watchSet(currentWatch);
       return considerSet(newConsider);
