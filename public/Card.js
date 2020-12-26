@@ -27,7 +27,6 @@ export default function Card({
     : "No synopsis has been added yet.";
   const altLang = language == "english" ? "romaji" : "english";
   const title = data.title[language] || data.title[altLang];
-  const endDate = data.endDate;
   const status = data.status;
   const officialSite = data.externalLinks.find(
     (obj) => obj.site == "Official Site"

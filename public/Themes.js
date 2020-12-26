@@ -5,12 +5,7 @@ export default function Themes({ tags, describeTags, Swiper, SwiperSlide }) {
     <div className="more-info-container border-top">
       <h4 className="card-title">Themes:</h4>
       {/* <div className="related-tags"> */}
-      <Swiper
-        spaceBetween={2}
-        slidesPerView={5}
-        onSlideChange={() => console.log("slide changed")}
-        onSwiper={(swiper) => console.log(swiper)}
-      >
+      <Swiper spaceBetween={2} slidesPerView={5}>
         <ul className="tags-section">
           {tags
             ? tags.map((tag) => {

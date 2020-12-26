@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Characters({ characters, Swiper, SwiperSlide }) {
-  console.log(characters);
+  // console.log(characters);
   if (!characters.length) return null;
 
   function sortAndFilterByCharacters(role) {
@@ -15,8 +15,6 @@ export default function Characters({ characters, Swiper, SwiperSlide }) {
       <Swiper
         slidesPerView={characters.length < 4 ? characters.length : 4}
         scrollbar={{ draggable: true }}
-        onSlideChange={() => console.log("slide changed")}
-        onSwiper={(swiper) => console.log(swiper)}
       >
         {sortAndFilterByCharacters("MAIN").map((character) => (
           <SwiperSlide key={character.id}>
@@ -26,7 +24,6 @@ export default function Characters({ characters, Swiper, SwiperSlide }) {
                 className="character-portrait anime-poster"
                 src={character.node.image["medium"]}
                 alt={`The character: "${character.node.name.full}"`}
-                onClick={() => console.log(character.node.favourites)}
               />
             </div>
           </SwiperSlide>
@@ -39,7 +36,6 @@ export default function Characters({ characters, Swiper, SwiperSlide }) {
                 className="character-portrait anime-poster"
                 src={character.node.image["medium"]}
                 alt={`The character: "${character.node.name.full}"`}
-                onClick={() => console.log(character.node.favourites)}
               />
             </div>
           </SwiperSlide>

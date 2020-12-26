@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Countdown from "./Countdown";
 import Nav from "./Nav";
 import PosterColumn from "./PosterColumn";
@@ -14,7 +14,6 @@ import Characters from "./Characters";
 //
 import SwiperCore, { Navigation, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
-// Import Swiper styles
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
@@ -22,10 +21,6 @@ import "swiper/components/scrollbar/scrollbar.scss";
 SwiperCore.use([Navigation, Scrollbar, A11y]);
 
 export default function InfoCard({ data, lastPage }) {
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-  // const [showText, setShowText] = useState(false);
   const {
     bannerImage,
     coverImage,
@@ -95,17 +90,6 @@ export default function InfoCard({ data, lastPage }) {
     const prev = document.querySelector(".alert.alert-info");
     prev.remove();
   }
-
-  // useEffect(() => {
-  //   const desc = document.querySelector(".anime-description");
-  //   const buttons = document.querySelector(".toggle-text");
-  //   if (desc.clientHeight > 200) {
-  //     buttons.classList.remove("hidden");
-  //     desc.classList.add("collapsed");
-  //   } else {
-  //     desc.classList.remove("collapsed");
-  //   }
-  // }, [showText]);
 
   return (
     <div>

@@ -48,9 +48,7 @@ const useOptions = () => {
           className="custom-select"
           name="sort-by"
           id="sort-names"
-          onChange={(e) => {
-            console.log(e), setTitles(e.target.value);
-          }}
+          onChange={(e) => setTitles(e.target.value)}
           onBlur={(e) => setTitles(e.target.value)}
         >
           <option value="english" key="english">

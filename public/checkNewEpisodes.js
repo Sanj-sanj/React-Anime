@@ -1,8 +1,6 @@
 import querys from "./querys";
 import Axios from "axios";
 
-//make a quereyEpisodes
-
 export default async function checkNewEp(ArrofIDs, nextPage, acc = []) {
   const variables = {
     id_in: ArrofIDs,
@@ -20,11 +18,11 @@ export default async function checkNewEp(ArrofIDs, nextPage, acc = []) {
     }),
   });
   const json = response.data;
-  console.log(json);
+  // console.log(json);
   if (!response.status == 200) return Promise.reject(json);
   if (!json.data.Page.pageInfo.hasNextPage) {
     // console.log("doesnt have a next page");
-    console.log(variables);
+    // console.log(variables);
     return acc.concat(json.data.Page.media);
   }
   // return checkNewEp(/)

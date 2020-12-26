@@ -3,7 +3,7 @@ import { Link } from "@reach/router";
 import PosterColumn from "./PosterColumn";
 
 export default function RelatedAnime({ relations, Swiper, SwiperSlide }) {
-  console.log(relations);
+  // console.log(relations);
   if (!relations.nodes || !relations.nodes.find((item) => item.type == "ANIME"))
     return null;
 
@@ -18,8 +18,6 @@ export default function RelatedAnime({ relations, Swiper, SwiperSlide }) {
         slidesPerView={findRelatedShowsLen() > 2 ? 2 : findRelatedShowsLen()}
         navigation={false}
         scrollbar={{ draggable: true }}
-        onSlideChange={() => console.log("slide changed")}
-        onSwiper={(swiper) => console.log(swiper)}
       >
         {relations
           ? relations.nodes
