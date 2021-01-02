@@ -1,8 +1,26 @@
 import React from "react";
 
-export default function Characters({ characters, Swiper, SwiperSlide }) {
-  // console.log(characters);
+export default function Characters({
+  characters,
+  Swiper,
+  SwiperSlide,
+  innerWidth,
+}) {
   if (!characters.length) return null;
+
+  function slidesToDisplay() {
+    let ammount;
+    if (innerWidth < 567) {
+      characters.length >= 3 ? (ammount = 3) : (ammount = characters.length);
+      return ammount;
+    }
+    if (innerWidth < 768) {
+      characters.length >= 4 ? (ammount = 4) : (ammount = characters.length);
+      return ammount;
+    }
+    characters.length >= 6 ? (ammount = 6) : (ammount = characters.length);
+    return ammount;
+  }
 
   function sortAndFilterByCharacters(role) {
     return characters
@@ -12,10 +30,7 @@ export default function Characters({ characters, Swiper, SwiperSlide }) {
   return (
     <div className="more-info-container border-top">
       <h4 className="card-title">Characters</h4>
-      <Swiper
-        slidesPerView={characters.length < 4 ? characters.length : 4}
-        scrollbar={{ draggable: true }}
-      >
+      <Swiper slidesPerView={slidesToDisplay()} scrollbar={{ draggable: true }}>
         {sortAndFilterByCharacters("MAIN").map((character) => (
           <SwiperSlide key={character.id}>
             {/* <h6>{character.node.name.full}</h6> */}
@@ -29,6 +44,18 @@ export default function Characters({ characters, Swiper, SwiperSlide }) {
           </SwiperSlide>
         ))}
         {sortAndFilterByCharacters("SUPPORTING").map((character) => (
+          <SwiperSlide key={character.id}>
+            <div className="col">
+              {/* <h6>{character.node.name.full}</h6> */}
+              <img
+                className="character-portrait anime-poster"
+                src={character.node.image["medium"]}
+                alt={`The character: "${character.node.name.full}"`}
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+        {sortAndFilterByCharacters("BACKGROUND").map((character) => (
           <SwiperSlide key={character.id}>
             <div className="col">
               {/* <h6>{character.node.name.full}</h6> */}

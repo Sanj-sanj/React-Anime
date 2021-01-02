@@ -9,9 +9,9 @@ export default function navbar({ lastLocation }) {
         <Link
           to={lastLocation}
           onClick={() => {
-            if (window.location.pathname.includes("details")) {
-              return;
-            }
+            // if (window.location.pathname.includes("details")) {
+            //   return;
+            // }
             if (window.location.pathname == "/") {
               window.location.href("/");
               return;

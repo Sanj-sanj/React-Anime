@@ -1,7 +1,7 @@
 import React from "react";
 
-export default function spinner({ watch }) {
-  if (!watch) return null;
+export default function spinner({ hasRendered }) {
+  if (!hasRendered) return null;
   return (
     <div className="loading-area">
       <img

@@ -152,12 +152,32 @@
   display: inline-flex;
   align-items: center;
   padding-bottom: 1em;
+  padding-top: 0.1em;
+}
+.tag {
+  width: 93%;
+  line-height: 1 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.char-container {
+  display: flex;
+  height: 4em !important;
 }
 .character-portrait {
-  width: 5em;
-  height: 8em;
+  width: inherit;
 }
-
+.related-poster {
+  display: -webkit-box;
+  padding: 0 0.2em;
+  max-height: 2em;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1;
+}
 .hidden {
   display: none !important;
 }

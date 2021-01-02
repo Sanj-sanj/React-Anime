@@ -31,7 +31,10 @@ export default function RelatedAnime({ relations, Swiper, SwiperSlide }) {
                       id={show.id}
                     />
                   </Link>
-                  <h6 className="card-title" style={{ padding: "0 2em" }}>
+                  <h6
+                    className="card-title related-poster"
+                    style={{ WebkitBoxOrient: "vertical" }}
+                  >
                     {show.title.english || show.title.romaji}
                   </h6>
                 </SwiperSlide>

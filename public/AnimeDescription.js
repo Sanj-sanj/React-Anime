@@ -8,7 +8,6 @@ export default function AnimeDescription({ description }) {
 
   useEffect(() => {
     const descriptionContainer = document.querySelector(".anime-description");
-    console.log(description);
     if (descriptionContainer.clientHeight > 200) {
       descriptionContainer.classList.add("collapsed");
       document.querySelector(".btn-show-txt").textContent = "SHOW MORE";

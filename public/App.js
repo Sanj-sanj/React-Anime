@@ -8,15 +8,24 @@ import Details from "./Details";
 
 const App = () => {
   const [currLocation, setCurrLocation] = useState("/");
-  // console.log({ "something changed": currLocation });
+  const [data, setData] = useState([]);
   return (
     <Router>
       <Parameters
         path="/:prevSeasonDashPrevYear/:prevFormat"
         setCurrLocation={setCurrLocation}
+        data={data}
+        setData={setData}
+        currLocation={currLocation}
       />
-      <Parameters path="/" setCurrLocation={setCurrLocation} />
-      <Details path="/details/:id" lastPage={currLocation} />
+      <Parameters
+        path="/"
+        setCurrLocation={setCurrLocation}
+        data={data}
+        setData={setData}
+        currLocation={currLocation}
+      />
+      <Details path="/details/:id" lastPage={currLocation} lastData={data} />
     </Router>
   );
 };

@@ -16,17 +16,18 @@ export default function body({
   prevSeasonDashPrevYear,
   prevFormat,
   setCurrLocation,
+  data,
+  setData,
 }) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
     const choices = [["TV", "TV_SHORT"], ["MOVIE"], ["OVA", "ONA"]];
-
     prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
   }
+
   const [onGoing, setOnGoing] = useState(
     JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"
   );
-  const [cards, setCards] = useState([]);
   const [newEpisodes, setNewEpisodes] = useState([]);
   const [season, setSeason] = useState(
     prevSeasonDashPrevYear || seasonFunc.checkSeason().split(" ")
@@ -44,6 +45,7 @@ export default function body({
   const [considerStates, setConsiderStates] = useState(
     JSON.parse(localStorage.getItem("considering")) || []
   );
+  const [isFetching, setIsFetching] = useState(true);
 
   function sortCards(allCards) {
     //map the state of cards to work with state then set it. otherwise state stays one step behind
@@ -178,7 +180,6 @@ export default function body({
         return { title, id, episodeNumber, status };
       })
     );
-    // console.log(updated);
     return updated;
   }
 
@@ -187,8 +188,6 @@ export default function body({
     const episodesForQuery = watchStates
       .filter((item) => item.status == "RELEASING")
       .map((item) => item.id);
-
-    // console.log({ watchStates, episodesForQuery });
     const response = await checkNewEp(episodesForQuery);
 
     const hasNewEpisodes = response.filter((latestShowInfo) => {
@@ -218,9 +217,24 @@ export default function body({
   }
 
   useEffect(async () => {
+    setData([]);
+    setIsFetching(true);
+
+    if (prevSeasonDashPrevYear && prevFormat && data.length) {
+      if (
+        prevSeasonDashPrevYear[0] == season[0] &&
+        prevFormat[0] == format[0]
+      ) {
+        //this is the time we reuse our previous API result
+        setData(data);
+        setIsFetching(false);
+        checkForNewReleases();
+        return;
+      }
+    }
+
     let ongoingShows = [];
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
-    setCards([]);
     setCurrLocation(`/${season.join("-")}/${format[0]}`.toLowerCase());
     console.log("hitting api");
     if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
@@ -231,7 +245,7 @@ export default function body({
     const thisSeasons = await requestAnimes(null, 1, [], format, season).then(
       (vals) => vals
     );
-    setCards(
+    setData(
       sortCards(
         thisSeasons.concat(
           ongoingShows
@@ -244,16 +258,16 @@ export default function body({
       )
     );
     checkForNewReleases();
+    setIsFetching(false);
   }, [season, format, onGoing]);
 
   useEffect(() => {
-    setCards(sortCards(cards));
+    setData(sortCards(data));
     localStorage.setItem("language", JSON.stringify(language));
     localStorage.setItem("sort", JSON.stringify(sort));
   }, [sort, language]);
 
   useEffect(() => {
-    // console.log({ watchStates, considerStates });
     localStorage.setItem("watching", JSON.stringify(watchStates));
     localStorage.setItem("considering", JSON.stringify(considerStates));
   }, [watchStates, considerStates]);
@@ -306,22 +320,21 @@ export default function body({
           <ToggleSortDropdown />
         </div>
         <div className="row row-card-area">
-          {!cards || !cards.length ? (
-            <Spinner watch={cards} />
-          ) : (
-            cards.map((data) => (
-              <Card
-                key={data.id}
-                data={data}
-                language={language}
-                watchSet={setWatchStates}
-                considerSet={setConsiderStates}
-                watching={watchStates}
-                considering={considerStates}
-              />
-            ))
-          )}
+          {isFetching
+            ? ""
+            : data.map((data) => (
+                <Card
+                  key={data.id}
+                  data={data}
+                  language={language}
+                  watchSet={setWatchStates}
+                  considerSet={setConsiderStates}
+                  watching={watchStates}
+                  considering={considerStates}
+                />
+              ))}
         </div>
+        <Spinner hasRendered={isFetching} />
       </div>
       <NewEpisodesModal shows={newEpisodes} />
     </div>

@@ -9,7 +9,6 @@ export default function goToMoreInfoWithNewDataAndLastPage(props) {
   useEffect(() => {
     setData({});
     requestAnimes({ id: props.id }).then((vals) => {
-      // console.log(vals);
       setData(...vals);
       setLastPage(props.lastPage);
     });
@@ -18,6 +17,6 @@ export default function goToMoreInfoWithNewDataAndLastPage(props) {
   return data.id ? (
     <MoreInfo data={data} lastPage={lastPage} />
   ) : (
-    <Spinner watch={data} />
+    <Spinner hasRendered={data} />
   );
 }

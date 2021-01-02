@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Countdown from "./Countdown";
 import Nav from "./Nav";
 import PosterColumn from "./PosterColumn";
@@ -21,6 +21,21 @@ import "swiper/components/scrollbar/scrollbar.scss";
 SwiperCore.use([Navigation, Scrollbar, A11y]);
 
 export default function InfoCard({ data, lastPage }) {
+  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
+
+  window.addEventListener("resize", debounce(getWindowSize));
+
+  function debounce(func) {
+    let timer;
+    return () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(func, 100);
+    };
+  }
+  function getWindowSize() {
+    return setInnerWidth(window.innerWidth);
+  }
+
   const {
     bannerImage,
     coverImage,
@@ -75,11 +90,11 @@ export default function InfoCard({ data, lastPage }) {
     box.className = "alert alert-info";
     box.textContent = tag.description;
     boxContainer.appendChild(box);
-    e.target.parentElement.appendChild(boxContainer);
+    e.target.offsetParent.offsetParent.offsetParent.appendChild(boxContainer);
     setTimeout(createRemove, 100);
   }
   function createRemove() {
-    const timeout = setTimeout(deleteBox, 3000);
+    const timeout = setTimeout(deleteBox, 4000);
     window.self.addEventListener("click", deleteBox);
     timeouts.push(timeout);
   }
@@ -87,7 +102,7 @@ export default function InfoCard({ data, lastPage }) {
     clearTimeout(timeouts[0]);
     timeouts.shift();
     window.self.removeEventListener("click", deleteBox);
-    const prev = document.querySelector(".alert.alert-info");
+    const prev = document.querySelector(".hover-container");
     prev.remove();
   }
 
@@ -138,6 +153,7 @@ export default function InfoCard({ data, lastPage }) {
                 characters={data.characters.edges}
                 Swiper={Swiper}
                 SwiperSlide={SwiperSlide}
+                innerWidth={innerWidth}
               />
               <RelatedAnime
                 relations={data.relations}
