@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function NewEpisodeModal({ shows }) {
+export default function NewEpisodeModal({ shows, language }) {
   // if (!shows.length) return null;
   // console.log(shows);
   return (
@@ -32,7 +32,7 @@ export default function NewEpisodeModal({ shows }) {
             <ul>
               {shows.length
                 ? shows.map((show) => (
-                    <li key={show.id}>{show.title.romaji}</li>
+                    <li key={show.id}>{show.title[language || "romaji"]}</li>
                   ))
                 : ""}
             </ul>

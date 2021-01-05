@@ -186,13 +186,23 @@ export default function body({
   async function checkForNewReleases() {
     console.log("checking for new releases");
     const episodesForQuery = watchStates
-      .filter((item) => item.status == "RELEASING")
+      .filter(
+        (item) =>
+          item.status == "RELEASING" || item.status == "NOT_YET_RELEASED"
+      )
       .map((item) => item.id);
     const response = await checkNewEp(episodesForQuery);
 
     const hasNewEpisodes = response.filter((latestShowInfo) => {
       const sameShow = watchStates.find((show) => latestShowInfo.id == show.id);
       if (!sameShow) return;
+      if (
+        sameShow.status == "NOT_YET_RELEASED" &&
+        latestShowInfo.status == "RELEASING"
+      ) {
+        //first ep aired
+        return sameShow;
+      }
       if (
         sameShow.status == "RELEASING" &&
         latestShowInfo.status == "FINISHED"
@@ -205,6 +215,7 @@ export default function body({
         sameShow.episodeNumber < latestShowInfo.nextAiringEpisode.episode
       ) {
         //new ep, show is still ongoing
+
         return sameShow;
       }
     });
@@ -320,23 +331,21 @@ export default function body({
           <ToggleSortDropdown />
         </div>
         <div className="row row-card-area">
-          {isFetching
-            ? ""
-            : data.map((data) => (
-                <Card
-                  key={data.id}
-                  data={data}
-                  language={language}
-                  watchSet={setWatchStates}
-                  considerSet={setConsiderStates}
-                  watching={watchStates}
-                  considering={considerStates}
-                />
-              ))}
+          {data.map((data) => (
+            <Card
+              key={data.id}
+              data={data}
+              language={language}
+              watchSet={setWatchStates}
+              considerSet={setConsiderStates}
+              watching={watchStates}
+              considering={considerStates}
+            />
+          ))}
         </div>
         <Spinner hasRendered={isFetching} />
       </div>
-      <NewEpisodesModal shows={newEpisodes} />
+      <NewEpisodesModal shows={newEpisodes} language={language} />
     </div>
   );
 }
