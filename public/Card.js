@@ -32,6 +32,13 @@ export default function Card({
     (obj) => obj.site == "Official Site"
   );
 
+  function airingStatusCheck(data) {
+    if (data.status == "FINISHED") return "Finished";
+    if (data.status == "NOT_YET_RELEASED")
+      return formatEpisodeAirDate(data.startDate);
+    return formatNextAiringEpisodeDate(data.nextAiringEpisode, data.status);
+  }
+
   function formatEpisodeAirDate({ day, month, year }) {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = [
@@ -48,12 +55,15 @@ export default function Card({
       "Nov",
       "Dec",
     ];
-    let date;
-    day ? (date = new Date(`${day}, ${months[month - 1]}, ${year}`)) : false;
+    let date = new Date(year, month - 1, day);
+    // day
+    //   ? (date = new Date(`${day}, ${months[month - 1]}, ${year}`).getDay())
+    //   : false;
     if (day) {
-      return `${days[date.getDay()]} ${months[month - 1]} ${day} ${year}`;
+      return `${days[date.getDay()]} ${months[month - 1]} ${year}`;
     }
-    return formatNextAiringEpisodeDate(data.nextAiringEpisode, data.status);
+    //!day
+    return "No information";
   }
 
   function formatNextAiringEpisodeDate(nextEp, status) {
@@ -203,7 +213,8 @@ export default function Card({
                   {studio ? studio.name : "No information"}
                 </li>
                 <li className="list-group-item date">
-                  {data.status == "FINISHED"
+                  {airingStatusCheck(data)}
+                  {/* {data.status == "FINISHED"
                     ? "Finished"
                     : data.status == "NOT_YET_RELEASED" ||
                       !data.nextAiringEpisode
@@ -211,7 +222,7 @@ export default function Card({
                     : formatNextAiringEpisodeDate(
                         data.nextAiringEpisode,
                         data.status
-                      )}
+                      )} */}
                 </li>
                 <li className="list-group-item meta-data">
                   <div className="source">

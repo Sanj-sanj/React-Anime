@@ -11,6 +11,7 @@ import AnimeDescription from "./AnimeDescription";
 import Banner from "./Banner";
 import RelatedAnime from "./RelatedAnime";
 import Characters from "./Characters";
+import Button from "./Button";
 //
 import SwiperCore, { Navigation, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -138,6 +139,7 @@ export default function InfoCard({ data, lastPage }) {
                   startDate.day
                 )}
               />
+              <Button style={"success"} action={"watching"} id={data.id} />
             </div>
             <MetaInfo
               format={format}

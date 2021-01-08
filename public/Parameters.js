@@ -16,7 +16,7 @@ export default function body({
   prevSeasonDashPrevYear,
   prevFormat,
   setCurrLocation,
-  data,
+  data = [],
   setData,
 }) {
   if (prevSeasonDashPrevYear && prevFormat) {
@@ -24,7 +24,6 @@ export default function body({
     const choices = [["TV", "TV_SHORT"], ["MOVIE"], ["OVA", "ONA"]];
     prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
   }
-
   const [onGoing, setOnGoing] = useState(
     JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"
   );
@@ -215,7 +214,6 @@ export default function body({
         sameShow.episodeNumber < latestShowInfo.nextAiringEpisode.episode
       ) {
         //new ep, show is still ongoing
-
         return sameShow;
       }
     });
@@ -230,7 +228,7 @@ export default function body({
   useEffect(async () => {
     setData([]);
     setIsFetching(true);
-
+    setCurrLocation(`/${season.join("-")}/${format[0]}`.toLowerCase());
     if (prevSeasonDashPrevYear && prevFormat && data.length) {
       if (
         prevSeasonDashPrevYear[0] == season[0] &&
@@ -243,10 +241,8 @@ export default function body({
         return;
       }
     }
-
     let ongoingShows = [];
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
-    setCurrLocation(`/${season.join("-")}/${format[0]}`.toLowerCase());
     console.log("hitting api");
     if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
       ongoingShows = await requestAnimes(onGoing, 1, [], format).then(
@@ -291,7 +287,7 @@ export default function body({
 
   return (
     <div>
-      <Nav lastLocation={"/"} />
+      <Nav lastLocation={"/"} setData={setData} />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
           <Season season={season} onChange={setSeason} />
@@ -331,17 +327,19 @@ export default function body({
           <ToggleSortDropdown />
         </div>
         <div className="row row-card-area">
-          {data.map((data) => (
-            <Card
-              key={data.id}
-              data={data}
-              language={language}
-              watchSet={setWatchStates}
-              considerSet={setConsiderStates}
-              watching={watchStates}
-              considering={considerStates}
-            />
-          ))}
+          {!data
+            ? ""
+            : data.map((data) => (
+                <Card
+                  key={data.id}
+                  data={data}
+                  language={language}
+                  watchSet={setWatchStates}
+                  considerSet={setConsiderStates}
+                  watching={watchStates}
+                  considering={considerStates}
+                />
+              ))}
         </div>
         <Spinner hasRendered={isFetching} />
       </div>

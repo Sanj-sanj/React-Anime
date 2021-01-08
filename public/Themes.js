@@ -1,6 +1,7 @@
 import React from "react";
 
 export default function Themes({ tags, describeTags, Swiper, SwiperSlide }) {
+  if (!tags.length) return null;
   return (
     <div className="more-info-container border-top">
       <h4 className="card-title">Themes</h4>
