@@ -7,8 +7,7 @@ export default async function requestAnimes(
   format,
   season
 ) {
-  console.log("Hitting API");
-  // console.log({ variables, nextPage, acc, format, season });
+  console.count("Hitting API");
 
   if (variables == "show ongoing") {
     variables = {
@@ -49,15 +48,12 @@ export default async function requestAnimes(
   const json = response.data;
   if (!response.status == 200) return Promise.reject(json);
   if (!json.data.Page.pageInfo.hasNextPage) {
-    // console.log("doesnt have a next page");
-    // console.log(variables);
     return acc.concat(json.data.Page.media);
   }
   console.log("has next page");
   //if were searching a particular anime or a list of ongoing shows use these params
   if (variables.id || variables.status_in) {
     variables.page = json.data.Page.pageInfo.currentPage + 1;
-    // console.log(json);
     return requestAnimes(
       variables,
       null,

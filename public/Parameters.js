@@ -18,6 +18,10 @@ export default function body({
   setCurrLocation,
   data = [],
   setData,
+  watchStates,
+  setWatchStates,
+  considerStates,
+  setConsiderStates,
 }) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -37,12 +41,6 @@ export default function body({
   );
   const [language, setLanguage] = useState(
     JSON.parse(localStorage.getItem("language")) || "english"
-  );
-  const [watchStates, setWatchStates] = useState(
-    JSON.parse(localStorage.getItem("watching")) || []
-  );
-  const [considerStates, setConsiderStates] = useState(
-    JSON.parse(localStorage.getItem("considering")) || []
   );
   const [isFetching, setIsFetching] = useState(true);
 
@@ -142,6 +140,7 @@ export default function body({
             )
         )
         .sort((a, b) => {
+          if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
           return (
             a.nextAiringEpisode.timeUntilAiring -
             b.nextAiringEpisode.timeUntilAiring
@@ -243,7 +242,6 @@ export default function body({
     }
     let ongoingShows = [];
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
-    console.log("hitting api");
     if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
       ongoingShows = await requestAnimes(onGoing, 1, [], format).then(
         (vals) => vals
@@ -273,11 +271,6 @@ export default function body({
     localStorage.setItem("language", JSON.stringify(language));
     localStorage.setItem("sort", JSON.stringify(sort));
   }, [sort, language]);
-
-  useEffect(() => {
-    localStorage.setItem("watching", JSON.stringify(watchStates));
-    localStorage.setItem("considering", JSON.stringify(considerStates));
-  }, [watchStates, considerStates]);
 
   useEffect(() => {
     if (!newEpisodes.length) return;

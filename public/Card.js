@@ -36,7 +36,9 @@ export default function Card({
     if (data.status == "FINISHED") return "Finished";
     if (data.status == "NOT_YET_RELEASED")
       return formatEpisodeAirDate(data.startDate);
-    return formatNextAiringEpisodeDate(data.nextAiringEpisode, data.status);
+    if (data.nextAiringEpisode)
+      return formatNextAiringEpisodeDate(data.nextAiringEpisode, data.status);
+    return "No information";
   }
 
   function formatEpisodeAirDate({ day, month, year }) {
@@ -56,17 +58,14 @@ export default function Card({
       "Dec",
     ];
     let date = new Date(year, month - 1, day);
-    // day
-    //   ? (date = new Date(`${day}, ${months[month - 1]}, ${year}`).getDay())
-    //   : false;
     if (day) {
-      return `${days[date.getDay()]} ${months[month - 1]} ${year}`;
+      return `${days[date.getDay()]} ${months[month - 1]} ${day} ${year}`;
     }
     //!day
     return "No information";
   }
 
-  function formatNextAiringEpisodeDate(nextEp, status) {
+  function formatNextAiringEpisodeDate(nextEp) {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const months = [
       "Jan",
@@ -82,12 +81,6 @@ export default function Card({
       "Nov",
       "Dec",
     ];
-    if (status == "FINISHED") {
-      return `Finished`;
-    }
-    if (nextEp == null || nextEp.timeUntilAiring == null) {
-      return `No infomation`;
-    }
     const nextEpDate = new Date();
     nextEpDate.setSeconds(nextEp.timeUntilAiring);
     let nextEpMinsRounded = Math.ceil(
@@ -263,6 +256,7 @@ export default function Card({
           <Link
             className="btn btn-sm btn-outline-info btn-id"
             to={`/details/${data.id}`}
+            sad={"sad"}
           >
             More info
           </Link>

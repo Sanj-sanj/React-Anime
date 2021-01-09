@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Countdown from "./Countdown";
 import Nav from "./Nav";
 import PosterColumn from "./PosterColumn";
@@ -18,13 +18,62 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
+import Ribbon from "./Ribbon";
 
 SwiperCore.use([Navigation, Scrollbar, A11y]);
 
-export default function InfoCard({ data, lastPage }) {
+export default function InfoCard({ data, lastPage, states }) {
+  console.log(states);
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-
+  const [watchState, setWatchState] = useState(
+    states.watchStates.find((item) => item.id == data.id) ? true : false
+  );
+  const [considerState, setConsiderState] = useState(
+    states.considerStates.find((item) => item.id == data.id) ? true : false
+  );
   window.addEventListener("resize", debounce(getWindowSize));
+
+  useEffect(() => {
+    const id = data.id;
+    const episodeNumber = data.nextAiringEpisode
+      ? data.nextAiringEpisode.episode
+      : null;
+    if (watchState) {
+      //if watching, add to watching state remove from considering state if exists
+      const currentlyWatching = states.watchStates.filter(
+        (show) => show.id !== id
+      );
+      const newWatching = [
+        ...currentlyWatching,
+        { title, id, episodeNumber, status },
+      ];
+      const currentConsider = states.considerStates.filter(
+        (show) => show.id !== id
+      );
+      states.setConsiderStates(currentConsider);
+      states.setWatchStates(newWatching);
+    }
+    if (considerState) {
+      const current = states.considerStates.filter((show) => show.id !== id);
+      const newConsider = [...current, { title, id, episodeNumber, status }];
+      const currentWatch = states.watchStates.filter((show) => show.id !== id);
+      states.setWatchStates(currentWatch);
+      states.setConsiderStates(newConsider);
+    }
+    if (!watchState && !considerState) {
+      const stillWatching = states.watchStates.filter((show) => show.id !== id);
+      const stillConsidering = states.considerStates.filter(
+        (show) => show.id !== id
+      );
+      states.setWatchStates(stillWatching);
+      states.setConsiderStates(stillConsidering);
+    }
+  }, [watchState, considerState]);
+
+  useEffect(() => {
+    localStorage.setItem("watching", JSON.stringify(states.watchStates));
+    localStorage.setItem("considering", JSON.stringify(states.considerStates));
+  }, [states.watchStates, states.considerStates]);
 
   function debounce(func) {
     let timer;
@@ -127,6 +176,7 @@ export default function InfoCard({ data, lastPage }) {
               />
             </div>
             <div className="row row-poster-meta-info mb-3">
+              <Ribbon watch={watchState} consider={considerState} />
               <PosterColumn coverImage={coverImage} title={title} id={id} />
               <RatingColumn
                 meanScore={meanScore}
@@ -139,8 +189,27 @@ export default function InfoCard({ data, lastPage }) {
                   startDate.day
                 )}
               />
-              <Button style={"success"} action={"watching"} id={data.id} />
             </div>
+
+            <Button
+              className={"mb-3"}
+              style={"success"}
+              action={"watching"}
+              status={watchState}
+              set={setWatchState}
+              altSet={setConsiderState}
+              id={data.id}
+            />
+            <Button
+              className={"mb-3"}
+              style={"warning"}
+              action={"consider"}
+              status={considerState}
+              set={setConsiderState}
+              altSet={setWatchState}
+              id={data.id}
+            />
+
             <MetaInfo
               format={format}
               source={source}

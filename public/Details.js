@@ -15,7 +15,7 @@ export default function goToMoreInfoWithNewDataAndLastPage(props) {
   }, [props.id]);
 
   return data.id ? (
-    <MoreInfo data={data} lastPage={lastPage} />
+    <MoreInfo data={data} lastPage={lastPage} states={props.states} />
   ) : (
     <Spinner hasRendered={data} />
   );

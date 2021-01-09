@@ -1,6 +1,13 @@
 import React from "react";
 
-export default function button({ style, action, status, set, altSet }) {
+export default function button({
+  style,
+  action,
+  status,
+  set,
+  altSet,
+  className,
+}) {
   function setStatus() {
     set(!status);
     //status updates async, therefore before its true it is false
@@ -12,13 +19,13 @@ export default function button({ style, action, status, set, altSet }) {
   }
 
   return (
-    <li className="icon">
+    <div className={`icon ${className}`}>
       <button
         className={`btn btn-sm btn-outline-${style} btn-${action}`}
         onClick={() => setStatus(status)}
       >
         {action.charAt(0).toUpperCase() + action.slice(1)}
       </button>
-    </li>
+    </div>
   );
 }

@@ -20,6 +20,13 @@ export default function makeCountdown({ status, airingInfo, cd, css }) {
       );
       const minutes = Math.floor((timeApart % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((timeApart % (1000 * 60)) / 1000);
+      // /* prettier-ignore*/
+      if (
+        [days, hours, minutes, seconds].reduce((acc, curr) => (acc += curr)) ==
+        0
+      ) {
+        return setTime("Airing!");
+      }
       const formatted = `${days}d ${hours}h ${
         minutes < 10 ? "0" : ""
       }${minutes}m ${seconds < 10 ? "0" : ""}${seconds}s`;
