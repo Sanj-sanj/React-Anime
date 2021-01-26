@@ -22,6 +22,7 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
@@ -166,8 +167,8 @@ const App = () => {
     if (signedIn && currentUser) await readFromDB(currentUser.googleId);
   }, [signedIn, currLocation, currentUser]);
 
-  useEffect(() => {
-    if (currentUser && signedIn) writeToDB();
+  useEffect(async () => {
+    if (currentUser && signedIn) await writeToDB();
   }, [watchStates, considerStates]);
 
   return (
