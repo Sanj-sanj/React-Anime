@@ -9,6 +9,7 @@ export default function navbar({
   isOnline,
 }) {
   lastLocation ? (lastLocation = `${lastLocation}`) : (lastLocation = "/");
+
   return (
     <div className="navbar navbar-dark bg-dark">
       <h2 className="navbar-text">
@@ -41,6 +42,8 @@ export default function navbar({
           cookiePolicy={"single_host_origin"}
           isSignedIn={true}
           theme="dark"
+          // responseType='code'
+          uxMode="redirect"
         />
       )}
     </div>
