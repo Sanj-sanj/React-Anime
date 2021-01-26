@@ -26,7 +26,9 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
-
+console.log(process.env.REACT_APP_MEASUREMENT_ID);
+console.log(process.env);
+console.log(process);
 const App = () => {
   const [currentUser, setCurrentUser] = useState("");
   const [currLocation, setCurrLocation] = useState("/");
