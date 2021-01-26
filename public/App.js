@@ -22,7 +22,6 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
@@ -49,58 +48,59 @@ const App = () => {
   async function onSignIn(googleUser) {
     // console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = firebase.auth().onAuthStateChanged((firebaseUser) => {
-      unsubscribe();
-      // Check if we are already signed-in Firebase with the correct user.
-      if (!isUserEqual(googleUser, firebaseUser)) {
-        // Build Firebase credential with the Google ID token.
-        console.log(googleUser);
-        var credential = firebase.auth.GoogleAuthProvider.credential(
-          googleUser.getAuthResponse().id_token
-        );
-        console.log("signing in");
-        try {
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .catch((error) => {
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
-              console.log({ errorCode, errorMessage, email, credential });
-            });
-          // console.log(firebaseUser);
-          setSignedIn(true);
+    var unsubscribe = firebase
+      .auth()
+      .onAuthStateChanged(async (firebaseUser) => {
+        unsubscribe();
+        // Check if we are already signed-in Firebase with the correct user.
+        if (!isUserEqual(googleUser, firebaseUser)) {
+          // Build Firebase credential with the Google ID token.
+          var credential = firebase.auth.GoogleAuthProvider.credential(
+            await googleUser.getAuthResponse().id_token
+          );
+          console.log("signing in");
+          try {
+            await firebase
+              .auth()
+              .signInWithCredential(credential)
+              .catch((error) => {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+                console.log({ errorCode, errorMessage, email, credential });
+              });
+            // console.log(firebaseUser);
+            setSignedIn(true);
+            setCurrentUser(googleUser.profileObj);
+            refreshTokenSetup(googleUser);
+          } catch (error) {
+            console.log("Could not sign in.");
+            console.log(error);
+          }
+
+          // Sign in with credential from the Google user.
+        } else {
           setCurrentUser(googleUser.profileObj);
           refreshTokenSetup(googleUser);
-        } catch (error) {
-          console.log("Could not sign in.");
-          console.log(error);
+          setSignedIn(true);
+          console.log("User already signed-in Firebase.");
         }
-
-        // Sign in with credential from the Google user.
-      } else {
-        setCurrentUser(googleUser.profileObj);
-        refreshTokenSetup(googleUser);
-        setSignedIn(true);
-        console.log("User already signed-in Firebase.");
-      }
-      // readFromDB(googleUser.profileObj.googleId);
-    });
+        // readFromDB(googleUser.profileObj.googleId);
+      });
   }
-  function isUserEqual(googleUser, firebaseUser) {
+  async function isUserEqual(googleUser, firebaseUser) {
     if (firebaseUser) {
       var providerData = firebaseUser.providerData;
       for (var i = 0; i < providerData.length; i++) {
         if (
           providerData[i].providerId ===
             firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
-          providerData[i].uid === googleUser.getBasicProfile().getId()
+          providerData[i].uid === (await googleUser.getBasicProfile().getId())
         ) {
           // We don't need to reauth the Firebase connection.
           return true;
@@ -122,10 +122,10 @@ const App = () => {
     //setup first refresh timer
     setTimeout(refreshToken, refreshTiming);
   }
-  function readFromDB(googleUserID) {
+  async function readFromDB(googleUserID) {
     const docRef = firestore.collection("users").doc(googleUserID);
     console.log("reading from db");
-    docRef
+    await docRef
       .get()
       .then(function (doc) {
         if (doc.exists) {
@@ -146,8 +146,8 @@ const App = () => {
         onSignOut();
       });
   }
-  function writeToDB() {
-    firestore
+  async function writeToDB() {
+    await firestore
       .collection("users")
       .doc(`${currentUser.googleId}`)
       .set({
