@@ -54,7 +54,6 @@ const App = () => {
       // Check if we are already signed-in Firebase with the correct user.
       if (!isUserEqual(googleUser, firebaseUser)) {
         // Build Firebase credential with the Google ID token.
-        console.log(googleUser);
         var credential = firebase.auth.GoogleAuthProvider.credential(
           googleUser.getAuthResponse().id_token
         );
@@ -146,8 +145,8 @@ const App = () => {
         onSignOut();
       });
   }
-  async function writeToDB() {
-    await firestore
+  function writeToDB() {
+    firestore
       .collection("users")
       .doc(`${currentUser.googleId}`)
       .set({
@@ -166,8 +165,8 @@ const App = () => {
     if (signedIn && currentUser) await readFromDB(currentUser.googleId);
   }, [signedIn, currLocation, currentUser]);
 
-  useEffect(async () => {
-    if (currentUser && signedIn) await writeToDB();
+  useEffect(() => {
+    if (currentUser && signedIn) writeToDB();
   }, [watchStates, considerStates]);
 
   return (
