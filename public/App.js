@@ -54,6 +54,7 @@ const App = () => {
       // Check if we are already signed-in Firebase with the correct user.
       if (!isUserEqual(googleUser, firebaseUser)) {
         // Build Firebase credential with the Google ID token.
+        console.log(googleUser);
         var credential = firebase.auth.GoogleAuthProvider.credential(
           googleUser.getAuthResponse().id_token
         );

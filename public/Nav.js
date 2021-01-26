@@ -9,7 +9,8 @@ export default function navbar({
   isOnline,
 }) {
   lastLocation ? (lastLocation = `${lastLocation}`) : (lastLocation = "/");
-
+  const devClientId =
+    "199155120744-c6co7khju4t1793gvhv9ap42t6mpia4i.apps.googleusercontent.com";
   return (
     <div className="navbar navbar-dark bg-dark">
       <h2 className="navbar-text">
@@ -42,8 +43,9 @@ export default function navbar({
           cookiePolicy={"single_host_origin"}
           isSignedIn={true}
           theme="dark"
-          // responseType='code'
+          // responseType="code"
           uxMode="redirect"
+          redirectUri="https://react-anime.herokuapp.com/"
         />
       )}
     </div>
