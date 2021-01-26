@@ -1,5 +1,6 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import React, { useState, useEffect } from "react";
+
 import ToggleSortDropdown from "./ToggleDropdown";
 import Season from "./Season";
 import Format from "./Format";
@@ -22,6 +23,11 @@ export default function body({
   setWatchStates,
   considerStates,
   setConsiderStates,
+  onSignIn,
+  onSignOut,
+  isOnline,
+  newEpisodes,
+  setNewEpisodes,
 }) {
   if (prevSeasonDashPrevYear && prevFormat) {
     prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
@@ -31,7 +37,7 @@ export default function body({
   const [onGoing, setOnGoing] = useState(
     JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"
   );
-  const [newEpisodes, setNewEpisodes] = useState([]);
+  // const [newEpisodes, setNewEpisodes] = useState([]);
   const [season, setSeason] = useState(
     prevSeasonDashPrevYear || seasonFunc.checkSeason().split(" ")
   );
@@ -167,6 +173,7 @@ export default function body({
     const unaffectedShows = watchStates.filter(
       (show) => !arrOfNewShows.find((newEp) => show.id == newEp.id)
     );
+    console.log(unaffectedShows);
     let updated = unaffectedShows.concat(
       arrOfNewShows.map((show) => {
         const episodeNumber = show.nextAiringEpisode
@@ -178,10 +185,12 @@ export default function body({
         return { title, id, episodeNumber, status };
       })
     );
+    console.log(updated);
     return updated;
   }
 
   async function checkForNewReleases() {
+    if (!watchStates.length) return;
     console.log("checking for new releases");
     const episodesForQuery = watchStates
       .filter(
@@ -190,7 +199,9 @@ export default function body({
       )
       .map((item) => item.id);
     const response = await checkNewEp(episodesForQuery);
-
+    // console.log(episodesForQuery);
+    // console.log(watchStates);
+    // console.log(response);
     const hasNewEpisodes = response.filter((latestShowInfo) => {
       const sameShow = watchStates.find((show) => latestShowInfo.id == show.id);
       if (!sameShow) return;
@@ -216,12 +227,17 @@ export default function body({
         return sameShow;
       }
     });
-    // console.log(hasNewEpisodes);
-
     if (hasNewEpisodes.length) {
       setNewEpisodes(hasNewEpisodes);
       setWatchStates(updateNewEpisodes(hasNewEpisodes));
     }
+  }
+  function removeDuplicates(arr) {
+    //their server can send duplicate items at times messing with React
+    return arr.reduce((acc, curr) => {
+      acc.find((show) => show.id == curr.id) ? false : acc.push(curr);
+      return acc;
+    }, []);
   }
 
   useEffect(async () => {
@@ -236,7 +252,6 @@ export default function body({
         //this is the time we reuse our previous API result
         setData(data);
         setIsFetching(false);
-        checkForNewReleases();
         return;
       }
     }
@@ -250,19 +265,13 @@ export default function body({
     const thisSeasons = await requestAnimes(null, 1, [], format, season).then(
       (vals) => vals
     );
-    setData(
-      sortCards(
-        thisSeasons.concat(
-          ongoingShows
-            .filter(
-              (show) =>
-                !thisSeasons.find((seasonShow) => show.id == seasonShow.id)
-            )
-            .filter((show) => show.popularity >= 100)
-        )
+    ongoingShows = ongoingShows
+      .filter(
+        (show) => !thisSeasons.find((seasonShow) => show.id == seasonShow.id)
       )
-    );
-    checkForNewReleases();
+      .filter((show) => show.popularity >= 100);
+
+    setData(sortCards(removeDuplicates(thisSeasons.concat(ongoingShows))));
     setIsFetching(false);
   }, [season, format, onGoing]);
 
@@ -270,7 +279,7 @@ export default function body({
     setData(sortCards(data));
     localStorage.setItem("language", JSON.stringify(language));
     localStorage.setItem("sort", JSON.stringify(sort));
-  }, [sort, language]);
+  }, [sort, language, watchStates, isOnline]);
 
   useEffect(() => {
     if (!newEpisodes.length) return;
@@ -278,9 +287,26 @@ export default function body({
     new Modal(newEpisodesModal).show();
   }, [newEpisodes]);
 
+  useEffect(() => {
+    // if the user signs manually and not auto, reload the page to properly display newep modal
+    // problem is if a new user signs up and in, the doc keep reloading
+
+    if (isOnline && !isFetching && !newEpisodes.length) {
+      console.log("can check for releases");
+      // readFromDB();
+      checkForNewReleases();
+    }
+  }, [isOnline, isFetching, watchStates]);
+
   return (
     <div>
-      <Nav lastLocation={"/"} setData={setData} />
+      <Nav
+        lastLocation={"/"}
+        setData={setData}
+        signInFunc={onSignIn}
+        signOutFunc={onSignOut}
+        isOnline={isOnline}
+      />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
           <Season season={season} onChange={setSeason} />
@@ -319,6 +345,7 @@ export default function body({
           />
           <ToggleSortDropdown />
         </div>
+
         <div className="row row-card-area">
           {!data
             ? ""

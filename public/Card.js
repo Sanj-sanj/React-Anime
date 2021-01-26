@@ -12,8 +12,8 @@ export default function Card({
   watching,
   considering,
 }) {
-  const [watchState, setWatchState] = useState(false);
-  const [considerState, setConsiderState] = useState(false);
+  const [isWatching, setIsWatching] = useState(false);
+  const [isConsidering, setIsConsidering] = useState(false);
 
   const nextEpCD = new Date();
   const airing = data.nextAiringEpisode
@@ -102,9 +102,10 @@ export default function Card({
     const episodeNumber = data.nextAiringEpisode
       ? data.nextAiringEpisode.episode
       : null;
-    if (watchState) {
+    if (isWatching) {
       //if watching, add to watching state remove from considering state if exists
       const currentlyWatching = watching.filter((show) => show.id !== id);
+      // console.log(currentlyWatching);
       const newWatching = [
         ...currentlyWatching,
         { title, id, episodeNumber, status },
@@ -113,14 +114,14 @@ export default function Card({
       considerSet(currentConsider);
       watchSet(newWatching);
     }
-    if (considerState) {
+    if (isConsidering) {
       const current = considering.filter((show) => show.id !== id);
       const newConsider = [...current, { title, id, episodeNumber, status }];
       const currentWatch = watching.filter((show) => show.id !== id);
       watchSet(currentWatch);
       return considerSet(newConsider);
     }
-    if (!watchState && !considerState) {
+    if (!isWatching && !isConsidering) {
       const stillWatching = watching.filter((show) => {
         return show.id !== id;
       });
@@ -130,23 +131,25 @@ export default function Card({
       watchSet(stillWatching);
       considerSet(stillConsidering);
     }
-  }, [watchState, considerState]);
+  }, [isWatching, isConsidering]);
 
   useEffect(() => {
+    setIsWatching(false);
+    setIsConsidering(false);
     watching.forEach((show) => {
       if (show.id != data.id) return;
-      show.id == data.id ? setWatchState(true) : false;
+      show.id == data.id ? setIsWatching(true) : false;
     });
     considering.forEach((show) => {
       if (show.id != data.id) return;
-      show.id == data.id ? setConsiderState(true) : false;
+      show.id == data.id ? setIsConsidering(true) : false;
     });
-  }, []);
+  }, [watching, considering]);
 
   return (
     <div className="card anime-card mb-3 col-md-4 col-xl-3">
       <h5 className="anime-title">
-        <Ribbon watch={watchState} consider={considerState} />
+        <Ribbon watch={isWatching} consider={isConsidering} />
         <a
           className="main-title"
           href={officialSite ? officialSite.url : "#"}
@@ -171,7 +174,7 @@ export default function Card({
       <div className="contents">
         <div className="col img-spot">
           <Countdown
-            status={data.status}
+            airingStatus={data.status}
             airingInfo={data.nextAiringEpisode}
             cd={airing}
           />
@@ -239,24 +242,23 @@ export default function Card({
         <Button
           style={"success"}
           action={"watching"}
-          status={watchState}
-          set={setWatchState}
-          altSet={setConsiderState}
+          airingStatus={isWatching}
+          set={setIsWatching}
+          altSet={setIsConsidering}
           id={data.id}
         />
         <Button
           style={"warning"}
           action={"consider"}
-          status={considerState}
-          set={setConsiderState}
-          altSet={setWatchState}
+          airingStatus={isConsidering}
+          set={setIsConsidering}
+          altSet={setIsWatching}
           id={data.id}
         />
         <li className="icon">
           <Link
             className="btn btn-sm btn-outline-info btn-id"
             to={`/details/${data.id}`}
-            sad={"sad"}
           >
             More info
           </Link>

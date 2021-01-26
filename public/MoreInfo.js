@@ -22,8 +22,14 @@ import Ribbon from "./Ribbon";
 
 SwiperCore.use([Navigation, Scrollbar, A11y]);
 
-export default function InfoCard({ data, lastPage, states }) {
-  console.log(states);
+export default function InfoCard({
+  data,
+  lastPage,
+  states,
+  onSignIn,
+  onSignOut,
+  isOnline,
+}) {
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [watchState, setWatchState] = useState(
     states.watchStates.find((item) => item.id == data.id) ? true : false
@@ -31,6 +37,7 @@ export default function InfoCard({ data, lastPage, states }) {
   const [considerState, setConsiderState] = useState(
     states.considerStates.find((item) => item.id == data.id) ? true : false
   );
+  const language = JSON.parse(localStorage.getItem("language")) || "english";
   window.addEventListener("resize", debounce(getWindowSize));
 
   useEffect(() => {
@@ -38,6 +45,7 @@ export default function InfoCard({ data, lastPage, states }) {
     const episodeNumber = data.nextAiringEpisode
       ? data.nextAiringEpisode.episode
       : null;
+    const title = data.title[language];
     if (watchState) {
       //if watching, add to watching state remove from considering state if exists
       const currentlyWatching = states.watchStates.filter(
@@ -71,8 +79,13 @@ export default function InfoCard({ data, lastPage, states }) {
   }, [watchState, considerState]);
 
   useEffect(() => {
-    localStorage.setItem("watching", JSON.stringify(states.watchStates));
-    localStorage.setItem("considering", JSON.stringify(states.considerStates));
+    console.log("statesupdate");
+    setWatchState(
+      states.watchStates.find((item) => item.id == data.id) ? true : false
+    );
+    setConsiderState(
+      states.considerStates.find((item) => item.id == data.id) ? true : false
+    );
   }, [states.watchStates, states.considerStates]);
 
   function debounce(func) {
@@ -155,10 +168,14 @@ export default function InfoCard({ data, lastPage, states }) {
     const prev = document.querySelector(".hover-container");
     prev.remove();
   }
-
   return (
     <div>
-      <Nav lastLocation={`${lastPage}`} />
+      <Nav
+        lastLocation={`${lastPage}`}
+        signInFunc={onSignIn}
+        signOutFunc={onSignOut}
+        isOnline={isOnline}
+      />
       <div className="container main-container">
         <Banner bannerImage={bannerImage} />
         <div className="card text-dark bg-light ">
@@ -169,7 +186,7 @@ export default function InfoCard({ data, lastPage, states }) {
             </h6>
             <div className="countdown-container">
               <Countdown
-                status={status}
+                airingStatus={status}
                 airingInfo={nextAiringEpisode}
                 cd={cd}
                 css={"countdown-show mb-2"}
@@ -195,7 +212,7 @@ export default function InfoCard({ data, lastPage, states }) {
               className={"mb-3"}
               style={"success"}
               action={"watching"}
-              status={watchState}
+              airingStatus={watchState}
               set={setWatchState}
               altSet={setConsiderState}
               id={data.id}
@@ -204,7 +221,7 @@ export default function InfoCard({ data, lastPage, states }) {
               className={"mb-3"}
               style={"warning"}
               action={"consider"}
-              status={considerState}
+              airingStatus={considerState}
               set={setConsiderState}
               altSet={setWatchState}
               id={data.id}

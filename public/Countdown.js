@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 
-export default function makeCountdown({ status, airingInfo, cd, css }) {
+export default function makeCountdown({ airingStatus, airingInfo, cd, css }) {
   const [time, setTime] = useState("");
 
   useEffect(() => {
-    if (status == null || airingInfo == null) {
+    if (airingStatus == null || airingInfo == null) {
       setTime("");
       return;
     }
@@ -27,7 +27,7 @@ export default function makeCountdown({ status, airingInfo, cd, css }) {
       ) {
         return setTime("Airing!");
       }
-      const formatted = `${days}d ${hours}h ${
+      const formatted = `- ${days}d ${hours}h ${
         minutes < 10 ? "0" : ""
       }${minutes}m ${seconds < 10 ? "0" : ""}${seconds}s`;
       setTime(formatted);
@@ -36,10 +36,10 @@ export default function makeCountdown({ status, airingInfo, cd, css }) {
     return () => {
       clearInterval(timer);
     };
-  }, [cd, status]);
+  }, [cd, airingStatus]);
 
   const episode =
-    status == "FINISHED"
+    airingStatus == "FINISHED"
       ? "Finished!"
       : airingInfo
       ? "Ep " + airingInfo.episode

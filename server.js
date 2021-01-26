@@ -2,7 +2,7 @@
 const express = require("express");
 const server = express();
 // let bundler = new Bundler("dist/index.html");
-const port = process.env.PORT || 3570;
+const port = process.env.PORT || 1234;
 
 server.use(express.static(__dirname + "/dist"));
 // server.use(express.static(__dirname + "/public/index.html"));

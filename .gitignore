@@ -7,3 +7,5 @@ public/testDropdown.js
 public/graphql.js
 public/useOpions.js
 debug.log
+secrets.txt
+.env.local
