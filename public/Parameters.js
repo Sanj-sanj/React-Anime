@@ -173,7 +173,6 @@ export default function body({
     const unaffectedShows = watchStates.filter(
       (show) => !arrOfNewShows.find((newEp) => show.id == newEp.id)
     );
-    console.log(unaffectedShows);
     let updated = unaffectedShows.concat(
       arrOfNewShows.map((show) => {
         const episodeNumber = show.nextAiringEpisode
@@ -185,7 +184,6 @@ export default function body({
         return { title, id, episodeNumber, status };
       })
     );
-    console.log(updated);
     return updated;
   }
 
@@ -289,11 +287,8 @@ export default function body({
 
   useEffect(() => {
     // if the user signs manually and not auto, reload the page to properly display newep modal
-    // problem is if a new user signs up and in, the doc keep reloading
-
     if (isOnline && !isFetching && !newEpisodes.length) {
       console.log("can check for releases");
-      // readFromDB();
       checkForNewReleases();
     }
   }, [isOnline, isFetching, watchStates]);

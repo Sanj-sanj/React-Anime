@@ -22,7 +22,6 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
@@ -37,60 +36,47 @@ const App = () => {
   const [newEpisodes, setNewEpisodes] = useState([]);
 
   async function onSignOut() {
-    console.log("Signed Out");
-    await writeToDB();
-    firebase.auth().signOut();
-    setCurrentUser("");
-    setWatchStates([]);
-    setConsiderStates([]);
-    setSignedIn(false);
+    try {
+      console.log("Signed Out");
+      await firebase.auth().signOut();
+      setSignedIn(false);
+      setCurrentUser("");
+      setWatchStates([]);
+      setConsiderStates([]);
+    } catch (error) {
+      console.log(`Error signing out of firebase: ${error}`);
+    }
   }
 
   async function onSignIn(googleUser) {
-    // console.log("Google Auth Response", googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = firebase.auth().onAuthStateChanged((firebaseUser) => {
-      unsubscribe();
-      // Check if we are already signed-in Firebase with the correct user.
-      if (!isUserEqual(googleUser, firebaseUser)) {
-        // Build Firebase credential with the Google ID token.
-        var credential = firebase.auth.GoogleAuthProvider.credential(
-          googleUser.getAuthResponse().id_token
-        );
-        console.log("signing in");
-        try {
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .catch((error) => {
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
-              console.log({ errorCode, errorMessage, email, credential });
-            });
-          // console.log(firebaseUser);
-          setSignedIn(true);
+    var unsubscribe = firebase
+      .auth()
+      .onAuthStateChanged(async (firebaseUser) => {
+        unsubscribe();
+        // Check if we are already signed-in Firebase with the correct user.
+        if (!isUserEqual(googleUser, firebaseUser)) {
+          // Build Firebase credential with the Google ID token.
+          var credential = firebase.auth.GoogleAuthProvider.credential(
+            googleUser.getAuthResponse().id_token
+          );
+          console.log("signing in");
+          try {
+            await firebase.auth().signInWithCredential(credential);
+            setSignedIn(true);
+            setCurrentUser(googleUser.profileObj);
+            refreshTokenSetup(googleUser);
+          } catch (error) {
+            console.log("Could not sign in: " + error);
+          }
+          // Sign in with credential from the Google user.
+        } else {
           setCurrentUser(googleUser.profileObj);
           refreshTokenSetup(googleUser);
-        } catch (error) {
-          console.log("Could not sign in.");
-          console.log(error);
+          setSignedIn(true);
+          console.log("User already signed-in Firebase.");
         }
-
-        // Sign in with credential from the Google user.
-      } else {
-        setCurrentUser(googleUser.profileObj);
-        refreshTokenSetup(googleUser);
-        setSignedIn(true);
-        console.log("User already signed-in Firebase.");
-      }
-      // readFromDB(googleUser.profileObj.googleId);
-    });
+      });
   }
   function isUserEqual(googleUser, firebaseUser) {
     if (firebaseUser) {
@@ -121,52 +107,51 @@ const App = () => {
     //setup first refresh timer
     setTimeout(refreshToken, refreshTiming);
   }
-  function readFromDB(googleUserID) {
+  async function readFromDB(googleUserID) {
     const docRef = firestore.collection("users").doc(googleUserID);
     console.log("reading from db");
-    docRef
-      .get()
-      .then(function (doc) {
-        if (doc.exists) {
-          const { watching, considering } = doc.data();
-          setWatchStates(JSON.parse(watching));
-          setConsiderStates(JSON.parse(considering));
-          console.log("FOUND DOCUMENT");
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
-          setWatchStates([]);
-          setConsiderStates([]);
-        }
-      })
-      .catch(function (error) {
-        console.log("Error getting document:", error);
-        //incase error getting doc, sign user out
-        onSignOut();
-      });
+    try {
+      const doc = await docRef.get();
+      if (doc.exists) {
+        const { watching, considering } = doc.data();
+        setWatchStates(JSON.parse(watching));
+        setConsiderStates(JSON.parse(considering));
+        console.log("FOUND DOCUMENT");
+      } else {
+        // doc.data() will be undefined in this case /* could */ be user's first login
+        console.log("No such document!");
+        setWatchStates([]);
+        setConsiderStates([]);
+      }
+    } catch (error) {
+      console.log("Error getting document:", error);
+      //incase error getting doc, sign user out
+      onSignOut();
+    }
   }
-  function writeToDB() {
-    firestore
-      .collection("users")
-      .doc(`${currentUser.googleId}`)
-      .set({
-        watching: JSON.stringify(watchStates),
-        considering: JSON.stringify(considerStates),
-      })
-      .then(function () {
-        return console.log("Document successfully written");
-      })
-      .catch(function (error) {
-        return console.log(`Error writting document: ${error}`);
-      });
+  async function writeToDB() {
+    try {
+      await firestore
+        .collection("users")
+        .doc(`${currentUser.googleId}`)
+        .set({
+          watching: JSON.stringify(watchStates),
+          considering: JSON.stringify(considerStates),
+        });
+      console.log("wrote to db");
+    } catch (error) {
+      console.log(`Error writting document: ${error}`);
+    }
   }
 
-  useEffect(async () => {
-    if (signedIn && currentUser) await readFromDB(currentUser.googleId);
+  useEffect(() => {
+    if (signedIn && currentUser) readFromDB(currentUser.googleId);
   }, [signedIn, currLocation, currentUser]);
 
   useEffect(() => {
-    if (currentUser && signedIn) writeToDB();
+    if (currentUser && signedIn) {
+      writeToDB();
+    }
   }, [watchStates, considerStates]);
 
   return (
