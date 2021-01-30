@@ -44,7 +44,7 @@ export default function navbar({
           theme="dark"
           // responseType="code"
           uxMode="redirect"
-          redirectUri="https://react-anime.herokuapp.com/"
+          redirectUri={process.env.REACT_APP_REDIRECT_URL}
         />
       )}
     </div>

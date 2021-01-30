@@ -37,7 +37,6 @@ export default function body({
   const [onGoing, setOnGoing] = useState(
     JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"
   );
-  // const [newEpisodes, setNewEpisodes] = useState([]);
   const [season, setSeason] = useState(
     prevSeasonDashPrevYear || seasonFunc.checkSeason().split(" ")
   );

@@ -37,7 +37,7 @@ export default function InfoCard({
   const [considerState, setConsiderState] = useState(
     states.considerStates.find((item) => item.id == data.id) ? true : false
   );
-  const language = JSON.parse(localStorage.getItem("language")) || "english";
+  const language = JSON.parse(localStorage.getItem("language")) || "romaji";
   window.addEventListener("resize", debounce(getWindowSize));
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export default function InfoCard({
         isOnline={isOnline}
       />
       <div className="container main-container">
-        <Banner bannerImage={bannerImage} />
+        <Banner bannerImage={bannerImage} altText={data.title[language]} />
         <div className="card text-dark bg-light ">
           <div className="card-body">
             <h2 className="card-title">{title.romaji || title.english}</h2>
