@@ -17,6 +17,7 @@ export default function seasonHeader({ season, onChange }) {
         className="btn change-season"
         type="button"
         onClick={() => changeSeason("down")}
+        aria-label="Last season"
       >
         <svg
           width="2em"
@@ -34,6 +35,7 @@ export default function seasonHeader({ season, onChange }) {
         className="btn change-season"
         type="button"
         onClick={() => changeSeason("up")}
+        aria-label="Next season"
       >
         <svg
           width="2em"

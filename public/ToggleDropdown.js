@@ -32,6 +32,7 @@ export default function Dropdown() {
     <button
       className="btn pull-dropdown"
       type="button"
+      aria-label="Sort and preferences dropdown"
       onClick={() => setToggle(!toggle)}
     >
       <svg

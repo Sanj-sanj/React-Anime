@@ -3,13 +3,11 @@ import { Link } from "@reach/router";
 import { GoogleLogin, GoogleLogout } from "react-google-login";
 
 export default function navbar({
-  lastLocation,
+  lastLocation = "/",
   signInFunc,
   signOutFunc,
   isOnline,
 }) {
-  lastLocation ? (lastLocation = `${lastLocation}`) : (lastLocation = "/");
-
   return (
     <div className="navbar navbar-dark bg-dark">
       <h2 className="navbar-text">

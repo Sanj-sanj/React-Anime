@@ -3,6 +3,7 @@ import { Link } from "@reach/router";
 import Countdown from "./Countdown";
 import Button from "./Button";
 import Ribbon from "./Ribbon";
+import LazyLoad from "react-lazyload";
 
 export default function Card({
   data,
@@ -148,7 +149,7 @@ export default function Card({
 
   return (
     <div className="card anime-card mb-3 col-md-4 col-xl-3">
-      <h5 className="anime-title">
+      <div className="anime-title">
         <Ribbon watch={isWatching} consider={isConsidering} />
         <a
           className="main-title"
@@ -158,7 +159,7 @@ export default function Card({
         >
           {title}{" "}
         </a>
-      </h5>
+      </div>
       <ol className="anime-genre">
         {data.genres.length ? (
           data.genres.map((genre) => (
@@ -178,12 +179,14 @@ export default function Card({
             airingInfo={data.nextAiringEpisode}
             cd={airing}
           />
-          <img
-            className="card-img-top anime-cover-image"
-            src={data.coverImage.large}
-            alt={data.title.english ? data.title.english : data.title.romaji}
-            srcSet=""
-          />
+          <LazyLoad>
+            <img
+              className="card-img-top anime-cover-image"
+              src={data.coverImage.large}
+              alt={data.title.english ? data.title.english : data.title.romaji}
+              srcSet=""
+            />
+          </LazyLoad>
           <div className="format">
             <div className="format-text-area">
               <span role="img" aria-label="tv-emoji">
@@ -210,15 +213,6 @@ export default function Card({
                 </li>
                 <li className="list-group-item date">
                   {airingStatusCheck(data)}
-                  {/* {data.status == "FINISHED"
-                    ? "Finished"
-                    : data.status == "NOT_YET_RELEASED" ||
-                      !data.nextAiringEpisode
-                    ? formatEpisodeAirDate(data.startDate)
-                    : formatNextAiringEpisodeDate(
-                        data.nextAiringEpisode,
-                        data.status
-                      )} */}
                 </li>
                 <li className="list-group-item meta-data">
                   <div className="source">
@@ -238,7 +232,7 @@ export default function Card({
           </div>
         </div>
       </div>
-      <ul className="links icons">
+      <div className="links icons">
         <Button
           style={"success"}
           action={"watching"}
@@ -255,15 +249,15 @@ export default function Card({
           altSet={setIsWatching}
           id={data.id}
         />
-        <li className="icon">
+        <div className="icon">
           <Link
-            className="btn btn-sm btn-outline-info btn-id"
             to={`/details/${data.id}`}
+            className="btn btn-sm btn-outline-info btn-id"
           >
-            More info
+            Details
           </Link>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
   );
 }

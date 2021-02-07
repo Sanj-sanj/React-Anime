@@ -1,8 +1,6 @@
 import React from "react";
 
 export default function NewEpisodeModal({ shows, language }) {
-  // if (!shows.length) return null;
-  // console.log(shows);
   return (
     <div
       className="modal fade"

@@ -11,9 +11,6 @@ export default function posterColumn({ coverImage, title }) {
           title={title.romaji || title.english}
         />
       </div>
-      {/* <span className="library-position border border-top-0 border-primary">
-        Watch
-      </span> */}
     </div>
   );
 }

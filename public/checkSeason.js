@@ -3,7 +3,6 @@ const seasons = ["WINTER", "SPRING", "SUMMER", "FALL"];
 
 function seasonFunc() {
   function getSeasonIndex(season) {
-    // console.log(season);
     return seasons.findIndex((arrSeason) => arrSeason == season);
   }
 

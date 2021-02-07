@@ -100,7 +100,6 @@ const App = () => {
       console.log("refresh token");
       const newAuthRes = await res.reloadAuthResponse();
       refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
-      //saveUserToken(newAuthRes.acces_token) <--save new token
       //setup the other timer after the first one
       setTimeout(refreshToken, refreshTiming);
     };

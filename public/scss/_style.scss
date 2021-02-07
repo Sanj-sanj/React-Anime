@@ -132,6 +132,7 @@ li.f-choice button:hover {
   justify-content: center;
   line-height: initial;
   font-size: 1rem;
+  font-weight: 500;
 }
 .ribbon {
   display: flex;
@@ -153,6 +154,9 @@ li.f-choice button:hover {
   padding: 0;
   margin: 0 0 0.1em 0;
   list-style: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 ol.anime-genre li {
   display: inline;
@@ -172,7 +176,6 @@ ol.anime-genre li:not(:last-child)::after {
 }
 .contents {
   display: flex;
-  height: 100%;
 }
 .anime-info {
   display: flex;

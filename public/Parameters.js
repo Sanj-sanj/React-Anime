@@ -6,12 +6,12 @@ import Season from "./Season";
 import Format from "./Format";
 import SortDropdown from "./SortDropdown";
 import seasonFunc from "./checkSeason";
+import requestAnimes from "./requestAnimes";
+import checkNewEp from "./checkNewEpisodes";
+import Spinner from "./Spinner";
+import Nav from "./Nav";
 import Card from "./Card";
 import NewEpisodesModal from "./NewEpisodeModal";
-import Spinner from "./Spinner";
-import requestAnimes from "./requestAnimes";
-import Nav from "./Nav";
-import checkNewEp from "./checkNewEpisodes";
 
 export default function body({
   prevSeasonDashPrevYear,
@@ -196,9 +196,6 @@ export default function body({
       )
       .map((item) => item.id);
     const response = await checkNewEp(episodesForQuery);
-    // console.log(episodesForQuery);
-    // console.log(watchStates);
-    // console.log(response);
     const hasNewEpisodes = response.filter((latestShowInfo) => {
       const sameShow = watchStates.find((show) => latestShowInfo.id == show.id);
       if (!sameShow) return;
@@ -230,7 +227,7 @@ export default function body({
     }
   }
   function removeDuplicates(arr) {
-    //their server can send duplicate items at times messing with React
+    //their server can send duplicate items at times, messing with need for React's unique key for mapped items
     return arr.reduce((acc, curr) => {
       acc.find((show) => show.id == curr.id) ? false : acc.push(curr);
       return acc;
