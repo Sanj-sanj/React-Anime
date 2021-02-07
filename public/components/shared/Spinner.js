@@ -6,7 +6,7 @@ export default function spinner({ hasRendered }) {
     <div className="loading-area">
       <img
         className="spinner"
-        src={require("./imgs/1F63B.svg")}
+        src={require("../../imgs/1F63B.svg")}
         alt="Loading spinner"
       />
     </div>

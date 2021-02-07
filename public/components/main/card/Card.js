@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "@reach/router";
-import Countdown from "./Countdown";
-import Button from "./Button";
-import Ribbon from "./Ribbon";
+import Countdown from "../../shared/Countdown";
+import Button from "../../shared/Button";
+import Ribbon from "../../shared/Ribbon";
 import LazyLoad from "react-lazyload";
 
 export default function Card({

@@ -1,5 +1,5 @@
 import React from "react";
-import seasonFunc from "./checkSeason";
+import seasonFunc from "../../js/checkSeason";
 
 export default function seasonHeader({ season, onChange }) {
   // console.log(season);

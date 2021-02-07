@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Countdown from "./Countdown";
-import Nav from "./Nav";
+import Countdown from "../shared/Countdown";
+import Nav from "../shared/Nav";
 import PosterColumn from "./PosterColumn";
 import RatingColumn from "./RatingColumn";
 import MetaInfo from "./MetaInfo";
@@ -11,14 +11,14 @@ import AnimeDescription from "./AnimeDescription";
 import Banner from "./Banner";
 import RelatedAnime from "./RelatedAnime";
 import Characters from "./Characters";
-import Button from "./Button";
+import Button from "../shared/Button";
 //
 import SwiperCore, { Navigation, Scrollbar, A11y } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
-import Ribbon from "./Ribbon";
+import Ribbon from "../shared/Ribbon";
 
 SwiperCore.use([Navigation, Scrollbar, A11y]);
 

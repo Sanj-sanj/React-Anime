@@ -3,14 +3,14 @@ import React, { useState, useEffect } from "react";
 
 import ToggleSortDropdown from "./ToggleDropdown";
 import Season from "./Season";
-import Format from "./Format";
+import Format from "./format/Format";
 import SortDropdown from "./SortDropdown";
-import seasonFunc from "./checkSeason";
-import requestAnimes from "./requestAnimes";
-import checkNewEp from "./checkNewEpisodes";
-import Spinner from "./Spinner";
-import Nav from "./Nav";
-import Card from "./Card";
+import seasonFunc from "../../js/checkSeason";
+import requestAnimes from "../../js/requestAnimes";
+import checkNewEp from "../../js/checkNewEpisodes";
+import Spinner from "../shared/Spinner";
+import Nav from "../shared/Nav";
+import Card from "./card/Card";
 import NewEpisodesModal from "./NewEpisodeModal";
 
 export default function body({

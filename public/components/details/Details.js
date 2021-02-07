@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import requestAnimes from "./requestAnimes";
+import requestAnimes from "../../js/requestAnimes";
 import MoreInfo from "./MoreInfo";
-import Spinner from "./Spinner";
-import checkNewEp from "./checkNewEpisodes";
+import Spinner from "../shared/Spinner";
+import checkNewEp from "../../js/checkNewEpisodes";
 
 export default function goToMoreInfoWithNewDataAndLastPage(props) {
   const [data, setData] = useState({});

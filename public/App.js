@@ -9,8 +9,8 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 
-import Parameters from "./Parameters";
-import Details from "./Details";
+import Parameters from "./components/main/Parameters";
+import Details from "./components/details/Details";
 dotenv.config();
 
 const firebaseConfig = {

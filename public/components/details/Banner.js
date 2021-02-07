@@ -5,7 +5,7 @@ export default function Banner({ bannerImage, altText }) {
     <div className="banner-area">
       <img
         className="title-banner border "
-        src={bannerImage || require("./imgs/d_banner.png")}
+        src={bannerImage || require("../../imgs/d_banner.png")}
         alt={`Banner of show: ${altText}`}
       />
     </div>
