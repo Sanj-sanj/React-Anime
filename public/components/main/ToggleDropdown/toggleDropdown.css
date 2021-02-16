@@ -1,0 +1,19 @@
+.bi.opt-toggle {
+  display: none;
+}
+.btn.pull-dropdown {
+  display: none;
+}
+/* for transition */
+.bi.show {
+  display: initial;
+}
+
+.view-area {
+  bottom: 0em !important;
+}
+@media (max-width: 746px) {
+  .btn.pull-dropdown {
+    display: initial;
+  }
+}

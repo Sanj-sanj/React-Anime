@@ -1,0 +1,7 @@
+.countdown {
+  position: absolute;
+  width: 100%;
+  background: #1f1f1f;
+  color: #f4f4f4;
+  opacity: 0.75;
+}

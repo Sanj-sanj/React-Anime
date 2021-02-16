@@ -1,307 +1,175 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense, Fragment } from "react";
+import "./parameters.css";
 
-import ToggleSortDropdown from "./ToggleDropdown";
-import Season from "./Season";
+import Season from "./Season/Season";
 import Format from "./format/Format";
-import SortDropdown from "./SortDropdown";
-import seasonFunc from "../../js/checkSeason";
+import SortDropdown from "./SortDropdown/SortDropdown";
+import Spinner from "../shared/Spinner/Spinner";
+import Nav from "../shared/Nav/Nav";
 import requestAnimes from "../../js/requestAnimes";
-import checkNewEp from "../../js/checkNewEpisodes";
-import Spinner from "../shared/Spinner";
-import Nav from "../shared/Nav";
-import Card from "./card/Card";
-import NewEpisodesModal from "./NewEpisodeModal";
+import {
+  removeDuplicates,
+  compareForNewReleases,
+} from "../../js/checkNewEpisodes";
+import { sortCards } from "../../js/cards";
+const Card = lazy(() => import("./card/Card"));
+const NewEpisodesModal = lazy(() =>
+  import("./NewEpisodeModal/NewEpisodeModal")
+);
+const ToggleSortDropdown = lazy(() =>
+  import("./ToggleDropdown/ToggleDropdown")
+);
 
-export default function body({
-  prevSeasonDashPrevYear,
-  prevFormat,
-  setCurrLocation,
-  data = [],
-  setData,
-  watchStates,
-  setWatchStates,
-  considerStates,
-  setConsiderStates,
+let callAPI = false;
+
+export default function Parameters({
+  compareSeasons,
   onSignIn,
   onSignOut,
-  isOnline,
-  newEpisodes,
-  setNewEpisodes,
+  LazyLoad,
+  forceCheck,
+  dispatch,
+  state,
 }) {
-  if (prevSeasonDashPrevYear && prevFormat) {
-    prevSeasonDashPrevYear = prevSeasonDashPrevYear.split("-");
-    const choices = [["TV", "TV_SHORT"], ["MOVIE"], ["OVA", "ONA"]];
-    prevFormat = choices.find((arr) => arr.includes(prevFormat.toUpperCase()));
-  }
-  const [onGoing, setOnGoing] = useState(
-    JSON.parse(localStorage.getItem("ongoing")) || "show ongoing"
-  );
-  const [season, setSeason] = useState(
-    prevSeasonDashPrevYear || seasonFunc.checkSeason().split(" ")
-  );
-  const [format, setFormat] = useState(prevFormat || ["TV", "TV_SHORT"]);
   const [sort, setSort] = useState(
-    JSON.parse(localStorage.getItem("sort")) || "popularity"
+    (() => {
+      try {
+        return JSON.parse(localStorage.getItem("sort")) || "popularity";
+      } catch (error) {
+        return false;
+      }
+    })()
   );
   const [language, setLanguage] = useState(
-    JSON.parse(localStorage.getItem("language")) || "english"
+    (() => {
+      try {
+        return JSON.parse(localStorage.getItem("language")) || "english";
+      } catch (error) {
+        return false;
+      }
+    })()
+  );
+  const [onGoing, setOnGoing] = useState(
+    (() => {
+      try {
+        return JSON.parse(localStorage.getItem("ongoing")) || "show ongoing";
+      } catch (err) {
+        return false;
+      }
+    })()
   );
   const [isFetching, setIsFetching] = useState(true);
+  const [rerender, setRerender] = useState(false);
 
-  function sortCards(allCards) {
-    //map the state of cards to work with state then set it. otherwise state stays one step behind
-    let cloneCards = allCards.map((show) => show);
-    const options = [
-      "popularity",
-      "countdown",
-      "rating",
-      "air date",
-      "my shows",
-      "season",
-    ];
-    if (sort == options[0]) {
-      return cloneCards.sort((a, b) => {
-        return b.popularity - a.popularity;
-      });
-    }
-    if (sort == options[1]) {
-      return cloneCards
-        .filter((item) => (item.nextAiringEpisode ? item : false))
-        .sort((a, b) => {
-          if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
-          return (
-            a.nextAiringEpisode.timeUntilAiring -
-            b.nextAiringEpisode.timeUntilAiring
-          );
-        })
-        .concat(cloneCards.filter((show) => !show.nextAiringEpisode));
-    }
-    if (sort == options[2]) {
-      return cloneCards.sort((a, b) => {
-        return b.meanScore - a.meanScore;
-      });
-    }
-    if (sort == options[3]) {
-      return cloneCards
-        .filter((show) => show.startDate.day)
-        .sort((a, b) => {
-          const altDayA = a.startDate.day ? `${a.startDate.day}` : "00";
-          const altMonthA = a.startDate.month ? `${a.startDate.month}` : "00";
-          const altYearA = a.startDate.year ? `${a.startDate.year}` : "2021";
-          const altDayB = b.startDate.day ? `${b.startDate.day}` : "00";
-          const altMonthB = b.startDate.month ? `${b.startDate.month}` : "00";
-          const altYearB = b.startDate.year ? `${b.startDate.year}` : "2021";
-          return (
-            `${altYearA}${altMonthA.length < 2 ? "0" + altMonthA : altMonthA}${
-              altDayA.length < 2 ? "0" + altDayA : altDayA
-            }` -
-            `${altYearB}${altMonthB.length < 2 ? "0" + altMonthB : altMonthB}${
-              altDayB.length < 2 ? "0" + altDayB : altDayB
-            }`
-          );
-        })
-        .concat(cloneCards.filter((show) => !show.startDate.day));
-    }
-    if (sort == options[4]) {
-      return cloneCards
-        .filter((show) => watchStates.find((item) => item.id == show.id))
-        .filter((show) => show.nextAiringEpisode)
-        .sort((a, b) => {
-          if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
-          return (
-            a.nextAiringEpisode.timeUntilAiring -
-            b.nextAiringEpisode.timeUntilAiring
-          );
-        })
-        .concat(
-          cloneCards
-            .filter((show) => watchStates.find((item) => item.id == show.id))
-            .filter((show) => !show.nextAiringEpisode)
-        )
-        .concat(
-          cloneCards.filter(
-            (show) => !watchStates.find((item) => item.id == show.id)
-          )
-        );
-    }
-    if (sort == options[5]) {
-      let thisSeasons = cloneCards
-        .filter((show) => show.season || show.startDate.year) //find anything that started last year but is supposed to be of the new years season
-        .filter(
-          (show) =>
-            show.startDate.month == 12 &&
-            show.startDate.year == season[1] - 1 &&
-            show.season == season[0].toUpperCase()
-        )
-        .concat(
-          cloneCards
-            .filter((show) => show.season || show.startDate.year)
-            .filter(
-              (show) =>
-                show.season == season[0].toUpperCase() &&
-                show.startDate.year == season[1] &&
-                show.nextAiringEpisode
-            )
-        )
-        .sort((a, b) => {
-          if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
-          return (
-            a.nextAiringEpisode.timeUntilAiring -
-            b.nextAiringEpisode.timeUntilAiring
-          );
-        })
-        .concat(
-          cloneCards.filter(
-            (show) =>
-              show.startDate.year == season[1] &&
-              show.season == season[0].toUpperCase() &&
-              !show.nextAiringEpisode
-          )
-        );
-      return thisSeasons.concat(
-        cloneCards.filter(
-          (show) =>
-            !thisSeasons.find((currSeasonShow) => currSeasonShow.id == show.id)
-        )
-      );
-    }
-  }
-
-  function updateNewEpisodes(arrOfNewShows) {
-    const unaffectedShows = watchStates.filter(
-      (show) => !arrOfNewShows.find((newEp) => show.id == newEp.id)
-    );
-    let updated = unaffectedShows.concat(
-      arrOfNewShows.map((show) => {
-        const episodeNumber = show.nextAiringEpisode
-          ? show.nextAiringEpisode.episode
-          : null;
-        const id = show.id;
-        const title = show.title[language];
-        const status = show.status;
-        return { title, id, episodeNumber, status };
-      })
-    );
-    return updated;
-  }
-
-  async function checkForNewReleases() {
-    if (!watchStates.length) return;
-    console.log("checking for new releases");
-    const episodesForQuery = watchStates
-      .filter(
-        (item) =>
-          item.status == "RELEASING" || item.status == "NOT_YET_RELEASED"
-      )
-      .map((item) => item.id);
-    const response = await checkNewEp(episodesForQuery);
-    const hasNewEpisodes = response.filter((latestShowInfo) => {
-      const sameShow = watchStates.find((show) => latestShowInfo.id == show.id);
-      if (!sameShow) return;
-      if (
-        sameShow.status == "NOT_YET_RELEASED" &&
-        latestShowInfo.status == "RELEASING"
-      ) {
-        //first ep aired
-        return sameShow;
-      }
-      if (
-        sameShow.status == "RELEASING" &&
-        latestShowInfo.status == "FINISHED"
-      ) {
-        //show finale aired
-        return sameShow;
-      }
-      if (
-        sameShow.status == "RELEASING" &&
-        sameShow.episodeNumber < latestShowInfo.nextAiringEpisode.episode
-      ) {
-        //new ep, show is still ongoing
-        return sameShow;
-      }
-    });
-    if (hasNewEpisodes.length) {
-      setNewEpisodes(hasNewEpisodes);
-      setWatchStates(updateNewEpisodes(hasNewEpisodes));
-    }
-  }
-  function removeDuplicates(arr) {
-    //their server can send duplicate items at times, messing with need for React's unique key for mapped items
-    return arr.reduce((acc, curr) => {
-      acc.find((show) => show.id == curr.id) ? false : acc.push(curr);
-      return acc;
-    }, []);
+  function fetchData() {
+    //call this function to fetch from API via client interaction
+    callAPI = true;
+    setIsFetching(true);
   }
 
   useEffect(async () => {
-    setData([]);
-    setIsFetching(true);
-    setCurrLocation(`/${season.join("-")}/${format[0]}`.toLowerCase());
-    if (prevSeasonDashPrevYear && prevFormat && data.length) {
-      if (
-        prevSeasonDashPrevYear[0] == season[0] &&
-        prevFormat[0] == format[0]
-      ) {
-        //this is the time we reuse our previous API result
-        setData(data);
-        setIsFetching(false);
-        return;
-      }
+    if (!isFetching) return;
+    if (!callAPI && state.data.length) {
+      //reuse previous state
+      callAPI = false;
+      setIsFetching(false);
+      return;
     }
     let ongoingShows = [];
     localStorage.setItem("ongoing", JSON.stringify(onGoing));
-    if (onGoing == "show ongoing" && seasonFunc.compareSeasons(season)) {
-      ongoingShows = await requestAnimes(onGoing, 1, [], format).then(
-        (vals) => vals
+    if (onGoing === "show ongoing" && compareSeasons(state.season)) {
+      ongoingShows = await requestAnimes(
+        onGoing,
+        1,
+        [],
+        state.format,
+        null,
+        "queryMain"
       );
     }
-    const thisSeasons = await requestAnimes(null, 1, [], format, season).then(
-      (vals) => vals
+    const thisSeasons = await requestAnimes(
+      null,
+      1,
+      [],
+      state.format,
+      state.season,
+      "queryMain"
     );
     ongoingShows = ongoingShows
       .filter(
-        (show) => !thisSeasons.find((seasonShow) => show.id == seasonShow.id)
+        (show) => !thisSeasons.find((seasonShow) => show.id === seasonShow.id)
       )
       .filter((show) => show.popularity >= 100);
-
-    setData(sortCards(removeDuplicates(thisSeasons.concat(ongoingShows))));
+    dispatch({
+      type: "updateData",
+      payload: sortCards(
+        removeDuplicates(thisSeasons.concat(ongoingShows)),
+        sort,
+        state.season,
+        state.watching
+      ),
+    });
+    callAPI = false;
     setIsFetching(false);
-  }, [season, format, onGoing]);
+    if (state.isOnline) {
+      //checks on subsequent API calls after initial page load. useEffect = async, therefore state stays behind on first render
+      compareForNewReleases(dispatch, state.watching, language);
+    }
+  }, [isFetching, onGoing]);
 
   useEffect(() => {
-    setData(sortCards(data));
+    dispatch({
+      type: "updateData",
+      payload: sortCards(state.data, sort, state.season, state.watching),
+    });
+    forceCheck();
     localStorage.setItem("language", JSON.stringify(language));
     localStorage.setItem("sort", JSON.stringify(sort));
-  }, [sort, language, watchStates, isOnline]);
+    setRerender(!rerender);
+    //dummy state to change for reducer to catchup, otherwise reducer state stays one step behind
+  }, [sort, language, state.watching, state.considering]);
 
   useEffect(() => {
-    if (!newEpisodes.length) return;
+    if (!state.newEpisodes.length) return;
     let newEpisodesModal = document.querySelector("#myModal");
     new Modal(newEpisodesModal).show();
-  }, [newEpisodes]);
+    return () => dispatch({ type: "newEpisodes", payload: new Array(0) });
+  }, [state.newEpisodes]);
 
   useEffect(() => {
-    // if the user signs manually and not auto, reload the page to properly display newep modal
-    if (isOnline && !isFetching && !newEpisodes.length) {
-      console.log("can check for releases");
-      checkForNewReleases();
+    if (!state.data) return;
+    //force lazyimg to load on change of sort filter.
+    forceCheck();
+  }, [state.data]);
+
+  useEffect(() => {
+    if (state.isOnline && state.watching.length) {
+      //checks on initial signin after watching state have been set
+      compareForNewReleases(dispatch, state.watching, language);
     }
-  }, [isOnline, isFetching, watchStates]);
+  }, [state.isOnline, state.watching]);
 
   return (
-    <div>
+    <Fragment>
       <Nav
-        lastLocation={"/"}
-        setData={setData}
         signInFunc={onSignIn}
         signOutFunc={onSignOut}
-        isOnline={isOnline}
+        dispatch={dispatch}
+        isOnline={state.isOnline}
       />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
-          <Season season={season} onChange={setSeason} />
-          <Format changeFormat={setFormat} activeFormat={format} />
+          <Season
+            season={state.season}
+            dispatch={dispatch}
+            fetchData={fetchData}
+          />
+          <Format
+            activeFormat={state.format}
+            dispatch={dispatch}
+            fetchData={fetchData}
+          />
         </div>
       </div>
       <div className="container-fluid anime-container">
@@ -333,28 +201,52 @@ export default function body({
             valuesArr={["Hide Ongoing", "Show Ongoing"]}
             set={setOnGoing}
             defaultState={onGoing}
+            fetchData={fetchData}
           />
-          <ToggleSortDropdown />
+          <Suspense fallback={<div>HOLD</div>}>
+            <ToggleSortDropdown />
+          </Suspense>
         </div>
-
+        {/* {row card area className used as quereyselector value in toggleDropdown} */}
         <div className="row row-card-area">
-          {!data
-            ? ""
-            : data.map((data) => (
-                <Card
-                  key={data.id}
-                  data={data}
-                  language={language}
-                  watchSet={setWatchStates}
-                  considerSet={setConsiderStates}
-                  watching={watchStates}
-                  considering={considerStates}
-                />
-              ))}
+          {isFetching ? (
+            <Spinner hasRendered={isFetching} />
+          ) : state.data.length ? (
+            state.data?.map((data) => (
+              <LazyLoad
+                key={data.id}
+                classNamePrefix="card anime-card mb-3 col-md-4 col-xl-3"
+              >
+                <Suspense
+                  fallback={
+                    <span
+                      role="img"
+                      aria-label="Diamond hands. Apes Strong. Smooth Brain. HOLD."
+                    >
+                      💎 🤚 🐒 💪 🚀 🌙
+                    </span>
+                  }
+                >
+                  <Card
+                    key={data.id}
+                    data={data}
+                    language={language}
+                    dispatch={dispatch}
+                    watching={state.watching}
+                    considering={state.considering}
+                    LazyLoad={LazyLoad}
+                  />
+                </Suspense>
+              </LazyLoad>
+            ))
+          ) : (
+            <div>No results...</div>
+          )}
         </div>
-        <Spinner hasRendered={isFetching} />
       </div>
-      <NewEpisodesModal shows={newEpisodes} language={language} />
-    </div>
+      <Suspense fallback={<div>HOLD</div>}>
+        <NewEpisodesModal shows={state.newEpisodes} language={language} />
+      </Suspense>
+    </Fragment>
   );
 }

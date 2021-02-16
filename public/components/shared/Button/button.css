@@ -1,0 +1,17 @@
+.interactiveButton {
+  padding-inline-start: 0;
+  flex: auto;
+}
+.interactiveButton > .btn {
+  width: 99%;
+  padding: 0;
+}
+.interactiveButton > .btn-outline-warning {
+  color: #8b6c10;
+}
+.interactiveButton > .btn-outline-success {
+  color: #0f852c;
+}
+.interactiveButton > .btn-outline-info {
+  color: #327e89;
+}

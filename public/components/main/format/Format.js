@@ -1,18 +1,19 @@
 import React from "react";
-import FormatButton from "./FormatBtns";
+import "./format.css";
+import FormatButton from "./FormatButton/FormatBtns";
 
-export default function format({ changeFormat, activeFormat }) {
-  const formats = ["TV", "MOVIE", "OVA"];
-  const names = ["Television", "Movie", "OVA"];
-  const choices = [];
-  choices["TV"] = ["TV", "TV_SHORT"];
-  choices["MOVIE"] = ["MOVIE"];
-  choices["OVA"] = ["OVA", "ONA"];
-  //this if causes two calls to the API, its probably better to set active format to be set properly than set it in this component
+const formats = ["TV", "MOVIE", "OVA"];
+const names = ["Television", "Movie", "OVA"];
+const choices = [];
+choices["TV"] = ["TV", "TV_SHORT"];
+choices["MOVIE"] = ["MOVIE"];
+choices["OVA"] = ["OVA", "ONA"];
+
+export default function Format({ dispatch, activeFormat, fetchData }) {
   function changeActiveFormat(e) {
     document.querySelector(".f-choice.active").classList.remove("active");
     e.target.parentElement.classList.add("active");
-    changeFormat(choices[e.target.value]);
+    dispatch({ type: "format", payload: choices[e.target.value] });
   }
   return (
     <div className="nav format-options">
@@ -24,6 +25,7 @@ export default function format({ changeFormat, activeFormat }) {
             active={activeFormat}
             name={names[i]}
             change={changeActiveFormat}
+            fetchData={fetchData}
           />
         ))}
       </ul>

@@ -1,0 +1,36 @@
+.links-section {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: space-evenly;
+}
+.links-section > li > a {
+  width: 4rem;
+}
+.crn_ico {
+  content: url("../../../imgs/crunchy_icon.png");
+}
+.twt_ico {
+  content: url("../../../imgs/twitter_icon.png");
+}
+.vrv_ico {
+  content: url("../../../imgs/vrv_icon.png");
+}
+.hulu_ico {
+  content: url("../../../imgs/hulu_icon.png");
+}
+.funi_ico {
+  content: url("../../../imgs/funi_icon.png");
+}
+.ytb_ico {
+  content: url("../../../imgs/youtube_icon.webp");
+}
+.alab_ico {
+  content: url("../../../imgs/animelab_icon.png");
+}
+.hidive_ico {
+  content: url("../../../imgs/hidive_icon.png");
+}
+.site_ico {
+  content: url("../../../imgs/site_icon.jpg");
+}

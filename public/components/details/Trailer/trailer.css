@@ -1,0 +1,10 @@
+.yt-thumb {
+  width: 45%;
+  height: auto;
+}
+@media (max-width: 768px) {
+  .yt-thumb {
+    width: 84%;
+    height: auto;
+  }
+}

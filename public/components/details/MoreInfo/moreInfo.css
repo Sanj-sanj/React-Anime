@@ -1,0 +1,25 @@
+.details-countdown-container {
+  display: inline-flex;
+  width: 46%;
+}
+.countdown-show {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  position: relative !important;
+  padding: 0.2em;
+  font-size: 27px;
+  background-color: #007cde !important;
+}
+.countdown-show > span {
+  font-size: 22px;
+  padding-left: 1em;
+}
+@media (max-width: 768px) {
+  .container {
+    max-width: 100% !important;
+  }
+  .details-countdown-container {
+    width: 100%;
+  }
+}

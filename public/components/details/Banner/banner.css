@@ -1,0 +1,16 @@
+.banner-area {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  max-height: 10rem;
+  display: flex;
+}
+.banner {
+  object-fit: cover;
+}
+@media (min-width: 768px) {
+  .banner-area {
+    align-items: center;
+    z-index: 0;
+  }
+}

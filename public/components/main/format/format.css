@@ -1,0 +1,12 @@
+.format-choices {
+  margin: 0;
+  list-style: none;
+  display: flex;
+  padding: 0;
+}
+@media (max-width: 644px) {
+  .nav.format-options {
+    width: 100%;
+    justify-content: center;
+  }
+}

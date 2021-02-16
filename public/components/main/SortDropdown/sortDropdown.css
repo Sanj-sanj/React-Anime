@@ -1,0 +1,14 @@
+.input-group {
+  width: 14em !important;
+  margin-right: 1rem;
+}
+.input-group-text {
+  width: 4.5em;
+  justify-content: center;
+}
+@media (max-width: 746px) {
+  .input-group {
+    width: 100% !important;
+    margin-right: 1rem;
+  }
+}

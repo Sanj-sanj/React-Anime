@@ -1,226 +1,149 @@
-import React, { useState, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Link } from "@reach/router";
-import Countdown from "../../shared/Countdown";
-import Button from "../../shared/Button";
-import Ribbon from "../../shared/Ribbon";
-import LazyLoad from "react-lazyload";
+import "./card.css";
+import {
+  formatEpisodeAirDate,
+  formatNextAiringEpisodeDate,
+} from "../../../js/formatDates";
+import Countdown from "../../shared/Countdown/Countdown";
+import Button from "../../shared/Button/Button";
+import Ribbon from "../../shared/Ribbon/Ribbon";
 
 export default function Card({
   data,
   language,
-  watchSet,
-  considerSet,
   watching,
+  dispatch,
   considering,
+  LazyLoad,
 }) {
-  const [isWatching, setIsWatching] = useState(false);
-  const [isConsidering, setIsConsidering] = useState(false);
-
+  const altLang = language == "english" ? "romaji" : "english";
   const nextEpCD = new Date();
   const airing = data.nextAiringEpisode
     ? nextEpCD.setSeconds(data.nextAiringEpisode.timeUntilAiring)
     : null;
-  const studio = data.studios
-    ? data.studios.nodes.find((studio) => studio.isAnimationStudio)
-    : "N/A";
-  const description = data.description
-    ? data.description
-    : "No synopsis has been added yet.";
-  const altLang = language == "english" ? "romaji" : "english";
+  const {
+    id,
+    genres,
+    nextAiringEpisode,
+    startDate,
+    status,
+    format,
+    coverImage,
+    meanScore,
+    source,
+    episodes,
+    duration,
+  } = data;
+
   const title = data.title[language] || data.title[altLang];
-  const status = data.status;
-  const officialSite = data.externalLinks.find(
-    (obj) => obj.site == "Official Site"
+  const description =
+    data.description || "<i>No synopsis has been added yet.</i>";
+  const officialSite = data.externalLinks?.find(
+    (obj) => obj.site === "Official Site"
   );
+  const studio =
+    data.studios?.nodes?.find((studio) => studio.isAnimationStudio)?.name ||
+    "No information";
+  const score = meanScore ? (meanScore / 10).toFixed(1) : "?";
+  const episodeNumber = nextAiringEpisode?.episode || null;
 
-  function airingStatusCheck(data) {
-    if (data.status == "FINISHED") return "Finished";
-    if (data.status == "NOT_YET_RELEASED")
-      return formatEpisodeAirDate(data.startDate);
-    if (data.nextAiringEpisode)
-      return formatNextAiringEpisodeDate(data.nextAiringEpisode, data.status);
+  function airingStatusCheck() {
+    if (status === "FINISHED") return "Finished";
+    if (status === "NOT_YET_RELEASED") return formatEpisodeAirDate(startDate);
+    if (nextAiringEpisode)
+      return formatNextAiringEpisodeDate(nextAiringEpisode);
     return "No information";
   }
 
-  function formatEpisodeAirDate({ day, month, year }) {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    let date = new Date(year, month - 1, day);
-    if (day) {
-      return `${days[date.getDay()]} ${months[month - 1]} ${day} ${year}`;
-    }
-    //!day
-    return "No information";
-  }
-
-  function formatNextAiringEpisodeDate(nextEp) {
-    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const nextEpDate = new Date();
-    nextEpDate.setSeconds(nextEp.timeUntilAiring);
-    let nextEpMinsRounded = Math.ceil(
-      nextEpDate.getMinutes() / nextEpDate.getMinutes() +
-        nextEpDate.getMinutes()
-    ).toFixed(1);
-    nextEpMinsRounded.replace(".", "");
-    return `${days[nextEpDate.getDay()]} 
-    ${months[nextEpDate.getMonth()]} 
-    ${nextEpDate.getDate()} ${nextEpDate.getFullYear()} ${nextEpDate.getHours()}:${
-      nextEpDate.getMinutes() < 10
-        ? "0" + nextEpDate.getMinutes()
-        : nextEpDate.getMinutes()
-    } `;
-  }
-
-  useEffect(() => {
-    const id = data.id;
-    const episodeNumber = data.nextAiringEpisode
-      ? data.nextAiringEpisode.episode
-      : null;
-    if (isWatching) {
-      //if watching, add to watching state remove from considering state if exists
-      const currentlyWatching = watching.filter((show) => show.id !== id);
-      // console.log(currentlyWatching);
-      const newWatching = [
-        ...currentlyWatching,
-        { title, id, episodeNumber, status },
-      ];
-      const currentConsider = considering.filter((show) => show.id !== id);
-      considerSet(currentConsider);
-      watchSet(newWatching);
-    }
-    if (isConsidering) {
-      const current = considering.filter((show) => show.id !== id);
-      const newConsider = [...current, { title, id, episodeNumber, status }];
-      const currentWatch = watching.filter((show) => show.id !== id);
-      watchSet(currentWatch);
-      return considerSet(newConsider);
-    }
-    if (!isWatching && !isConsidering) {
-      const stillWatching = watching.filter((show) => {
-        return show.id !== id;
-      });
-      const stillConsidering = considering.filter((show) => {
-        return show.id !== id;
-      });
-      watchSet(stillWatching);
-      considerSet(stillConsidering);
-    }
-  }, [isWatching, isConsidering]);
-
-  useEffect(() => {
-    setIsWatching(false);
-    setIsConsidering(false);
-    watching.forEach((show) => {
-      if (show.id != data.id) return;
-      show.id == data.id ? setIsWatching(true) : false;
+  function updateWatching() {
+    return dispatch({
+      type: "watching",
+      payload: { title, id, episodeNumber, status },
     });
-    considering.forEach((show) => {
-      if (show.id != data.id) return;
-      show.id == data.id ? setIsConsidering(true) : false;
+  }
+  function updateConsider() {
+    return dispatch({
+      type: "considering",
+      payload: { title, id, episodeNumber, status },
     });
-  }, [watching, considering]);
+  }
 
   return (
-    <div className="card anime-card mb-3 col-md-4 col-xl-3">
+    <Fragment>
       <div className="anime-title">
-        <Ribbon watch={isWatching} consider={isConsidering} />
-        <a
-          className="main-title"
-          href={officialSite ? officialSite.url : "#"}
-          style={{ WebkitBoxOrient: "vertical" }}
-          title={title}
-        >
-          {title}{" "}
-        </a>
+        <Ribbon watch={watching} consider={considering} id={id} />
+        {/* css WebkitBoxOrient needs to be applied through js else it does not apply */}
+        <div className="w-100 main-title-container">
+          <a
+            className="main-title"
+            href={officialSite?.url || "#"}
+            style={{ WebkitBoxOrient: "vertical" }}
+            title={title}
+          >
+            {title}{" "}
+          </a>
+        </div>
+        <ol className="anime-genre">
+          {genres.length ? (
+            genres?.map((genre) => (
+              <li key={genre} className="text-muted">
+                {genre}
+              </li>
+            ))
+          ) : (
+            <li className="text-muted">None</li>
+          )}
+        </ol>
       </div>
-      <ol className="anime-genre">
-        {data.genres.length ? (
-          data.genres.map((genre) => (
-            <li key={genre} className="text-muted">
-              {genre}
-            </li>
-          ))
-        ) : (
-          <li className="text-muted">No information</li>
-        )}
-      </ol>
 
-      <div className="contents">
+      <div className="d-flex">
         <div className="col img-spot">
           <Countdown
-            airingStatus={data.status}
-            airingInfo={data.nextAiringEpisode}
+            airingStatus={status}
+            airingInfo={nextAiringEpisode}
             cd={airing}
           />
-          <LazyLoad>
+          <LazyLoad height={252}>
             <img
               className="card-img-top anime-cover-image"
-              src={data.coverImage.large}
-              alt={data.title.english ? data.title.english : data.title.romaji}
-              srcSet=""
+              alt={title}
+              srcSet={`${coverImage.medium} 100w,
+              ${coverImage.large}`}
+              sizes="(max-width: 300px) 100px,
+              230px"
+              src={coverImage.large}
             />
           </LazyLoad>
           <div className="format">
-            <div className="format-text-area">
+            <div>
               <span role="img" aria-label="tv-emoji">
                 📺
               </span>{" "}
-              {data.format.replace("_", " ") || "Anime"}
+              {format?.replace("_", " ") || "Anime"}
             </div>
           </div>
           <div className="rating">
-            <div className="rating-text-area">
+            <div>
               <span role="img" aria-label="star-emoji">
                 ⭐
               </span>{" "}
-              {data.meanScore ? (data.meanScore / 10).toFixed(1) : "?"}
+              {score}
             </div>
           </div>
         </div>
-        <div className="row no-gutters row-anime-info">
-          <div className="anime-info col border-top border-left">
-            <div className="meta-container">
+        <div className="row no-gutters w-100">
+          <div className=" anime-info col border-top border-left">
+            <div>
               <ul className="list-group list-group-flush">
-                <li className="list-group-item company">
-                  {studio ? studio.name : "No information"}
-                </li>
-                <li className="list-group-item date">
-                  {airingStatusCheck(data)}
-                </li>
-                <li className="list-group-item meta-data">
-                  <div className="source">
-                    {data.source ? data.source.replace("_", " ") : "?"}
+                <li className="list-group-item">{studio}</li>
+                <li className="list-group-item">{airingStatusCheck(data)}</li>
+                <li className="list-group-item meta-info">
+                  <div className="w-100">
+                    {source?.replace("_", " ") || "N/A"}
                   </div>
-                  <div className="episodes">
-                    {data.episodes ? data.episodes : "12?"} x{" "}
-                    {data.duration ? data.duration + " min" : "24 min?"}
+                  <div className="w-100">
+                    {episodes || "??"} x {(duration || "??") + " min"}
                   </div>
                 </li>
               </ul>
@@ -232,32 +155,28 @@ export default function Card({
           </div>
         </div>
       </div>
-      <div className="links icons">
+      <div className="card-button-sec">
         <Button
           style={"success"}
           action={"watching"}
-          airingStatus={isWatching}
-          set={setIsWatching}
-          altSet={setIsConsidering}
-          id={data.id}
+          updateState={updateWatching}
+          id={id}
         />
         <Button
           style={"warning"}
           action={"consider"}
-          airingStatus={isConsidering}
-          set={setIsConsidering}
-          altSet={setIsWatching}
-          id={data.id}
+          updateState={updateConsider}
+          id={id}
         />
-        <div className="icon">
+        <div className="interactiveButton">
           <Link
-            to={`/details/${data.id}`}
+            to={`/details/${id}`}
             className="btn btn-sm btn-outline-info btn-id"
           >
             Details
           </Link>
         </div>
       </div>
-    </div>
+    </Fragment>
   );
 }

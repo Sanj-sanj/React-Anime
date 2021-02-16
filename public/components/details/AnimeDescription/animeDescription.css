@@ -1,0 +1,10 @@
+.collapsed {
+  height: 12rem;
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  overflow: hidden;
+}
+.btn-show-txt {
+  color: #007cde !important;
+  font-weight: 500 !important;
+}

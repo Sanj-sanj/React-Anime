@@ -1,0 +1,10 @@
+.related-poster {
+  display: -webkit-box;
+  padding: 0 0.2em;
+  max-height: 2em;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1;
+}

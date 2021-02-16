@@ -1,0 +1,34 @@
+.alert.alert-dark {
+  z-index: 20;
+}
+.anime-season-area {
+  align-items: center;
+  justify-content: left;
+}
+.anime-container {
+  padding: 0 2rem !important;
+}
+
+.options-area {
+  display: flex;
+  justify-content: left;
+}
+
+@media (max-width: 498px) {
+  .anime-container {
+    padding: 0 1em !important;
+  }
+}
+@media (max-width: 746px) {
+  .options-area {
+    display: block;
+    position: relative;
+    bottom: 11em;
+    transition: bottom 1s ease;
+  }
+  .row.row-card-area {
+    position: relative;
+    bottom: 11em;
+    transition: bottom 1s ease;
+  }
+}

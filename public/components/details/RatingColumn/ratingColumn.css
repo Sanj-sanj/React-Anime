@@ -1,0 +1,20 @@
+.rating-title {
+  font-size: 1.3em;
+  font-weight: 700;
+}
+.show-rating {
+  display: inline-block;
+  padding: 0 1em 0.25em 1em;
+  font-size: 2em;
+}
+.synonym {
+  font-weight: 500;
+}
+.studio {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.genres {
+  list-style: none;
+  padding-left: 0;
+}
