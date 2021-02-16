@@ -84,18 +84,18 @@ export default function Card({
             {title}{" "}
           </a>
         </div>
-        <ol className="anime-genre">
-          {genres.length ? (
-            genres?.map((genre) => (
-              <li key={genre} className="text-muted">
-                {genre}
-              </li>
-            ))
-          ) : (
-            <li className="text-muted">None</li>
-          )}
-        </ol>
       </div>
+      <ol className="anime-genre">
+        {genres.length ? (
+          genres?.map((genre) => (
+            <li key={genre} className="text-muted">
+              {genre}
+            </li>
+          ))
+        ) : (
+          <li className="text-muted">None</li>
+        )}
+      </ol>
 
       <div className="d-flex">
         <div className="col img-spot">

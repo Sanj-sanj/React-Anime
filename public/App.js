@@ -42,7 +42,6 @@ const App = () => {
     ) {
       setLocState(reachLocation.state.key);
       //this reads from db on return from different route.
-      console.log("time to read");
       readFromDB(state.currentUser.googleId, dispatch);
     }
   }, [history]);

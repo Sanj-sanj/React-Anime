@@ -52,19 +52,4 @@ export default function Details({
       />
     </Suspense>
   );
-  // return isFetching ? (
-  //   <Spinner hasRendered={isFetching} />
-  // ) : (
-  //   <Suspense fallback={<Spinner hasRendered={true} />}>
-  //     <MoreInfo
-  //       data={data}
-  //       state={state}
-  //       dispatch={dispatch}
-  //       onSignIn={onSignIn}
-  //       onSignOut={onSignOut}
-  //       LazyLoad={LazyLoad}
-  //       language={language}
-  //     />
-  //   </Suspense>
-  // );
 }

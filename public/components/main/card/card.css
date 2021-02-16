@@ -8,7 +8,7 @@
   padding: 0.1rem 5px 0 5px;
   display: flex;
   flex-flow: column;
-  min-height: 4.038rem;
+  min-height: 3rem;
   align-items: center;
   justify-content: space-between;
   line-height: initial;
@@ -20,6 +20,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-flow: wrap;
 }
 .main-title {
   display: block;
@@ -33,7 +34,7 @@
 }
 
 .anime-genre {
-  padding: 0;
+  padding: 0 0.5rem;
   margin: 0 0 0.1em 0;
   list-style: none;
   white-space: nowrap;
