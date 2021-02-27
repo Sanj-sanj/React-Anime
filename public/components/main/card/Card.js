@@ -8,6 +8,7 @@ import {
 import Countdown from "../../shared/Countdown/Countdown";
 import Button from "../../shared/Button/Button";
 import Ribbon from "../../shared/Ribbon/Ribbon";
+import CoverImage from "../../shared/CoverImage/CoverImage";
 
 export default function Card({
   data,
@@ -18,10 +19,8 @@ export default function Card({
   LazyLoad,
 }) {
   const altLang = language == "english" ? "romaji" : "english";
-  const nextEpCD = new Date();
-  const airing = data.nextAiringEpisode
-    ? nextEpCD.setSeconds(data.nextAiringEpisode.timeUntilAiring)
-    : null;
+  const airing = data.nextAiringEpisode?.airingAt * 1000;
+
   const {
     id,
     genres,
@@ -105,32 +104,14 @@ export default function Card({
             cd={airing}
           />
           <LazyLoad height={252}>
-            <img
-              className="card-img-top anime-cover-image"
-              alt={title}
-              srcSet={`${coverImage.medium} 100w,
-              ${coverImage.large}`}
-              sizes="(max-width: 300px) 100px,
-              230px"
-              src={coverImage.large}
-            />
+            <CoverImage
+              title={title}
+              coverImage={coverImage}
+              format={format}
+              score={score}
+              style="anime-cover-image"
+            />{" "}
           </LazyLoad>
-          <div className="format">
-            <div>
-              <span role="img" aria-label="tv-emoji">
-                📺
-              </span>{" "}
-              {format?.replace("_", " ") || "Anime"}
-            </div>
-          </div>
-          <div className="rating">
-            <div>
-              <span role="img" aria-label="star-emoji">
-                ⭐
-              </span>{" "}
-              {score}
-            </div>
-          </div>
         </div>
         <div className="row no-gutters w-100">
           <div className=" anime-info col border-top border-left">

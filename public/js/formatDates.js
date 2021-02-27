@@ -14,7 +14,7 @@ const months = [
   "Dec",
 ];
 
-//first two functions get used in Parameters, third function is for moreDetails
+//first two functions get used in Parameters, third function is for moreDetails, fourth for calendar
 function formatEpisodeAirDate({ day, month, year }) {
   let date = new Date(year, month - 1, day);
   if (day) {
@@ -43,4 +43,28 @@ function formatNextAiringEpisodeDate(nextEpObj) {
 function formatDate(year, month, day) {
   return `${months[month - 1] || "?"} ${day || "?"} ${year || "?"}`;
 }
-export { formatEpisodeAirDate, formatNextAiringEpisodeDate, formatDate };
+
+function formatCalendarDate(today, ind = 0) {
+  today === 6 && ind >= 1 ? (today = today + ind) : today;
+  const date = new Date();
+  const sortedDays = days.slice(today).concat(days.slice(0, today));
+
+  return sortedDays.map((day) => {
+    const formattedDateObj = new Date(
+      `${day} ${months[date.getMonth()]} ${today + ind} ${date.getFullYear()}`
+    );
+    const formattedDate = `${formattedDateObj.getDate()}`;
+    const formatted = `${days[formattedDateObj.getDay()]} · ${
+      months[formattedDateObj.getMonth()]
+    } ${formattedDate.length === 1 ? "0" + formattedDate : formattedDate}`;
+    ind++;
+    return formatted;
+  });
+}
+
+export {
+  formatEpisodeAirDate,
+  formatNextAiringEpisodeDate,
+  formatDate,
+  formatCalendarDate,
+};

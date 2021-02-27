@@ -4,9 +4,16 @@ import React, { useEffect, useReducer, useState } from "react";
 import { render } from "react-dom";
 import { Router, createHistory } from "@reach/router";
 import LazyLoad, { forceCheck } from "react-lazyload";
+//
+import SwiperCore, { Navigation, Scrollbar, A11y } from "swiper";
+import "swiper/swiper.scss";
+import "swiper/components/navigation/navigation.scss";
+import "swiper/components/scrollbar/scrollbar.scss";
 
+import Nav from "./components/shared/Nav/Nav";
 import Parameters from "./components/main/Parameters";
 import Details from "./components/details/Details";
+import Calendar from "./components/calendar/Calendar";
 import seasonFunc from "./js/checkSeason";
 import reducer from "./js/reducer";
 import {
@@ -15,6 +22,9 @@ import {
   readFromDB,
   writeToDB,
 } from "./js/firebase/firebase";
+
+SwiperCore.use([Navigation, Scrollbar, A11y]);
+dotenv.config();
 
 const initial = {
   watching: [],
@@ -26,14 +36,12 @@ const initial = {
   season: seasonFunc.checkSeason().split(" "),
   format: ["TV", "TV_SHORT"],
 };
-dotenv.config();
 
 const App = () => {
   let history = createHistory(window);
   const reachLocation = history.location;
   const [state, dispatch] = useReducer(reducer, initial);
   const [locState, setLocState] = useState();
-
   useEffect(() => {
     if (
       reachLocation.state?.key &&
@@ -59,26 +67,31 @@ const App = () => {
   }, [state.watching, state.considering]);
 
   return (
-    <Router>
-      <Parameters
-        path="/"
-        state={state}
-        onSignIn={onSignIn}
-        onSignOut={onSignOut}
-        LazyLoad={LazyLoad}
-        forceCheck={forceCheck}
-        compareSeasons={seasonFunc.compareSeasons}
+    <React.Fragment>
+      <Nav
+        signInFunc={onSignIn}
+        signOutFunc={onSignOut}
+        isOnline={state.isOnline}
         dispatch={dispatch}
       />
-      <Details
-        path="/details/:id"
-        state={state}
-        onSignIn={onSignIn}
-        onSignOut={onSignOut}
-        dispatch={dispatch}
-        LazyLoad={LazyLoad}
-      />
-    </Router>
+      <Router>
+        <Parameters
+          path="/"
+          state={state}
+          LazyLoad={LazyLoad}
+          forceCheck={forceCheck}
+          compareSeasons={seasonFunc.compareSeasons}
+          dispatch={dispatch}
+        />
+        <Details
+          path="/details/:id"
+          state={state}
+          dispatch={dispatch}
+          LazyLoad={LazyLoad}
+        />
+        <Calendar path={"/calendar"} props={{ state, dispatch }} />
+      </Router>
+    </React.Fragment>
   );
 };
 render(<App />, document.getElementById("root"));

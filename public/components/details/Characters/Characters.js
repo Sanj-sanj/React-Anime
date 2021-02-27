@@ -1,23 +1,6 @@
 import React from "react";
 import "./characters.css";
-
-function slidesToDisplay(characters, innerWidth) {
-  let ammount;
-  if (innerWidth < 567) {
-    characters.length >= 3 ? (ammount = 3) : (ammount = characters.length);
-    return ammount;
-  }
-  if (innerWidth < 768) {
-    characters.length >= 4 ? (ammount = 4) : (ammount = characters.length);
-    return ammount;
-  }
-  if (innerWidth < 991) {
-    characters.length >= 5 ? (ammount = 5) : (ammount = characters.length);
-    return ammount;
-  }
-  characters.length >= 6 ? (ammount = 6) : (ammount = characters.length);
-  return ammount;
-}
+import { characterSlidesToDisplay } from "../../../js/slidesToDisplay";
 
 function sortAndFilterByCharacters(characters, role) {
   return characters
@@ -38,12 +21,11 @@ export default function Characters({
       <h4 className="card-title">Characters</h4>
       <LazyLoad>
         <Swiper
-          slidesPerView={slidesToDisplay(characters, innerWidth)}
+          slidesPerView={characterSlidesToDisplay(characters, innerWidth)}
           scrollbar={{ draggable: true }}
         >
           {sortAndFilterByCharacters(characters, "MAIN").map((character) => (
             <SwiperSlide key={character.id}>
-              {/* <h6>{character.node.name.full}</h6> */}
               <div className="col">
                 <img
                   className="character-portrait"
@@ -57,7 +39,6 @@ export default function Characters({
             (character) => (
               <SwiperSlide key={character.id}>
                 <div className="col">
-                  {/* <h6>{character.node.name.full}</h6> */}
                   <img
                     className="character-portrait"
                     src={character.node.image["medium"]}
@@ -71,7 +52,6 @@ export default function Characters({
             (character) => (
               <SwiperSlide key={character.id}>
                 <div className="col">
-                  {/* <h6>{character.node.name.full}</h6> */}
                   <img
                     className="character-portrait"
                     src={character.node.image["medium"]}
@@ -83,7 +63,6 @@ export default function Characters({
           )}
         </Swiper>
       </LazyLoad>
-
       <div></div>
     </div>
   );

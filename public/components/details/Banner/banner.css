@@ -8,7 +8,7 @@
 .banner {
   object-fit: cover;
 }
-@media (min-width: 768px) {
+@media (min-width: 666px) {
   .banner-area {
     align-items: center;
     z-index: 0;

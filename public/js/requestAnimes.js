@@ -32,9 +32,10 @@ export default async function requestAnimes(
       sort: ["START_DATE"],
     };
   }
+
   const response = await Axios({
     method: "POST",
-    url: "https://graphql.anilist.co",
+    url: "https://graphql.anilist.co/",
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -44,7 +45,6 @@ export default async function requestAnimes(
       variables: variables,
     }),
   });
-
   const json = response.data;
   if (!response.status == 200) return Promise.reject(json);
   if (!json.data.Page.pageInfo.hasNextPage) {
@@ -52,7 +52,7 @@ export default async function requestAnimes(
   }
   console.log("has next page");
   //if were searching a particular anime ('DETAILS ROUTE') or a list of 'ONGOING' shows use these params
-  if (variables.id || variables.status_in) {
+  if (variables.id || variables.id_in || variables.status_in) {
     variables.page = json.data.Page.pageInfo.currentPage + 1;
     return requestAnimes(
       variables,

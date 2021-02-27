@@ -1,0 +1,26 @@
+.calendar-date-container {
+  flex-flow: column;
+  align-items: center;
+}
+
+.schedule-date {
+  border-bottom: 2px #4d94e2 solid;
+  border-left: 5px #4d94e2 solid;
+  color: #3b99ff;
+}
+
+.calendar-items-slide {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: baseline;
+}
+.img-spot > a > div {
+  bottom: 4%;
+}
+.calendar-image {
+  width: 230px;
+  height: 325px;
+  position: relative;
+  top: 6.7%;
+  margin-bottom: 2em;
+}
