@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "@reach/router";
 import "./format.css";
 import FormatButton from "./FormatButton/FormatBtns";
 
@@ -28,6 +29,11 @@ export default function Format({ dispatch, activeFormat, fetchData }) {
             fetchData={fetchData}
           />
         ))}
+        <li className="f-choice">
+          <Link className="f-choice" to={`/calendar`}>
+            <button className="btn">Calendar</button>
+          </Link>
+        </li>
       </ul>
     </div>
   );

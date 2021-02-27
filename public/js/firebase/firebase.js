@@ -8,11 +8,10 @@ firebase.initializeApp(firebaseConfig);
 const firestore = firebase.firestore();
 
 async function onSignOut(dispatch) {
-  console.log(dispatch);
   try {
-    console.log("Signed Out");
     await firebase.auth().signOut();
-    return dispatch({ type: "logout" });
+    dispatch({ type: "logout" });
+    return console.log("Signed Out");
   } catch (error) {
     console.log(`Error signing out of firebase: ${error}`);
   }

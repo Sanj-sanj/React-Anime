@@ -15,6 +15,19 @@
   font-size: 22px;
   padding-left: 1em;
 }
+/* styling for watch/consider buttons */
+#n2 {
+  display: none;
+}
+@media (max-width: 540px) {
+  #n2 {
+    display: inherit;
+  }
+  #n1 {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     max-width: 100% !important;

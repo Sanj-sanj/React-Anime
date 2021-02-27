@@ -1,0 +1,35 @@
+.img-spot {
+  display: flex;
+  max-height: fit-content;
+  max-width: fit-content !important;
+  max-width: -moz-min-content !important;
+  padding: 0em !important;
+}
+.anime-cover-image {
+  width: 180px !important;
+  max-height: 252px;
+  min-height: 252px;
+}
+.format {
+  position: absolute;
+  z-index: 1;
+  right: 1%;
+  bottom: 1%;
+  background: #1f1f1f;
+  color: white;
+  padding: 1% 4%;
+  opacity: 0.75;
+  font-size: 80%;
+  border-radius: 0.5em;
+}
+.rating {
+  position: absolute;
+  background: #1f1f1f;
+  z-index: 1;
+  left: 1%;
+  bottom: 1%;
+  color: white;
+  opacity: 0.75;
+  padding: 0 0.5em;
+  border-radius: 0.5em;
+}

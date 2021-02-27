@@ -8,9 +8,7 @@ export default function Button({ style, action, className, updateState }) {
         className={`btn btn-sm btn-outline-${style}`}
         onClick={() => updateState()}
       >
-        {typeof action == "object"
-          ? action
-          : action.charAt(0).toUpperCase() + action.slice(1)}
+        {action.charAt(0).toUpperCase() + action.slice(1)}
       </button>
     </div>
   );

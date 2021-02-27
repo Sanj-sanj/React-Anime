@@ -6,7 +6,6 @@ import Season from "./Season/Season";
 import Format from "./format/Format";
 import SortDropdown from "./SortDropdown/SortDropdown";
 import Spinner from "../shared/Spinner/Spinner";
-import Nav from "../shared/Nav/Nav";
 import requestAnimes from "../../js/requestAnimes";
 import {
   removeDuplicates,
@@ -20,18 +19,11 @@ const NewEpisodesModal = lazy(() =>
 const ToggleSortDropdown = lazy(() =>
   import("./ToggleDropdown/ToggleDropdown")
 );
+import Error from "../shared/Error/Error";
 
 let callAPI = false;
 
-export default function Parameters({
-  compareSeasons,
-  onSignIn,
-  onSignOut,
-  LazyLoad,
-  forceCheck,
-  dispatch,
-  state,
-}) {
+function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
   const [sort, setSort] = useState(
     (() => {
       try {
@@ -95,7 +87,10 @@ export default function Parameters({
       state.format,
       state.season,
       "queryMain"
-    );
+    ).catch((err) => {
+      //do error handling here for bad API requests.
+      console.log(err);
+    });
     ongoingShows = ongoingShows
       .filter(
         (show) => !thisSeasons.find((seasonShow) => show.id === seasonShow.id)
@@ -152,12 +147,6 @@ export default function Parameters({
 
   return (
     <Fragment>
-      <Nav
-        signInFunc={onSignIn}
-        signOutFunc={onSignOut}
-        dispatch={dispatch}
-        isOnline={state.isOnline}
-      />
       <div className="alert alert-dark">
         <div className="anime-season-area border-dark border-bottom row">
           <Season
@@ -248,5 +237,13 @@ export default function Parameters({
         <NewEpisodesModal shows={state.newEpisodes} language={language} />
       </Suspense>
     </Fragment>
+  );
+}
+
+export default function ParametersWithErrorBoundarys(props) {
+  return (
+    <Error>
+      <Parameters {...props} />
+    </Error>
   );
 }

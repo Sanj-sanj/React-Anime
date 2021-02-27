@@ -9,12 +9,12 @@ export default function Navbar({
   isOnline,
   dispatch,
 }) {
+  //REDIRECT URI NEEDS TO BE HARDCODED FOR REDIRECT TO REGISTER
   return (
     <div className="navbar navbar-dark bg-dark">
       <h2 className="navbar-text">
         <Link to={"/"}>Seasonal Anime</Link>
       </h2>
-
       {isOnline ? (
         <GoogleLogout
           clientId={process.env.REACT_APP_CLIENT_ID}
@@ -32,7 +32,7 @@ export default function Navbar({
           isSignedIn={true}
           theme="dark"
           uxMode="redirect"
-          redirectUri={process.env.REACT_APP_REDIRECT_URL}
+          redirectUri="http://localhost:1234/"
         />
       )}
     </div>
