@@ -5,10 +5,11 @@ import { render } from "react-dom";
 import { Router, createHistory } from "@reach/router";
 import LazyLoad, { forceCheck } from "react-lazyload";
 //
-import SwiperCore, { Navigation, Scrollbar, A11y } from "swiper";
+import SwiperCore, { Pagination, Navigation, Scrollbar, A11y } from "swiper";
 import "swiper/swiper.scss";
 import "swiper/components/navigation/navigation.scss";
 import "swiper/components/scrollbar/scrollbar.scss";
+import "swiper/components/pagination/pagination.scss";
 
 import Nav from "./components/shared/Nav/Nav";
 import Parameters from "./components/main/Parameters";
@@ -23,7 +24,7 @@ import {
   writeToDB,
 } from "./js/firebase/firebase";
 
-SwiperCore.use([Navigation, Scrollbar, A11y]);
+SwiperCore.use([Pagination, Navigation, Scrollbar, A11y]);
 dotenv.config();
 
 const initial = {
@@ -33,6 +34,7 @@ const initial = {
   isOnline: false,
   currentUser: "",
   data: [],
+  calendar: [],
   season: seasonFunc.checkSeason().split(" "),
   format: ["TV", "TV_SHORT"],
 };

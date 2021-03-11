@@ -46,12 +46,15 @@ function formatDate(year, month, day) {
 
 function formatCalendarDate(today, ind = 0) {
   today === 6 && ind >= 1 ? (today = today + ind) : today;
-  const date = new Date();
   const sortedDays = days.slice(today).concat(days.slice(0, today));
+  return sortedDays.map((day, i) => {
+    const fullDayMS = 86400000;
+    const date = new Date(new Date().setMilliseconds(fullDayMS * i));
 
-  return sortedDays.map((day) => {
     const formattedDateObj = new Date(
-      `${day} ${months[date.getMonth()]} ${today + ind} ${date.getFullYear()}`
+      `${day} ${
+        months[date.getMonth()]
+      } ${date.getDate()} ${date.getFullYear()}`
     );
     const formattedDate = `${formattedDateObj.getDate()}`;
     const formatted = `${days[formattedDateObj.getDay()]} · ${

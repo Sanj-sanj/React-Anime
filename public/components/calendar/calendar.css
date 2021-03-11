@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .calendar-title-container {
   flex: 1;
   display: flex;
@@ -16,13 +17,16 @@
   z-index: 1;
 }
 
+=======
+/* styles for the countdown colours, airing:green, tomorrow:blue, daysAway:red  */
+>>>>>>> calendar
 .calendar-date-container:not(:nth-child(3))
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
   > .calendar-items-slide
   > .img-spot
-  > time:nth-child(1) {
+  > time {
   background-color: #ff1616;
 }
 .calendar-date-container:nth-child(3)
@@ -31,7 +35,7 @@
   > .swiper-wrapper
   > .calendar-items-slide
   > .img-spot
-  > time:nth-child(1) {
+  > time {
   background-color: #4d94e2;
 }
 .calendar-date-container:nth-child(2)
@@ -40,6 +44,6 @@
   > .swiper-wrapper
   > .calendar-items-slide
   > .img-spot
-  > time:nth-child(1) {
+  > time {
   background-color: #08ae31;
 }

@@ -45,6 +45,8 @@ export default function reducer(state, action) {
       return { ...state, currentUser: payload };
     case "updateData":
       return { ...state, data: [...payload] };
+    case "updateCalendar":
+      return { ...state, calendar: [...payload] };
     case "format":
       state.format = payload;
       return state;

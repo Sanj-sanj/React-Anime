@@ -14,6 +14,15 @@ export default class Calendar extends React.Component {
 
   async componentDidMount() {
     console.log(this);
+    //needs to probably be handled in componentWillRecieveProps to discern a prop update
+    // if (this.props.props.state.calendar.length) {
+    //   console.log("using previous calendar");
+    //   return this.setState({
+    //     data: this.props.props.state.calendar,
+    //     loading: false,
+    //   });
+    // }
+    console.log("fetching calendar");
     const { watching } = this.props.props.state;
     const id_in = watching.map((show) => {
       if (show.status == "RELEASING") {
@@ -28,6 +37,7 @@ export default class Calendar extends React.Component {
       null,
       "queryDetails"
     );
+    this.props.props.dispatch({ type: "updateCalendar", payload: res });
     this.setState({ data: res, loading: false });
   }
   async componentDidUpdate(prevProps) {
@@ -67,7 +77,7 @@ export default class Calendar extends React.Component {
     const filteredShowArrays = buildCalendarListArrays(dateStringsArray, data);
 
     return (
-      <div className="card-body ">
+      <div className="container ">
         <div className="card-title">
           <h1>Calendar</h1>
         </div>
