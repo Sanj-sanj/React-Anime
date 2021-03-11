@@ -2,25 +2,38 @@
   flex-flow: column;
   align-items: center;
 }
-
-.schedule-date {
+.calendar-date {
   border-bottom: 2px #4d94e2 solid;
   border-left: 5px #4d94e2 solid;
   color: #3b99ff;
 }
 
+/* Styles to overwrite coverImage and Countdown styles. */
+.calendar-items-container {
+  border: yellowgreen 2px solid;
+  background: wheat;
+  padding: 1em 0;
+}
+.calendar-items-container > .swiper-container > .swiper-pagination {
+  bottom: 0 !important;
+}
 .calendar-items-slide {
   display: flex;
   justify-content: space-evenly;
   align-items: baseline;
 }
+.calendar-items-slide > .img-spot {
+  flex-direction: column;
+}
+.calendar-items-slide > .img-spot > .countdown {
+  position: unset;
+}
 .img-spot > a > div {
-  bottom: 4%;
+  bottom: 2%;
 }
 .calendar-image {
   width: 230px;
   height: 325px;
   position: relative;
   top: 6.7%;
-  margin-bottom: 2em;
 }

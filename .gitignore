@@ -8,4 +8,8 @@ public/graphql.js
 public/useOpions.js
 debug.log
 secrets.txt
+server.crt
+server.csr
+server.key
+server.pass.key
 .env.local

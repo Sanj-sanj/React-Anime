@@ -5,20 +5,16 @@ import "./parameters.css";
 import Season from "./Season/Season";
 import Format from "./format/Format";
 import SortDropdown from "./SortDropdown/SortDropdown";
+import ToggleSortDropdown from "./ToggleDropdown/ToggleDropdown";
 import Spinner from "../shared/Spinner/Spinner";
 import requestAnimes from "../../js/requestAnimes";
+import NewEpisodesModal from "./NewEpisodeModal/NewEpisodeModal";
+const Card = lazy(() => import("./card/Card"));
 import {
   removeDuplicates,
   compareForNewReleases,
 } from "../../js/checkNewEpisodes";
 import { sortCards } from "../../js/cards";
-const Card = lazy(() => import("./card/Card"));
-const NewEpisodesModal = lazy(() =>
-  import("./NewEpisodeModal/NewEpisodeModal")
-);
-const ToggleSortDropdown = lazy(() =>
-  import("./ToggleDropdown/ToggleDropdown")
-);
 import Error from "../shared/Error/Error";
 
 let callAPI = false;
@@ -192,9 +188,7 @@ function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
             defaultState={onGoing}
             fetchData={fetchData}
           />
-          <Suspense fallback={<div>HOLD</div>}>
-            <ToggleSortDropdown />
-          </Suspense>
+          <ToggleSortDropdown />
         </div>
         {/* {row card area className used as quereyselector value in toggleDropdown} */}
         <div className="row row-card-area">
@@ -210,7 +204,7 @@ function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
                   fallback={
                     <span
                       role="img"
-                      aria-label="Diamond hands. Apes Strong. Smooth Brain. HOLD."
+                      aria-label="Diamond hands. Apes Strong. Brain Smooth. HOLD."
                     >
                       💎 🤚 🐒 💪 🚀 🌙
                     </span>
@@ -233,9 +227,7 @@ function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
           )}
         </div>
       </div>
-      <Suspense fallback={<div>HOLD</div>}>
-        <NewEpisodesModal shows={state.newEpisodes} language={language} />
-      </Suspense>
+      <NewEpisodesModal shows={state.newEpisodes} language={language} />
     </Fragment>
   );
 }

@@ -1,45 +1,28 @@
-.calendar-title-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-flow: wrap;
-}
-.calendar-title {
-  display: block;
-  display: -webkit-box;
-  padding: 1px 1.45em;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  z-index: 1;
-}
-
-.card-body:not(:nth-child(3))
+/* styles for the countdown colours, airing:green, tomorrow:blue, daysAway:red  */
+.calendar-date-container:not(:nth-child(3))
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
   > .calendar-items-slide
   > .img-spot
-  > time:nth-child(1) {
+  > time {
   background-color: #ff1616;
 }
-.card-body:nth-child(3)
+.calendar-date-container:nth-child(3)
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
   > .calendar-items-slide
   > .img-spot
-  > time:nth-child(1) {
+  > time {
   background-color: #4d94e2;
 }
-.card-body:nth-child(2)
+.calendar-date-container:nth-child(2)
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
   > .calendar-items-slide
   > .img-spot
-  > time:nth-child(1) {
+  > time {
   background-color: #08ae31;
 }

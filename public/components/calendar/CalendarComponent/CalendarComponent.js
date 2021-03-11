@@ -49,60 +49,62 @@ export default class CalendarComponent extends React.Component {
         {dateStringsArray.map((dateString, i) => {
           return (
             <div
-              className="pb-0 d-flex calendar-date-container"
+              className="card-body pb-0 d-flex calendar-date-container"
               key={dateString}
             >
               <div className="col dates d-flex p-0">
-                <h3 className="schedule-date w-100 my-4 p-2 text-left">
+                <h3 className="calendar-date w-100 mb-4 p-2 text-left">
                   {dateString}
                 </h3>
               </div>
               <div className="row my-0 mx-3 w-100 calendar-items-container">
                 {filteredShowArrays[i].length ? (
                   <Swiper
-                    slidesPerView={
-                      slidesToDisplayCalendar(
-                        filteredShowArrays[i],
-                        this.state.innerWidth
-                      ) ?? 1
-                    }
-                    scrollbar={{ draggable: true }}
+                    slidesPerView={slidesToDisplayCalendar(
+                      filteredShowArrays[i].length,
+                      this.state.innerWidth
+                    )}
+                    // scrollbar={{ draggable: true }}
                     spaceBetween={1}
+                    pagination={{ clickable: true }}
                     className="w-100"
                   >
-                    {filteredShowArrays[i].map((show) => {
-                      const {
+                    {filteredShowArrays[i].map(
+                      ({
                         id,
                         coverImage,
+                        title,
                         format,
                         meanScore,
                         nextAiringEpisode,
-                      } = show;
-                      const title = show.title[language] || show.title.romaji;
-                      const score = meanScore
-                        ? (meanScore / 10).toFixed(1)
-                        : "?";
-                      return (
-                        <SwiperSlide key={id} className="calendar-items-slide">
-                          <div className="col img-spot" key={id}>
-                            <Countdown
-                              airingStatus={status}
-                              airingInfo={nextAiringEpisode}
-                              cd={nextAiringEpisode?.airingAt * 1000}
-                            />
-                            <Link to={`/details/${id}`}>
-                              <CoverImage
-                                title={title}
-                                coverImage={coverImage}
-                                format={format}
-                                score={score}
-                                style="calendar-image"
+                      }) => {
+                        title = title[language] || title.romaji;
+                        meanScore = (meanScore / 10).toFixed(1) || "?";
+                        return (
+                          <SwiperSlide
+                            key={id}
+                            className="calendar-items-slide"
+                          >
+                            <div className="col img-spot my-2" key={id}>
+                              <Countdown
+                                airingStatus={status}
+                                airingInfo={nextAiringEpisode}
+                                cd={nextAiringEpisode?.airingAt * 1000}
                               />
-                            </Link>
-                          </div>
-                        </SwiperSlide>
-                      );
-                    })}
+                              <Link to={`/details/${id}`}>
+                                <CoverImage
+                                  title={title}
+                                  coverImage={coverImage}
+                                  format={format}
+                                  score={meanScore}
+                                  style="calendar-image"
+                                />
+                              </Link>
+                            </div>
+                          </SwiperSlide>
+                        );
+                      }
+                    )}
                   </Swiper>
                 ) : (
                   <div>
