@@ -10,8 +10,13 @@
 
 /* Styles to overwrite coverImage and Countdown styles. */
 .calendar-items-container {
-  border: yellowgreen 2px solid;
-  background: wheat;
+  border: #a3cfff 2px solid;
+  background: #eaecff;
+  padding: 1em 0;
+}
+.calendar-items-container > .swiper-container {
+  /* border: yellowgreen 2px solid; */
+  background: aliceblue;
   padding: 1em 0;
 }
 .calendar-items-container > .swiper-container > .swiper-pagination {

@@ -61,7 +61,7 @@ export default class CalendarComponent extends React.Component {
                 {filteredShowArrays[i].length ? (
                   <Swiper
                     slidesPerView={slidesToDisplayCalendar(
-                      filteredShowArrays[i].length,
+                      filteredShowArrays[i],
                       this.state.innerWidth
                     )}
                     // scrollbar={{ draggable: true }}

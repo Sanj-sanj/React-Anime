@@ -57,7 +57,14 @@ function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
   }
 
   useEffect(async () => {
-    if (!isFetching) return;
+    if (!isFetching) {
+      //if were not fetching cancel the api call, and sort the data for good measure.
+      dispatch({
+        type: "updateData",
+        payload: sortCards(state.data, sort, state.season, state.watching),
+      });
+      return;
+    }
     if (!callAPI && state.data.length) {
       //reuse previous state
       callAPI = false;
@@ -110,6 +117,8 @@ function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
   }, [isFetching, onGoing]);
 
   useEffect(() => {
+    // console.log(state.watching, sort, state.season, state.data);
+    if (!state.data) return;
     dispatch({
       type: "updateData",
       payload: sortCards(state.data, sort, state.season, state.watching),

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .calendar-title-container {
   flex: 1;
   display: flex;
@@ -17,9 +16,6 @@
   z-index: 1;
 }
 
-=======
-/* styles for the countdown colours, airing:green, tomorrow:blue, daysAway:red  */
->>>>>>> calendar
 .calendar-date-container:not(:nth-child(3))
   > .calendar-items-container
   > .swiper-container

@@ -9,16 +9,18 @@ function seasonFunc() {
   function compareSeasons(userSeason) {
     const seasonAndYear = checkSeason().split(" ");
 
-    let currentInd = seasons.findIndex(
+    let currentSeasonInd = seasons.findIndex(
       (season) => season === seasonAndYear[0].toUpperCase()
     );
-    let userInd = seasons.findIndex(
+    let userSeasonInd = seasons.findIndex(
       (season) => season === userSeason[0].toUpperCase()
     );
-    currentInd === 0 ? (currentInd = 4) : currentInd;
-    userInd === 0 ? (userInd = 4) : userInd;
-
-    if (currentInd >= userInd && +userSeason[1] >= +seasonAndYear[1]) {
+    currentSeasonInd === 0 ? (currentSeasonInd = 4) : currentSeasonInd;
+    userSeasonInd === 0 ? (userSeasonInd = 4) : userSeasonInd;
+    if (
+      currentSeasonInd >= userSeasonInd &&
+      +userSeason[1] >= +seasonAndYear[1]
+    ) {
       return true;
     }
     return false;

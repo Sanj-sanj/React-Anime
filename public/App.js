@@ -44,6 +44,7 @@ const App = () => {
   const reachLocation = history.location;
   const [state, dispatch] = useReducer(reducer, initial);
   const [locState, setLocState] = useState();
+
   useEffect(() => {
     if (
       reachLocation.state?.key &&

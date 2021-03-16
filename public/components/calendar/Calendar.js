@@ -13,15 +13,6 @@ export default class Calendar extends React.Component {
   state = { loading: true };
 
   async componentDidMount() {
-    console.log(this);
-    //needs to probably be handled in componentWillRecieveProps to discern a prop update
-    // if (this.props.props.state.calendar.length) {
-    //   console.log("using previous calendar");
-    //   return this.setState({
-    //     data: this.props.props.state.calendar,
-    //     loading: false,
-    //   });
-    // }
     console.log("fetching calendar");
     const { watching } = this.props.props.state;
     const id_in = watching.map((show) => {
