@@ -1,6 +1,8 @@
 import { queryEpisodes } from "./querys";
 import Axios from "axios";
 //removed one param = nextPage
+//this function checks an array of pre-filtered id's and returns json if correct
+//else returns an error.
 async function checkNewEp(ArrofIDs, acc = []) {
   const variables = {
     id_in: ArrofIDs,

@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel public/index.html --open",
+    "dev": "parcel src/index.html --open",
     "format": "prettier \"src/**/*.{js,html}\" --write",
     "lint": "eslint \"src/**/*/{js,jsx}\" --quiet",
-    "build": "parcel build public/index.html --no-source-maps ",
+    "build": "parcel build src/index.html --no-source-maps ",
     "start": "npm run build && node ./server.js",
     "server": "node server.js",
-    "serve": "parcel serve public/index.html",
-    "out": "parcel build public/index.html --out-dir build/output ",
-    "pub": "parcel public/index.html --public-url ./dist/"
+    "serve": "parcel serve src/index.html",
+    "out": "parcel build src/index.html --out-dir build/output ",
+    "pub": "parcel src/index.html --public-url ./dist/"
   },
   "keywords": [],
   "author": "",
