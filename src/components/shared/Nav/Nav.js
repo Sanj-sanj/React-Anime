@@ -32,7 +32,7 @@ export default function Navbar({
           isSignedIn={true}
           theme="dark"
           uxMode="redirect"
-          redirectUri="https://react-anime.herokuapp.com/"
+          redirectUri="https://react-anime.netlify.app/"
         />
       )}
     </div>
