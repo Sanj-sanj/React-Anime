@@ -10,18 +10,23 @@ const today = new Date().getDay();
 const dateStringsArray = formatCalendarDate(today);
 
 export default class Calendar extends React.Component {
-  state = { loading: true };
+  constructor(props) {
+    super(props);
+    this.state = { loading: true };
+  }
 
   async componentDidMount() {
     console.log("fetching calendar");
     const { watching } = this.props.props.state;
-    const id_in = watching.map((show) => {
-      if (show.status == "RELEASING") {
-        return show.id;
-      }
-    });
+
+    const filteredIds = watching
+      .filter(
+        (i) => i.status === "RELEASING" || i.status === "NOT_YET_RELEASED"
+      )
+      .map((v) => v.id);
+
     const res = await requestAnimes(
-      { id_in: id_in },
+      { id_in: filteredIds },
       null,
       undefined,
       null,
@@ -32,17 +37,21 @@ export default class Calendar extends React.Component {
     this.setState({ data: res, loading: false });
   }
   async componentDidUpdate(prevProps) {
+    //if user goes to calendar before firebase returns user data.
     const { watching } = this.props.props.state;
     const { watching: prevWatching } = prevProps.props.state;
+
+    const filteredIds = watching
+      .filter(
+        (i) => i.status === "RELEASING" || i.status === "NOT_YET_RELEASED"
+      )
+      .map((v) => v.id);
+
     if (prevWatching.length !== watching.length) {
       console.log("doing componentDidUpdate API CALL");
-      const id_in = watching.map((show) => {
-        if (show.status == "RELEASING") {
-          return show.id;
-        }
-      });
+
       const res = await requestAnimes(
-        { id_in: id_in },
+        { id_in: filteredIds },
         null,
         undefined,
         null,
