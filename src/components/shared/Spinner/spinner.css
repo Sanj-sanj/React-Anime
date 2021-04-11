@@ -1,18 +1,27 @@
 .loading-area {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
   position: fixed;
   top: 50%;
-  left: 50%;
+  z-index: 100;
+  justify-content: center;
 }
 
 .spinner {
-  width: fit-content;
   animation: spinner 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
   position: absolute;
   z-index: 100;
+  width: 100%;
+  max-width: 175px;
+  display: -webkit-box;
 }
+
+@media (max-width: 498px) {
+  .spinner {
+    max-width: 100px;
+  }
+}
+
 @keyframes spinner {
   to {
     transform: rotateZ(360deg);

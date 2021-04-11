@@ -1,17 +1,10 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import requestAnimes from "../../js/requestAnimes";
 const MoreInfo = React.lazy(() => import("./MoreInfo/MoreInfo"));
-import Spinner from "../shared/Spinner/Spinner";
 import { compareForNewReleases } from "../../js/checkNewEpisodes";
+import Spinner from "../shared/Spinner/Spinner";
 
-export default function Details({
-  state,
-  dispatch,
-  id,
-  onSignIn,
-  onSignOut,
-  LazyLoad,
-}) {
+export default function Details({ state, dispatch, id, onSignIn, onSignOut }) {
   const [data, setData] = useState({});
   const [isFetching, setIsFetching] = useState(true);
   const language = (() => {
@@ -37,19 +30,16 @@ export default function Details({
     compareForNewReleases(dispatch, state.watching, language);
   }, [id]);
 
-  return isFetching ? (
-    <Spinner hasRendered={isFetching} />
-  ) : (
-    <Suspense fallback={<Spinner hasRendered={true} />}>
+  if (!isFetching)
+    return (
       <MoreInfo
         data={data}
         state={state}
         dispatch={dispatch}
         onSignIn={onSignIn}
         onSignOut={onSignOut}
-        LazyLoad={LazyLoad}
         language={language}
       />
-    </Suspense>
-  );
+    );
+  return <Spinner hasRendered={isFetching} />;
 }

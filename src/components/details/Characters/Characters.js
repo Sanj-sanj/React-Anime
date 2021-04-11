@@ -12,14 +12,11 @@ export default function Characters({
   Swiper,
   SwiperSlide,
   innerWidth,
-  LazyLoad,
 }) {
-  if (!characters.length) return null;
-
-  return (
-    <div className="pt-3 border-top">
-      <h4 className="card-title">Characters</h4>
-      <LazyLoad>
+  if (characters.length)
+    return (
+      <div className="pt-3 border-top">
+        <h4 className="card-title">Characters</h4>
         <Swiper
           slidesPerView={characterSlidesToDisplay(characters, innerWidth)}
           scrollbar={{ draggable: true }}
@@ -62,8 +59,7 @@ export default function Characters({
             )
           )}
         </Swiper>
-      </LazyLoad>
-      <div></div>
-    </div>
-  );
+      </div>
+    );
+  return null;
 }

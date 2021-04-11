@@ -5,49 +5,48 @@ export default function AnimeDescription({ description, innerWidth }) {
   if (!description) {
     description = "<i>No synopsis has been made available yet.</i>";
   }
-  const [toggle, setToggle] = useState(false);
-  const [btn, setBtn] = useState(false);
-  const descriptionContainer = document.querySelector("div.px-3 div.mb-3");
+  // const [toggle, setToggle] = useState(false);
+  // const [btn, setBtn] = useState(false);
+  // const descriptionContainer = document.querySelector("div.px-3 div.mb-3");
 
-  function expandContainer(e) {
-    let button = e.target;
-    if (descriptionContainer?.clientHeight >= 200) {
-      descriptionContainer.classList.add("collapsed");
-      button.textContent = "SHOW MORE";
-      return setToggle(!toggle);
-    }
-    if (descriptionContainer?.clientHeight < 200) {
-      descriptionContainer.classList.remove("collapsed");
-      button.textContent = "SHOW LESS";
-      return setToggle(!toggle);
-    }
-  }
+  const [showTxt, setShowTxt] = useState(false);
+  const [btnTxt, setBtnTxt] = useState("SHOW MORE");
 
   useEffect(() => {
-    if (innerWidth < 992) return setBtn(true);
-    if (innerWidth >= 992) return setBtn(false);
-  }, [innerWidth]);
+    const descriptionContainer = document.querySelector(
+      "div.px-3 section.mb-3"
+    );
+    if (innerWidth > 992) {
+      descriptionContainer.classList.remove("collapsed");
+      setShowTxt(false);
+      setBtnTxt("SHOW MORE");
+    }
+
+    if (innerWidth < 992 && !showTxt) {
+      descriptionContainer.classList.add("collapsed");
+      return setBtnTxt("SHOW MORE");
+    }
+
+    if (innerWidth < 992 && showTxt) {
+      descriptionContainer.classList.remove("collapsed");
+      return setBtnTxt("SHOW LESS");
+    }
+  }, [innerWidth, showTxt]);
 
   return (
     <div className="px-3">
-      <div
-        className={`mb-3 ${
-          descriptionContainer && descriptionContainer.clientHeight > 191 && btn
-            ? "collapsed"
-            : ""
-        }`}
+      <section
+        className="mb-3"
         dangerouslySetInnerHTML={{ __html: description }}
       />
-      <div className={"mb-3"}>
-        {btn ? (
-          <button
-            className="btn btn-sm btn-show-txt"
-            onClick={(e) => expandContainer(e)}
-          >
-            SHOW MORE
-          </button>
-        ) : null}
-      </div>
+      {innerWidth < 992 ? (
+        <button
+          className="btn btn-sm btn-show-txt"
+          onClick={() => setShowTxt(!showTxt)}
+        >
+          {btnTxt}
+        </button>
+      ) : null}
     </div>
   );
 }

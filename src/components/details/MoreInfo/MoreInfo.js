@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import LazyLoad from "react-lazyload";
 import "./moreInfo.css";
 import { formatDate } from "../../../js/formatDates";
 //
@@ -10,20 +11,15 @@ import RatingColumn from "../RatingColumn/RatingColumn";
 import MetaInfo from "../MetaInfo/MetaInfo";
 import AnimeDescription from "../AnimeDescription/AnimeDescription";
 import Characters from "../Characters/Characters";
-import Themes from "../Themes/Themes";
 import RelatedAnime from "../RelatedAnime/RelatedAnime";
+import Themes from "../Themes/Themes";
 import Trailer from "../Trailer/Trailer";
 import ExternalLinks from "../ExternalLinks/ExternalLinks";
 import Button from "../../shared/Button/Button";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 
-export default function MoreInfo({
-  data,
-  state,
-  dispatch,
-  LazyLoad,
-  language,
-}) {
+export default function MoreInfo({ data, state, dispatch, language }) {
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const { watching, considering } = state;
   const {
@@ -95,100 +91,95 @@ export default function MoreInfo({
       <Banner bannerImage={bannerImage} altText={title} />
       <div className="card text-dark bg-light ">
         <div className="card-body">
-          <h2 className="card-title">{title}</h2>
-          <h6 className="card-subtitle mb-2 text-muted mb-2">{altTitle}</h6>
-          <div className="details-countdown-container">
-            <Countdown
-              airingStatus={status}
-              airingInfo={nextAiringEpisode}
-              cd={cd}
-              css={"countdown-show mb-2"}
-            />
-          </div>
-          <div className="row pt-3 mb-3">
-            <Ribbon watch={watching} consider={considering} id={id} />
-            <PosterColumn coverImage={coverImage} title={title} id={id} />
-            <div className="col">
-              <RatingColumn
-                meanScore={meanScore}
-                synonyms={synonyms}
-                studios={studios}
-                genres={genres}
-                formattedDate={formattedDate}
+          <LazyLoad height={"90vh"}>
+            <h2 className="card-title">{title}</h2>
+            <h6 className="card-subtitle mb-2 text-muted mb-2">{altTitle}</h6>
+            <div className="details-countdown-container">
+              <Countdown
+                airingStatus={status}
+                airingInfo={nextAiringEpisode}
+                cd={cd}
+                css={"countdown-show mb-2"}
               />
-              <div className="col" id="n1">
-                <Button
-                  className={"mb-3"}
-                  style={"success"}
-                  action={"watching"}
-                  updateState={updateWatching}
-                  id={id}
+            </div>
+            <div className="row pt-3 mb-3">
+              <Ribbon watch={watching} consider={considering} id={id} />
+              <PosterColumn coverImage={coverImage} title={title} id={id} />
+              <div className="col">
+                <RatingColumn
+                  meanScore={meanScore}
+                  synonyms={synonyms}
+                  studios={studios}
+                  genres={genres}
+                  formattedDate={formattedDate}
                 />
-                <Button
-                  className={"mb-3"}
-                  style={"warning"}
-                  action={"consider"}
-                  updateState={updateConsider}
-                  id={id}
-                />
+                <div className="col" id="n1">
+                  <Button
+                    className={"mb-3"}
+                    style={"success"}
+                    action={"watching"}
+                    updateState={updateWatching}
+                    id={id}
+                  />
+                  <Button
+                    className={"mb-3"}
+                    style={"warning"}
+                    action={"consider"}
+                    updateState={updateConsider}
+                    id={id}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col" id="n2">
-            <Button
-              className={"mb-3"}
-              style={"success"}
-              action={"watching"}
-              updateState={updateWatching}
-              id={id}
+            <div className="col" id="n2">
+              <Button
+                className={"mb-3"}
+                style={"success"}
+                action={"watching"}
+                updateState={updateWatching}
+                id={id}
+              />
+              <Button
+                className={"mb-3"}
+                style={"warning"}
+                action={"consider"}
+                updateState={updateConsider}
+                id={id}
+              />
+            </div>
+            <MetaInfo
+              format={format}
+              source={source}
+              episodes={episodes}
+              duration={duration}
             />
-            <Button
-              className={"mb-3"}
-              style={"warning"}
-              action={"consider"}
-              updateState={updateConsider}
-              id={id}
-            />
-          </div>
-          <MetaInfo
-            format={format}
-            source={source}
-            episodes={episodes}
-            duration={duration}
-          />
-          <div className="mt-3">
             <AnimeDescription
               description={description}
               innerWidth={innerWidth}
             />
-            <Characters
-              characters={characters.edges}
-              Swiper={Swiper}
-              SwiperSlide={SwiperSlide}
-              innerWidth={innerWidth}
-              LazyLoad={LazyLoad}
-            />
-            <RelatedAnime
-              relations={relations}
-              Swiper={Swiper}
-              SwiperSlide={SwiperSlide}
-              language={language}
-              LazyLoad={LazyLoad}
-            />
-            <Themes
-              tags={tags}
-              Swiper={Swiper}
-              SwiperSlide={SwiperSlide}
-              isAdult={isAdult}
-            />
-            <LazyLoad>
-              <Trailer trailer={trailer} title={title} LazyLoad={LazyLoad} />
-            </LazyLoad>
-            <LazyLoad>
-              <ExternalLinks
-                externalLinks={externalLinks}
-                LazyLoad={LazyLoad}
+          </LazyLoad>
+          <div className="mt-3">
+            <LazyLoad offset={10} height={"100vh"}>
+              <Characters
+                characters={characters.edges}
+                Swiper={Swiper}
+                SwiperSlide={SwiperSlide}
+                innerWidth={innerWidth}
               />
+              <RelatedAnime
+                relations={relations}
+                Swiper={Swiper}
+                SwiperSlide={SwiperSlide}
+                language={language}
+              />
+              <Themes
+                tags={tags}
+                Swiper={Swiper}
+                SwiperSlide={SwiperSlide}
+                isAdult={isAdult}
+              />
+              <Trailer trailer={trailer} title={title} />
+              <ExternalLinks externalLinks={externalLinks} />
             </LazyLoad>
           </div>
         </div>

@@ -1,13 +1,14 @@
 import React from "react";
 import { Link } from "@reach/router";
 import PosterColumn from "../PosterColumn/PosterColumn";
+import LazyLoad from "react-lazyload";
+
 import "./relatedAnime.css";
 
 export default function RelatedAnime({
   relations,
   Swiper,
   SwiperSlide,
-  LazyLoad,
   language,
 }) {
   if (

@@ -1,5 +1,6 @@
 import { Modal } from "bootstrap/dist/js/bootstrap.bundle.min.js";
 import React, { useState, useEffect, lazy, Suspense, Fragment } from "react";
+import LazyLoad, { forceCheck } from "react-lazyload";
 import "./parameters.css";
 
 import Season from "./Season/Season";
@@ -19,7 +20,7 @@ import Error from "../shared/Error/Error";
 
 let callAPI = false;
 
-function Parameters({ compareSeasons, LazyLoad, forceCheck, dispatch, state }) {
+function Parameters({ compareSeasons, dispatch, state }) {
   const [sort, setSort] = useState(
     (() => {
       try {

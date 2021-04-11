@@ -1,9 +1,8 @@
 import "regenerator-runtime/runtime";
 import dotenv from "dotenv";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState, lazy, Suspense } from "react";
 import { render } from "react-dom";
 import { Router, createHistory } from "@reach/router";
-import LazyLoad, { forceCheck } from "react-lazyload";
 //
 import SwiperCore, { Pagination, Navigation, Scrollbar, A11y } from "swiper";
 import "swiper/swiper.scss";
@@ -12,9 +11,11 @@ import "swiper/components/scrollbar/scrollbar.scss";
 import "swiper/components/pagination/pagination.scss";
 
 import Nav from "./components/shared/Nav/Nav";
-import Parameters from "./components/main/Parameters";
-import Details from "./components/details/Details";
-import Calendar from "./components/calendar/Calendar";
+import Spinner from "./components/shared/Spinner/Spinner";
+const Parameters = lazy(() => import("./components/main/Parameters"));
+const Details = lazy(() => import("./components/details/Details"));
+const Calendar = lazy(() => import("./components/calendar/Calendar"));
+
 import seasonFunc from "./js/checkSeason";
 import reducer from "./js/reducer";
 import {
@@ -77,23 +78,18 @@ const App = () => {
         isOnline={state.isOnline}
         dispatch={dispatch}
       />
-      <Router>
-        <Parameters
-          path="/"
-          state={state}
-          LazyLoad={LazyLoad}
-          forceCheck={forceCheck}
-          compareSeasons={seasonFunc.compareSeasons}
-          dispatch={dispatch}
-        />
-        <Details
-          path="/details/:id"
-          state={state}
-          dispatch={dispatch}
-          LazyLoad={LazyLoad}
-        />
-        <Calendar path={"/calendar"} props={{ state, dispatch }} />
-      </Router>
+      <Suspense fallback={<Spinner hasRendered={true} />}>
+        <Router>
+          <Parameters
+            path="/"
+            state={state}
+            compareSeasons={seasonFunc.compareSeasons}
+            dispatch={dispatch}
+          />
+          <Details path="/details/:id" state={state} dispatch={dispatch} />
+          <Calendar path={"/calendar"} props={{ state, dispatch }} />
+        </Router>
+      </Suspense>
     </React.Fragment>
   );
 };
