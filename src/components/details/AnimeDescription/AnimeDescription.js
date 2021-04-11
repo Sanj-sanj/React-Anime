@@ -5,10 +5,6 @@ export default function AnimeDescription({ description, innerWidth }) {
   if (!description) {
     description = "<i>No synopsis has been made available yet.</i>";
   }
-  // const [toggle, setToggle] = useState(false);
-  // const [btn, setBtn] = useState(false);
-  // const descriptionContainer = document.querySelector("div.px-3 div.mb-3");
-
   const [showTxt, setShowTxt] = useState(false);
   const [btnTxt, setBtnTxt] = useState("SHOW MORE");
 
