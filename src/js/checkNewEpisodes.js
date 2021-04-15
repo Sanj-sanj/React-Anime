@@ -53,6 +53,13 @@ async function compareForNewReleases(dispatch, watching, language) {
       return sameShow;
     }
     if (
+      sameShow.status === "NOT_YET_RELEASED" &&
+      latestShowInfo.status === "FINISHED"
+    ) {
+      //They dropped all the episodes at once
+      return latestShowInfo;
+    }
+    if (
       sameShow.status === "RELEASING" &&
       latestShowInfo.status === "FINISHED"
     ) {
