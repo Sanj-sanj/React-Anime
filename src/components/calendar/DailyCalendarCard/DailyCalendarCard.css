@@ -2,11 +2,6 @@
   flex-flow: column;
   align-items: center;
 }
-.calendar-date {
-  border-bottom: 2px #4d94e2 solid;
-  border-left: 5px #4d94e2 solid;
-  color: #3b99ff;
-}
 
 /* Styles to overwrite coverImage and Countdown styles. */
 .calendar-items-container {

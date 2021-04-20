@@ -98,7 +98,7 @@ export default function MoreInfo({ data, state, dispatch, language }) {
               <Countdown
                 airingStatus={status}
                 airingInfo={nextAiringEpisode}
-                cd={cd}
+                airingAt={cd}
                 css={"countdown-show mb-2"}
               />
             </div>

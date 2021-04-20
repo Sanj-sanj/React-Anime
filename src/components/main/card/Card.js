@@ -101,7 +101,7 @@ export default function Card({
           <Countdown
             airingStatus={status}
             airingInfo={nextAiringEpisode}
-            cd={airing}
+            airingAt={airing}
           />
           <LazyLoad height={252}>
             <CoverImage

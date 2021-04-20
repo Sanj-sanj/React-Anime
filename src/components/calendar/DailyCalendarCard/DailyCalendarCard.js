@@ -5,7 +5,8 @@ import CoverImage from "../../shared/CoverImage/CoverImage";
 import Countdown from "../../shared/Countdown/Countdown";
 import "../../shared/Countdown/countdown.css";
 import { slidesToDisplayCalendar } from "../../../js/slidesToDisplay";
-import "./calendarComponent.css";
+import "./DailyCalendarCard.css";
+import DailyHeader from "./DailyHeader/DailyHeader";
 
 const language = (() => {
   try {
@@ -15,7 +16,7 @@ const language = (() => {
   }
 })();
 
-export default class CalendarComponent extends React.Component {
+export default class DailyCalendarCard extends React.Component {
   state = { innerWidth: window.innerWidth, listener: null };
 
   componentDidMount() {
@@ -52,11 +53,7 @@ export default class CalendarComponent extends React.Component {
               className="card-body pb-0 d-flex calendar-date-container"
               key={dateString}
             >
-              <div className="col dates d-flex p-0">
-                <h3 className="calendar-date w-100 mb-4 p-2 text-left">
-                  {dateString}
-                </h3>
-              </div>
+              <DailyHeader dateString={dateString} />
               <div className="row my-0 mx-3 w-100 calendar-items-container">
                 {filteredShowArrays[i].length ? (
                   <Swiper
@@ -64,7 +61,6 @@ export default class CalendarComponent extends React.Component {
                       filteredShowArrays[i],
                       this.state.innerWidth
                     )}
-                    // scrollbar={{ draggable: true }}
                     spaceBetween={1}
                     pagination={{ clickable: true }}
                     className="w-100"

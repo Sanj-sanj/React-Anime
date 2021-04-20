@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./countdown.css";
 
-export default function Countdown({ airingStatus, airingInfo, cd, css }) {
+export default function Countdown({ airingStatus, airingInfo, airingAt, css }) {
   const [time, setTime] = useState("");
-
+  //
   useEffect(() => {
     if (airingStatus === null || airingInfo === null) {
       setTime("");
@@ -11,7 +11,7 @@ export default function Countdown({ airingStatus, airingInfo, cd, css }) {
     }
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const timeApart = cd - now;
+      const timeApart = airingAt - now;
       if (timeApart < 0) {
         return "Released!";
       }
@@ -37,7 +37,7 @@ export default function Countdown({ airingStatus, airingInfo, cd, css }) {
     return () => {
       clearInterval(timer);
     };
-  }, [cd, airingStatus]);
+  }, [airingAt, airingStatus]);
 
   const episode =
     airingStatus === "FINISHED"
@@ -45,7 +45,6 @@ export default function Countdown({ airingStatus, airingInfo, cd, css }) {
       : airingInfo
       ? "Ep " + airingInfo.episode
       : "No information";
-
   return (
     <time className={`countdown ${css}`}>
       {episode} {!time ? null : time}

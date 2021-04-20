@@ -1,0 +1,86 @@
+:root {
+  --box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.timetable {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.timetable-date {
+  background: white;
+  flex: 1 0 17em;
+  margin: 1em 0.5rem 1rem;
+  box-shadow: var(--box-shadow);
+}
+
+.table-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+}
+.show {
+  display: flex !important;
+}
+.hide {
+  display: none !important;
+}
+
+/* container for teh time cards */
+.timetable-slot {
+  padding: 0 0.5rem;
+}
+.timetable-slot:last-child {
+  padding-bottom: 1rem;
+}
+.line {
+  margin: 0 0.5em;
+  border-right: 7px solid #007aff;
+}
+/* content for teh time cards */
+.content {
+  padding-top: 1rem;
+}
+
+.timetable-date > .table-heading + .timetable-slot > .line {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+.timetable-date > .timetable-slot:last-child > .line {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+.timetable-poster {
+  margin-right: 0.5rem;
+}
+.timetable-time {
+  text-align: left;
+  /* margin-bottom: 0.5rem; */
+}
+
+.timetable-time::after {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  display: block;
+  box-shadow: var(--box-shadow);
+  position: relative;
+  transform: translateY(-180%) translateX(-1rem);
+  background: white;
+}
+.timetable-body > time {
+  position: relative;
+  background: transparent;
+  color: #444;
+  /* padding: .25rem 1rem; */
+}
+.timetable-title {
+  display: -webkit-box;
+  font-weight: 700;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}

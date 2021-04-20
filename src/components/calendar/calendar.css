@@ -16,7 +16,7 @@
   z-index: 1;
 }
 
-.calendar-date-container:not(:nth-child(3))
+.calendar-date-container:not(:nth-child(9))
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
@@ -25,7 +25,7 @@
   > time {
   background-color: #ff1616;
 }
-.calendar-date-container:nth-child(3)
+.calendar-date-container:nth-child(2)
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
@@ -34,7 +34,7 @@
   > time {
   background-color: #4d94e2;
 }
-.calendar-date-container:nth-child(2)
+.calendar-date-container:nth-child(1)
   > .calendar-items-container
   > .swiper-container
   > .swiper-wrapper
