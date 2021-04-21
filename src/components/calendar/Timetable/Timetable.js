@@ -5,8 +5,10 @@ import { Link } from "@reach/router";
 import TimetableHeader from "./TimetableHeader/TimetableHeader";
 import Countdown from "../../shared/Countdown/Countdown";
 
-const Timetable = ({ date, showsArray }) => {
-  const [visbility, setVisbility] = useState("hide");
+const Timetable = ({ date, showsArray, innerWidth }) => {
+  const [visbility, setVisbility] = useState(
+    innerWidth >= 1870 ? "show" : "hide"
+  );
 
   return (
     <>
@@ -38,7 +40,14 @@ const Timetable = ({ date, showsArray }) => {
                   <div key={show.id} className={`timetable-slot ${visbility}`}>
                     <div className="line"></div>
                     <div className="content">
-                      <div className="timetable-time">{time} </div>
+                      <div className="timetable-time">
+                        {time}{" "}
+                        <Countdown
+                          airingStatus={status}
+                          airingInfo={nextAiringEpisode}
+                          airingAt={nextAiringEpisode.airingAt * 1000}
+                        />{" "}
+                      </div>
                       <div className="anime-block d-flex">
                         <div className="timetable-poster">
                           <img
@@ -53,11 +62,6 @@ const Timetable = ({ date, showsArray }) => {
                           >
                             {show.title.romaji}
                           </Link>
-                          <Countdown
-                            airingStatus={status}
-                            airingInfo={nextAiringEpisode}
-                            airingAt={nextAiringEpisode.airingAt * 1000}
-                          />
                         </div>
                       </div>
                     </div>

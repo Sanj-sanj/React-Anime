@@ -74,7 +74,6 @@ async function compareForNewReleases(dispatch, watching, language) {
       return sameShow;
     }
   });
-  console.log(hasNewEpisodes);
   if (hasNewEpisodes.length) {
     dispatch({ type: "newEpisodes", payload: hasNewEpisodes });
     dispatch({

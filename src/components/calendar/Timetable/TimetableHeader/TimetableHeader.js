@@ -6,7 +6,7 @@ const TimetableHeader = ({ date, visbility, setVisbility }) => {
       className="btn table-heading"
       onClick={() => setVisbility(visbility == "show" ? "hide" : "show")}
     >
-      <h2>{date}</h2>
+      <h3>{date}</h3>
       <svg
         width="2em"
         height="2em"

@@ -85,7 +85,7 @@ export default class DailyCalendarCard extends React.Component {
                               <Countdown
                                 airingStatus={status}
                                 airingInfo={nextAiringEpisode}
-                                cd={nextAiringEpisode?.airingAt * 1000}
+                                airingAt={nextAiringEpisode?.airingAt * 1000}
                               />
                               <Link to={`/details/${id}`}>
                                 <CoverImage

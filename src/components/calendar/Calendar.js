@@ -21,8 +21,14 @@ export default class Calendar extends React.Component {
       hasError: false,
       data: [],
       filteredShowArrays: [],
+      toggleView: "calendar",
+      innerWidth: window.innerWidth,
     };
   }
+
+  getWindowSize = () => this.setState({ innerWidth: window.innerWidth });
+
+  toggle = (value) => this.setState({ toggleView: value });
 
   async componentDidMount() {
     const { watching } = this.props.props.state;
@@ -79,11 +85,14 @@ export default class Calendar extends React.Component {
   }
 
   render() {
+    const { toggle } = this;
+    const { loading, filteredShowArrays, toggleView, innerWidth } = this.state;
+
     return (
       <>
-        <CalendarHeader />
+        <CalendarHeader toggle={toggle} view={toggleView} />
         {this.state.loading ? (
-          <Spinner hasRendered={this.state.loading} />
+          <Spinner hasRendered={loading} />
         ) : this.state.hasError ? (
           <h3>
             Oops... Something went wrong! Sadly I am not intelligent enough to
@@ -91,30 +100,31 @@ export default class Calendar extends React.Component {
             re-navigating back here, or try again after some time.
           </h3>
         ) : (
-          <div className="container">
-            {/* <DailyCalendarCard
-              dateStringsArray={dateStringsArray}
-              filteredShowArrays={buildCalendarListArrays(
-                dateStringsArray,
-                this.state.data
+          <>
+            <div
+              className={
+                toggleView === "calendar" ? "container" : "container-fluid"
+              }
+            >
+              {toggleView === "calendar" ? (
+                <DailyCalendarCard
+                  dateStringsArray={dateStringsArray}
+                  filteredShowArrays={filteredShowArrays}
+                />
+              ) : (
+                <div className="d-flex flex-wrap justify-content-center">
+                  {dateStringsArray?.map((dateString, i) => (
+                    <Timetable
+                      key={dateString}
+                      date={dateString}
+                      showsArray={filteredShowArrays[i]}
+                      innerWidth={innerWidth}
+                    />
+                  ))}
+                </div>
               )}
-            /> */}
-            {/* <Timetable
-              dateStringsArray={dateStringsArray}
-              filteredShowArrays={buildCalendarListArrays(
-                dateStringsArray,
-                this.state.data
-              )}
-            /> */}
-
-            {dateStringsArray?.map((dateString, i) => (
-              <Timetable
-                key={dateString}
-                date={dateString}
-                showsArray={this.state.filteredShowArrays[i]}
-              />
-            ))}
-          </div>
+            </div>
+          </>
         )}
       </>
     );

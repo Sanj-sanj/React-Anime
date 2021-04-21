@@ -3,9 +3,10 @@ node_modules/
 dist/
 coverage/
 .vscode/
-public/testDropdown.js
-public/graphql.js
-public/useOpions.js
+
+src/components/shared/nav/Nav.js
+server/
+test.js
 debug.log
 secrets.txt
 server.crt

@@ -1,0 +1,25 @@
+.calendar-header-title {
+  margin: 0 5.1rem;
+}
+.calendar-views {
+  margin-left: 3.4rem;
+}
+.calendar-views > button {
+  font-size: 21px;
+}
+.calendar-views > button:not(.active-view) {
+  color: #4b4b4b;
+}
+.calendar-views > button:hover {
+  color: black;
+}
+.active-view {
+  border-bottom: solid 2px dimgray;
+  font-weight: 700;
+}
+
+@media (max-width: 570px) {
+  .calendar-views {
+    margin-left: 0;
+  }
+}
