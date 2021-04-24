@@ -21,14 +21,29 @@ export default class Calendar extends React.Component {
       hasError: false,
       data: [],
       filteredShowArrays: [],
-      toggleView: "calendar",
+      toggleView: (() => {
+        try {
+          return (
+            JSON.parse(localStorage.getItem("calendar-view")) || "calendar"
+          );
+        } catch (error) {
+          return "calendar";
+        }
+      })(),
       innerWidth: window.innerWidth,
     };
   }
 
   getWindowSize = () => this.setState({ innerWidth: window.innerWidth });
 
-  toggle = (value) => this.setState({ toggleView: value });
+  toggle = (value) => {
+    try {
+      this.setState({ toggleView: value });
+      return localStorage.setItem("calendar-view", JSON.stringify(value));
+    } catch (err) {
+      return err;
+    }
+  };
 
   async componentDidMount() {
     const { watching } = this.props.props.state;
