@@ -21,11 +21,11 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
           />
           {showsArray.length ? (
             <>
-              {showsArray.map((show) => {
+              {showsArray.map((arrayOfShows) => {
                 let time = new Date();
-                const { nextAiringEpisode, status } = show;
+                const { nextAiringEpisode, status } = arrayOfShows[0];
                 try {
-                  time.setSeconds(show.nextAiringEpisode?.timeUntilAiring);
+                  time.setSeconds(nextAiringEpisode?.timeUntilAiring);
                   time = `${time.getHours()}:${
                     time.getMinutes() < 10
                       ? time.getMinutes() + "0"
@@ -37,7 +37,10 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
                 }
 
                 return (
-                  <div key={show.id} className={`timetable-slot ${visbility}`}>
+                  <div
+                    key={arrayOfShows[0].nextAiringEpisode?.timeUntilAiring}
+                    className={`timetable-slot ${visbility}`}
+                  >
                     <div className="line"></div>
                     <div className="content">
                       <div className="timetable-time">
@@ -48,22 +51,24 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
                           airingAt={nextAiringEpisode.airingAt * 1000}
                         />{" "}
                       </div>
-                      <div className="anime-block d-flex">
-                        <div className="timetable-poster">
-                          <img
-                            src={show.coverImage.medium}
-                            alt={show.title.romaji}
-                          />
+                      {arrayOfShows.map((show) => (
+                        <div key={show.id} className="anime-block d-flex pb-2">
+                          <div className="timetable-poster">
+                            <img
+                              src={show.coverImage.medium}
+                              alt={show.title.romaji}
+                            />
+                          </div>
+                          <div className="timetable-body text-left d-flex flex-column align-content-start">
+                            <Link
+                              to={`/details/${show.id}`}
+                              className="timetable-title"
+                            >
+                              {show.title.romaji}
+                            </Link>
+                          </div>
                         </div>
-                        <div className="timetable-body text-left d-flex flex-column align-content-start">
-                          <Link
-                            to={`/details/${show.id}`}
-                            className="timetable-title"
-                          >
-                            {show.title.romaji}
-                          </Link>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 );

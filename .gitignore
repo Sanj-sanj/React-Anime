@@ -4,7 +4,7 @@ dist/
 coverage/
 .vscode/
 
-src/components/shared/nav/Nav.js
+src/components/shared/Nav/Nav.js
 server/
 test.js
 debug.log
