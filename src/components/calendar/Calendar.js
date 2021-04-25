@@ -20,8 +20,7 @@ export default class Calendar extends React.Component {
       loading: true,
       hasError: false,
       data: [],
-      filteredShowArrays: [],
-      toggleView: (() => {
+      viewMode: (() => {
         try {
           return (
             JSON.parse(localStorage.getItem("calendar-view")) || "calendar"
@@ -38,7 +37,7 @@ export default class Calendar extends React.Component {
 
   toggle = (value) => {
     try {
-      this.setState({ toggleView: value });
+      this.setState({ viewMode: value });
       return localStorage.setItem("calendar-view", JSON.stringify(value));
     } catch (err) {
       return err;
@@ -65,7 +64,6 @@ export default class Calendar extends React.Component {
     this.setState({
       data: res,
       loading: false,
-      filteredShowArrays: buildCalendarListArrays(dateStringsArray, res),
     });
   }
   async componentDidUpdate(prevProps) {
@@ -91,7 +89,6 @@ export default class Calendar extends React.Component {
         this.setState({
           data: res,
           loading: false,
-          filteredShowArrays: buildCalendarListArrays(dateStringsArray, res),
         });
       } catch (err) {
         this.setState({ loading: false, hasError: true });
@@ -101,11 +98,11 @@ export default class Calendar extends React.Component {
 
   render() {
     const { toggle } = this;
-    const { loading, filteredShowArrays, toggleView, innerWidth } = this.state;
+    const { loading, viewMode, innerWidth, data } = this.state;
 
     return (
       <>
-        <CalendarHeader toggle={toggle} view={toggleView} />
+        <CalendarHeader toggle={toggle} view={viewMode} />
         {this.state.loading ? (
           <Spinner hasRendered={loading} />
         ) : this.state.hasError ? (
@@ -118,13 +115,16 @@ export default class Calendar extends React.Component {
           <>
             <div
               className={
-                toggleView === "calendar" ? "container" : "container-fluid"
+                viewMode === "calendar" ? "container" : "container-fluid"
               }
             >
-              {toggleView === "calendar" ? (
+              {viewMode === "calendar" ? (
                 <DailyCalendarCard
                   dateStringsArray={dateStringsArray}
-                  filteredShowArrays={filteredShowArrays}
+                  filteredShowArrays={buildCalendarListArrays(
+                    dateStringsArray,
+                    data
+                  )}
                 />
               ) : (
                 <div className="d-flex flex-wrap justify-content-center">
@@ -132,7 +132,13 @@ export default class Calendar extends React.Component {
                     <Timetable
                       key={dateString}
                       date={dateString}
-                      showsArray={filteredShowArrays[i]}
+                      showsArray={
+                        buildCalendarListArrays(
+                          dateStringsArray,
+                          data,
+                          "timetable"
+                        )[i]
+                      }
                       innerWidth={innerWidth}
                     />
                   ))}
