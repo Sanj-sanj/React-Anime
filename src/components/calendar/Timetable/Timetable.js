@@ -24,17 +24,14 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
               {showsArray.map((arrayOfShows) => {
                 let time = new Date();
                 const { nextAiringEpisode, status } = arrayOfShows[0];
-                try {
-                  time.setSeconds(nextAiringEpisode?.timeUntilAiring);
-                  time = `${time.getHours()}:${
-                    time.getMinutes() < 10
-                      ? time.getMinutes() + "0"
-                      : time.getMinutes()
-                  }`;
-                } catch (err) {
-                  console.log(err);
-                  time = "N/A";
-                }
+
+                time.setSeconds(nextAiringEpisode?.timeUntilAiring);
+                time = `${time.getHours()}:${
+                  time.getMinutes() < 10
+                    ? time.getMinutes() + "0"
+                    : time.getMinutes()
+                }`;
+                if (isNaN(time)) time = "N/A";
 
                 return (
                   <div
@@ -45,11 +42,13 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
                     <div className="content">
                       <div className="timetable-time">
                         {time}{" "}
-                        <Countdown
-                          airingStatus={status}
-                          airingInfo={nextAiringEpisode}
-                          airingAt={nextAiringEpisode.airingAt * 1000}
-                        />{" "}
+                        {nextAiringEpisode ? (
+                          <Countdown
+                            airingStatus={status}
+                            airingInfo={nextAiringEpisode}
+                            airingAt={nextAiringEpisode.airingAt * 1000}
+                          />
+                        ) : null}
                       </div>
                       {arrayOfShows.map((show) => (
                         <div key={show.id} className="anime-block d-flex pb-2">
