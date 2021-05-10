@@ -31,7 +31,10 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
                     ? time.getMinutes() + "0"
                     : time.getMinutes()
                 }`;
-                if (isNaN(time)) time = "N/A";
+                console.log(time);
+                if (isNaN(time.includes(":") ? time.replace(":", "") : time)) {
+                  time = "N/A";
+                }
 
                 return (
                   <div
