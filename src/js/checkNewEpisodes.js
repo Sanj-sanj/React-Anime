@@ -70,8 +70,6 @@ async function compareForNewReleases(dispatch, watching, language) {
       sameShow.status === "RELEASING" &&
       sameShow.episodeNumber < latestShowInfo?.nextAiringEpisode?.episode
     ) {
-      console.log(sameShow);
-      console.log(latestShowInfo);
       //new ep, show is still ongoing
       return sameShow;
     }

@@ -31,15 +31,14 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
                     ? time.getMinutes() + "0"
                     : time.getMinutes()
                 }`;
-                console.log(time);
                 if (isNaN(time.includes(":") ? time.replace(":", "") : time)) {
                   time = "N/A";
                 }
 
                 return (
                   <div
-                    key={arrayOfShows[0].nextAiringEpisode?.timeUntilAiring}
                     className={`timetable-slot ${visbility}`}
+                    key={arrayOfShows[0].id}
                   >
                     <div className="line"></div>
                     <div className="content">
@@ -77,10 +76,11 @@ const Timetable = ({ date, showsArray, innerWidth }) => {
               })}
             </>
           ) : (
-            <p>
-              This message needs to be dynamic, display loading or a placeholder
-              while building, and display no info found when finished building.
-            </p>
+            <div className={`timeslot  ${visbility}`}>
+              <p className="w-100 text-center">
+                🔍️ No shows airing in you watch list this day!
+              </p>
+            </div>
           )}
         </div>
       </div>

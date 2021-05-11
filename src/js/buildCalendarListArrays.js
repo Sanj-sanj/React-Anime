@@ -5,7 +5,6 @@ export default function buildCalendarListArrays(dateStringsArray, data, type) {
     const calendarDate = new Date(
       `${dateString.replace("·", "").trim()} ${today.getFullYear()}`
     );
-    console.log(data);
     const filteredAndSortedByDate = data
       .filter((show) => {
         let showStart = new Date(
@@ -17,11 +16,9 @@ export default function buildCalendarListArrays(dateStringsArray, data, type) {
         if (!a.nextAiringEpisode || !b.nextAiringEpisode) return;
         return a.nextAiringEpisode.airingAt - b.nextAiringEpisode.airingAt;
       });
-
     if (type === "timetable") {
       return group(filteredAndSortedByDate);
     }
-
     return filteredAndSortedByDate;
   });
   return filteredShowArrays;
@@ -38,10 +35,12 @@ function group(arr) {
       })
     ),
   ];
+  airTimes = airTimes.sort();
 
-  return airTimes.map((time) => {
+  const sorted = airTimes.map((time) => {
     return arr.filter(
       (show) => show?.nextAiringEpisode?.timeUntilAiring === time
     );
   });
+  return sorted;
 }
